@@ -8,17 +8,15 @@ use axum::{
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/", get(hello));
+    let app = Router::new().route("/", get(root));
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 
 #[derive(Template)]
-#[template(path = "hello.html")]
-struct HelloTemplate<'a> {
-    name: &'a str,
-}
+#[template(path = "index.html")]
+struct RootTemplate {}
 
 struct HtmlTemplate<T>(T);
 
@@ -41,7 +39,7 @@ where
     }
 }
 
-async fn hello() -> impl IntoResponse {
-    let template = HelloTemplate { name: "world" };
+async fn root() -> impl IntoResponse {
+    let template = RootTemplate {};
     HtmlTemplate(template)
 }
