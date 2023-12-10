@@ -1,6 +1,7 @@
-use super::html::HtmlTemplate;
 use askama::Template;
 use axum::response::IntoResponse;
+
+use crate::templates::html::HtmlTemplate;
 
 #[derive(Template)]
 #[template(path = "index.html")]
