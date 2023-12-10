@@ -1,7 +1,7 @@
 use askama::Template;
 use axum::{extract::Path, response::IntoResponse};
 
-use crate::templates::html::HtmlTemplate;
+use crate::utils::html::HtmlTemplate;
 
 #[derive(Template)]
 #[template(path = "blog.html")]
