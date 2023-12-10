@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "dev": "npx tailwindcss -i ./templates/input.css -o ./assets/css/main.css --watch",
-    "prod": "npx tailwindcss -i ./templates/input.css -o ./assets/css/main.css --minify"
+    "dev": "npx tailwindcss -i ./templates/input.css -o ./assets/output.css --watch",
+    "prod": "npx tailwindcss -i ./templates/input.css -o ./assets/output.css --minify"
   },
   "devDependencies": {},
   "dependencies": {

@@ -11,5 +11,5 @@ node_modules
 !.yarn/sdks
 !.yarn/versions
 
-# assets
-assets/css
+# tailwind
+dist

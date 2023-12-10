@@ -1,10 +1,13 @@
 use axum::{routing::get, Router};
+use tower_http::services::ServeDir;
+
 mod routes;
 mod utils;
 
 #[tokio::main]
 async fn main() {
     let app = Router::new()
+        .nest_service("/assets", ServeDir::new("assets"))
         .route("/", get(routes::root::root))
         .route("/blog/:id", get(routes::blog::blog));
 
