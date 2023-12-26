@@ -1,0 +1,16 @@
+{
+  "restoreTerminals.terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "axum",
+          "commands": ["cargo watch -x run"]
+        },
+        {
+          "name": "tailwind",
+          "commands": ["yarn dev"]
+        }
+      ]
+    }
+  ]
+}
