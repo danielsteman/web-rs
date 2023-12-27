@@ -1,5 +1,9 @@
 use askama::Template;
-use axum::{extract::Path, response::IntoResponse};
+use axum::{
+    extract::{Path, State},
+    response::IntoResponse,
+};
+use sqlx::PgPool;
 
 use crate::utils::html::HtmlTemplate;
 
@@ -10,7 +14,7 @@ struct BlogTemplate {
     body: String,
 }
 
-pub async fn blog(Path(id): Path<u32>) -> impl IntoResponse {
+pub async fn blog(State(pool): State<PgPool>, Path(id): Path<u32>) -> impl IntoResponse {
     let template = BlogTemplate {
         title: String::from("Hoi"),
         body: id.to_string(),

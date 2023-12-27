@@ -1,5 +1,6 @@
 use askama::Template;
-use axum::response::IntoResponse;
+use axum::{extract::State, response::IntoResponse};
+use sqlx::PgPool;
 
 use crate::utils::html::HtmlTemplate;
 
@@ -15,7 +16,7 @@ struct Blog {
     summary: String,
 }
 
-pub async fn blogs() -> impl IntoResponse {
+pub async fn blogs(State(pool): State<PgPool>) -> impl IntoResponse {
     let template = BlogsTemplate {
         blogs: vec![
             Blog {
