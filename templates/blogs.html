@@ -4,12 +4,10 @@
     {% for blog in blogs %}
     <a href="/blog/{{blog.id}}">
       <div class="h-fit rounded-lg bg-indigo-500 flex flex-col gap-2 p-2">
-        <div
-          class="font-mono px-4 py-2 rounded-lg dark:text-white bg-purple-500"
-        >
+        <div class="font-mono px-4 py-2 rounded-lg text-white bg-purple-500">
           {{blog.title}}
         </div>
-        <div class="font-mono px-4 py-2 rounded-lg dark:text-white bg-pink-500">
+        <div class="font-mono px-4 py-2 rounded-lg text-white bg-pink-500">
           {{blog.summary}}
         </div>
       </div>
