@@ -3,6 +3,7 @@ use sqlx::postgres::PgPoolOptions;
 use std::env;
 use tower_http::services::ServeDir;
 
+mod crud;
 mod routes;
 mod utils;
 

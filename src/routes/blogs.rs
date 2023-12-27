@@ -2,6 +2,7 @@ use askama::Template;
 use axum::{extract::State, response::IntoResponse};
 use sqlx::PgPool;
 
+use crate::crud::blog::Blog;
 use crate::utils::html::HtmlTemplate;
 
 #[derive(Template)]
@@ -10,23 +11,17 @@ struct BlogsTemplate {
     blogs: Vec<Blog>,
 }
 
-#[derive(Debug, sqlx::FromRow)]
-struct Blog {
-    id: i32,
-    title: String,
-    summary: String,
-}
-
 pub async fn blogs(State(pool): State<PgPool>) -> impl IntoResponse {
-    let blogs: Vec<Blog> = sqlx::query_as::<_, Blog>("SELECT id, title, summary FROM blog")
-        .fetch_all(&pool)
-        .await
-        .unwrap();
+    match Blog::get_blogs(&pool).await {
+        Ok(blogs) => {
+            let template = BlogsTemplate { blogs };
+            HtmlTemplate(template)
+        }
+        Err(err) => {
+            println!("Error fetching blogs: {}", err);
 
-    for blog in &blogs {
-        println!("{:?}", blog.id);
+            let error_template = BlogsTemplate { blogs: vec![] };
+            HtmlTemplate(error_template)
+        }
     }
-
-    let template = BlogsTemplate { blogs };
-    HtmlTemplate(template)
 }
