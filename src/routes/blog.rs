@@ -1,23 +1,20 @@
-use askama::Template;
+use core::panic;
+
 use axum::{
     extract::{Path, State},
     response::IntoResponse,
 };
+
 use sqlx::PgPool;
 
-use crate::utils::html::HtmlTemplate;
+use crate::{crud::blog::Blog, utils::html::HtmlTemplate};
 
-#[derive(Template)]
-#[template(path = "blog.html")]
-struct BlogTemplate {
-    title: String,
-    body: String,
-}
-
-pub async fn blog(State(pool): State<PgPool>, Path(id): Path<u32>) -> impl IntoResponse {
-    let template = BlogTemplate {
-        title: String::from("Hoi"),
-        body: id.to_string(),
-    };
-    HtmlTemplate(template)
+pub async fn blog(State(pool): State<PgPool>, Path(id): Path<i32>) -> impl IntoResponse {
+    match Blog::get_blog(&pool, id).await {
+        Ok(blog) => HtmlTemplate(blog),
+        Err(err) => {
+            println!("Error fetching blog: {}", err);
+            panic!("Error fetching blog")
+        }
+    }
 }
