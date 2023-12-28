@@ -15,5 +15,5 @@ node_modules
 dist
 assets/output.css
 
-# secrets
-.env
+# articles
+articles
