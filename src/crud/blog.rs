@@ -1,3 +1,5 @@
+use std::fs;
+
 use askama::Template;
 use sqlx::error::Error;
 use sqlx::types::time::Date;
@@ -25,11 +27,23 @@ impl Blog {
     }
 
     pub async fn get_blog(pool: &Pool<Postgres>, id: i32) -> Result<Blog, Error> {
-        let blogs: Blog = sqlx::query_as::<_, Blog>("SELECT * FROM blog WHERE id = $1")
+        let mut blog: Blog = sqlx::query_as::<_, Blog>("SELECT * FROM blog WHERE id = $1")
             .bind(id)
             .fetch_one(pool)
             .await?;
 
-        Ok(blogs)
+        let file_path = "articles/blog11.md";
+
+        let content = match fs::read_to_string(&file_path) {
+            Ok(content) => content,
+            Err(e) => {
+                panic!("Failed to read file: {}", e);
+            }
+        };
+
+        let html = markdown::to_html(&content);
+        blog.body = html;
+
+        Ok(blog)
     }
 }
