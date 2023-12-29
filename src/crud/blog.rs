@@ -1,12 +1,9 @@
 use std::fs;
 
-use askama::Template;
 use sqlx::error::Error;
 use sqlx::types::time::Date;
 use sqlx::{Pool, Postgres};
 
-#[derive(Template)]
-#[template(path = "blog.html")]
 #[derive(Debug, sqlx::FromRow)]
 pub struct Blog {
     pub id: i32,
@@ -32,7 +29,7 @@ impl Blog {
             .fetch_one(pool)
             .await?;
 
-        let file_path = "articles/blog11.md";
+        let file_path = format!("articles/blog{}.md", id);
 
         let content = match fs::read_to_string(&file_path) {
             Ok(content) => content,

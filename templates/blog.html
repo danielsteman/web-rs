@@ -3,7 +3,7 @@
   <div class="bg-purple-400 flex flex-col gap-4 p-4">
     <header class="font-mono text-white">{{ title }}</header>
     <div class="font-mono text-white">{{ date }}</div>
-    <div class="font-mono text-white">{{ body }}</div>
+    <div class="font-mono text-white">{{ body|safe }}</div>
   </div>
 </body>
 {% endblock %}
