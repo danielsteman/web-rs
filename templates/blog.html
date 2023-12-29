@@ -1,5 +1,31 @@
 {% extends "base.html" %} {% block content %}
 <body class="h-full">
+  <script>
+    async function highlightCodeWithShiki() {
+      const codeElements = document.querySelectorAll("code");
+
+      const highlighter = await shiki.getHighlighter({
+        theme: "rose-pine-moon",
+        langs: ["yaml", "bash", "python", "markdown"],
+      });
+
+      codeElements.forEach(async (codeElement) => {
+        const codeContent = codeElement.textContent;
+        const language = codeElement.className.split("-")[1];
+        if (language !== undefined) {
+          const highlightedCode = await highlighter.codeToHtml(
+            codeContent,
+            codeElement.className.split("-")[1]
+          );
+          codeElement.innerHTML = highlightedCode;
+        }
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      highlightCodeWithShiki();
+    });
+  </script>
   <div class="bg-purple-400 flex flex-col gap-4 p-4">
     <header class="font-mono text-white">{{ title }}</header>
     <div class="font-mono text-white">{{ date }}</div>
