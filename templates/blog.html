@@ -12,12 +12,31 @@
       codeElements.forEach(async (codeElement) => {
         const codeContent = codeElement.textContent;
         const language = codeElement.className.split("-")[1];
+
         if (language !== undefined) {
           const highlightedCode = await highlighter.codeToHtml(
             codeContent,
             codeElement.className.split("-")[1]
           );
-          codeElement.innerHTML = highlightedCode;
+
+          const tempDiv = document.createElement("div");
+          tempDiv.innerHTML = highlightedCode;
+
+          // Get the <pre> elements within codeContent and apply styles
+          const preElements = tempDiv.querySelectorAll("pre");
+          preElements.forEach((pre) => {
+            pre.style.width = "fit-content";
+            pre.style.padding = "1em";
+            pre.style.margin = "1em";
+            pre.style.fontSize = "14px";
+            pre.style.borderRadius = "1em";
+            // Add other styles or conditions as needed
+          });
+
+          // Set the modified HTML back to the codeElement
+          codeElement.innerHTML = tempDiv.innerHTML;
+
+          codeElement.innerHTML = styledCode;
         }
       });
     }
