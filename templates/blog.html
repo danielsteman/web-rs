@@ -5,7 +5,7 @@
       const codeElements = document.querySelectorAll("code");
 
       const highlighter = await shiki.getHighlighter({
-        theme: "rose-pine-moon",
+        theme: "min-light",
         langs: ["yaml", "bash", "python", "markdown"],
       });
 
@@ -22,7 +22,6 @@
           const tempDiv = document.createElement("div");
           tempDiv.innerHTML = highlightedCode;
 
-          // Get the <pre> elements within codeContent and apply styles
           const preElements = tempDiv.querySelectorAll("pre");
           preElements.forEach((pre) => {
             pre.style.width = "fit-content";
@@ -30,13 +29,9 @@
             pre.style.margin = "1em";
             pre.style.fontSize = "14px";
             pre.style.borderRadius = "1em";
-            // Add other styles or conditions as needed
           });
 
-          // Set the modified HTML back to the codeElement
           codeElement.innerHTML = tempDiv.innerHTML;
-
-          codeElement.innerHTML = styledCode;
         }
       });
     }
