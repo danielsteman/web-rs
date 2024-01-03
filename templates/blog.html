@@ -1,11 +1,11 @@
 {% extends "base.html" %} {% block content %}
-<body class="h-full">
+<body class="blog bg-gray-100">
   <script>
     async function highlightCodeWithShiki() {
       const codeElements = document.querySelectorAll("code");
 
       const highlighter = await shiki.getHighlighter({
-        theme: "min-light",
+        theme: "github-light",
         langs: ["yaml", "bash", "python", "markdown"],
       });
 
@@ -40,10 +40,12 @@
       highlightCodeWithShiki();
     });
   </script>
-  <div class="bg-purple-400 flex flex-col gap-4 p-4">
-    <header class="font-mono text-white">{{ title }}</header>
-    <div class="font-mono text-white">{{ date }}</div>
-    <div class="font-mono text-white">{{ body|safe }}</div>
+  <div class="flex justify-center flex-col gap-4 pt-8 max-w-screen-md mx-auto">
+    <header class="font-mono text-2xl text-gray-900 font-black">
+      {{ title }}
+    </header>
+    <div class="font-mono text-gray-900">{{ date }}</div>
+    <div class="font-mono text-gray-900">{{ body|safe }}</div>
   </div>
 </body>
 {% endblock %}

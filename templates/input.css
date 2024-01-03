@@ -5,3 +5,10 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+/*
+style hrefs in blog articles but not in the blogs overview
+*/
+body[class*="blog"] a {
+  background-color: #ec4899;
+}
