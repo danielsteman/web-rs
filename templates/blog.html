@@ -26,7 +26,7 @@
           preElements.forEach((pre) => {
             pre.style.width = "fit-content";
             pre.style.padding = "1em";
-            pre.style.margin = "1em";
+            pre.style.margin = "1em 0";
             pre.style.fontSize = "14px";
             pre.style.borderRadius = "1em";
           });
@@ -48,4 +48,4 @@
     <div class="font-mono text-gray-900">{{ body|safe }}</div>
   </div>
 </body>
-{% endblock %}
+{% include "footer.html" %} {% endblock %}
