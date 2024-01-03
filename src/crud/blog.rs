@@ -43,4 +43,22 @@ impl Blog {
 
         Ok(blog)
     }
+
+    pub async fn create_blog(pool: &Pool<Postgres>, blog: Blog) -> Result<Blog, Error> {
+        unimplemented!("Blog isn't creatable");
+        // let result = sqlx::query(
+        //     "INSERT INTO blog (id, title, summary, body, date, tags)
+        //     VALUES ($1, $2, $3, $4)",
+        // )
+        // .bind(blog.id)
+        // .bind(String::from("title").as_str())
+        // .bind(String::from("summary").as_str())
+        // .bind(String::from("body").as_str())
+        // .bind(blog.date)
+        // .bind(blog.tags.join(", "))
+        // .execute(pool)
+        // .await;
+
+        // Ok(blog)
+    }
 }

@@ -23,7 +23,7 @@ fn main() {
 }
 
 #[derive(Debug)]
-struct Metadata {
+pub struct Metadata {
     id: Option<i16>,
     title: Option<String>,
     date: Option<String>,
