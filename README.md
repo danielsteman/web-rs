@@ -8,7 +8,7 @@ Run the server:
 
 ```
 cargo install cargo-watch
-cargo watch -x run
+cargo watch -x "run --bin web-rs"
 ```
 
 Run Tailwind (styling):

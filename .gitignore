@@ -14,6 +14,3 @@ node_modules
 # tailwind
 dist
 assets/output.css
-
-# articles
-articles

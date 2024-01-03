@@ -2153,6 +2153,7 @@ dependencies = [
  "dotenv",
  "markdown",
  "pulldown-cmark",
+ "regex",
  "sqlx",
  "tokio",
  "tower-http",
