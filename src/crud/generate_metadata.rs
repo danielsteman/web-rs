@@ -16,7 +16,17 @@ fn main() {
             if extension == "md" {
                 // mdvec.push(path);
                 let metadata = get_metadata(&path);
-                print!("{:?}", metadata)
+                print!("{:?}", metadata);
+
+                Blog::create_blog(
+                    metadata.id,
+                    metadata.title,
+                    String::from("summary"),
+                    String::from("body"),
+                    String::from("summary"),
+                    date!(2022 - 01 - 01),
+                    vec![String::from("tag1"), String::from("tag2")],
+                );
             }
         }
     }
@@ -58,16 +68,6 @@ fn get_metadata(path: &PathBuf) -> Metadata {
             }
         }
     }
-
-    Blog::create_blog(
-        metadata.id,
-        metadata.title,
-        String::from("summary"),
-        String::from("body"),
-        String::from("summary"),
-        date!(2022 - 01 - 01),
-        vec![String::from("tag1"), String::from("tag2")],
-    );
 
     metadata
 }

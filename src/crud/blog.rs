@@ -48,7 +48,8 @@ impl Blog {
         // unimplemented!("Blog isn't creatable");
         let result = sqlx::query(
             "INSERT INTO blog (id, title, summary, body, date, tags)
-            VALUES ($1, $2, $3, $4)",
+            VALUES ($1, $2, $3, $4)
+            WHERE NOT EXISTS (SELECT id FROM blog)",
         )
         .bind(blog.id)
         .bind(String::from("title").as_str())
