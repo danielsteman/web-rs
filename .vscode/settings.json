@@ -4,7 +4,7 @@
       "splitTerminals": [
         {
           "name": "axum",
-          "commands": ["cargo watch -x run"]
+          "commands": ["cargo watch -x \"run --bin web-rs\""]
         },
         {
           "name": "tailwind",
@@ -13,5 +13,5 @@
       ]
     }
   ],
-  "rust-analyzer.linkedProjects": ["./Cargo.toml", "./Cargo.toml"]
+  "rust-analyzer.linkedProjects": ["./Cargo.toml"]
 }

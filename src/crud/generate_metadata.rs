@@ -4,7 +4,9 @@ use std::{
     path::PathBuf,
 };
 
+use crate::crud::blog::Blog;
 use regex::Regex;
+use time::macros::date;
 
 fn main() {
     let metadata_vec: Vec<std::path::PathBuf> = Vec::new();
@@ -56,6 +58,16 @@ fn get_metadata(path: &PathBuf) -> Metadata {
             }
         }
     }
+
+    Blog::create_blog(
+        metadata.id,
+        metadata.title,
+        String::from("summary"),
+        String::from("body"),
+        String::from("summary"),
+        date!(2022 - 01 - 01),
+        vec![String::from("tag1"), String::from("tag2")],
+    );
 
     metadata
 }
