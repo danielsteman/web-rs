@@ -1,6 +1,7 @@
 % id: 6
 % title: Integrating a ML model in an API 🔀
 % date: 2023-01-23
+% tags: ml
 
 In my [previous post](https://www.danielsteman.com/blog/5) I wrote about deploying a ML model using the Seldon Core library. At the end of the post we ended up with a `SeldonDeployment` kubernetes object which roughly resembles a standard `Deployment` object, but with some extras. When deployed, you'll end up with a micro service that runs in a pod and a service that exposes the pod.
 

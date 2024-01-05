@@ -1,6 +1,7 @@
 % id: 5
 % title: ML model serving with Seldon Core 🤖🧠
 % date: 2022-12-06
+% tags: ml
 
 Usually machine learning projects start off with the configuration and training of models, which can be accomplished relatively quickly thanks to libraries such as [scikit-learn](https://scikit-learn.org/stable/). Once trained, one can feed new data points to the model to calculate an output such as a number, which can provide new insights. At this moment, the trained model is only available on the system of the creator of the model. In case of, let's say, a model that calculates dynamic prices which are widely used across an organisation, this is not optimal nor desirable.
 

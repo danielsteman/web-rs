@@ -1,6 +1,7 @@
 % id: 10
 % title: My default pre-commit hooks for Python projects 🪝🐍
 % date: 2023-08-15
+% tags: productivity
 
 My goal is to automate as much as possible in my workflow, to decrease cognitive overhead and leave more headspace for actual work. Things that contribute to this goal are [shortkeys](https://github.com/danielsteman/.dotfiles/blob/master/nvim/lua/remap.lua), linters that are [triggered on save](https://code.visualstudio.com/docs/editor/codebasics), [pre-commit](https://pre-commit.com/) hooks and much more. I want to talk a little bit more about the last one: pre-commit hooks. As the name reveals, these hooks, or scripts, are ran before submission of new code. A script can be a check if the contributor is trying to [submit secrets](https://github.com/Yelp/detect-secrets), has [unused imports](https://beta.ruff.rs/docs/) or [wrong indentation](https://pypi.org/project/black/), just to name a view. Also, you can easily create your own hook and run a script that you wrote. Lately, I created a hook to generate a section of my CI/CD pipeline based on the folder-structure of my repository, but there are countless use cases, so be creative. The best thing about `pre-commit` is that its config (`.pre-commit-config.yaml`) is tracked by Git, so every contributor gets to use the same "commit rules". I'll quickly show a couple of the pre-commit hooks that I find very convenient in Python projects:
 

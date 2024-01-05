@@ -1,6 +1,7 @@
 % id: 8
 % title: SaaS-starter wrapped in a monorepo with microservices 🚀
 % date: 2023-06-20
+% tags: web
 
 Those who are in the business of software development might be familiar with the phenomenon of people coming up to you with a business pitch, asking you for a technical implementation. I always admire entrepreneurship and when I can, I try to help out. After speaking to several people with several ([SaaS](https://en.wikipedia.org/wiki/Software_as_a_service)) ideas, I realised that implementing these ideas would involve common components, such as user authentication, a billing system and a [CRM](https://en.wikipedia.org/wiki/Customer_relationship_management), to name a view.
 

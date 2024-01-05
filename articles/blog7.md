@@ -3,6 +3,7 @@
 % id: 7
 % title: Taking ergonomics to the next level with a split ergo mech keyboard 🖖
 % date: 2023-04-24
+% tags: hardware
 
 Already a few months ago I entered the [rabbit hole](https://www.reddit.com/r/ErgoMechKeyboards/) of custom- ergo- mechanical- split keyboards and by now I built my own. I wanted to give the [ortholinear](https://www.reviewgeek.com/70291/what-is-an-ortholinear-keyboard-and-should-you-use-one/) key layout a shot as I read many good things about it and it kind of made sense to me from an ergonomics point of view. The staggered layout of regular keyboards is a legacy from typewriters and is inferior, [some claim](https://readcaffeine.com/2022/06/ortholinear-keyboard/). Also I wanted to try a [layered key layout](https://github.com/danielsteman/ckbrd/blob/master/config/corne.keymap) to save space and make the keyboard more compact so I can bring it around easily. I also like the idea of a layered layout because it will decrease the distance between keys and raise typing speed potential.
 

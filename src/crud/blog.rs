@@ -4,7 +4,7 @@ use sqlx::error::Error;
 use sqlx::types::time::Date;
 use sqlx::{Pool, Postgres};
 
-#[derive(Debug, sqlx::FromRow)]
+#[derive(PartialEq, Debug, sqlx::FromRow)]
 pub struct Blog {
     pub id: i32,
     pub title: String,
@@ -44,24 +44,23 @@ impl Blog {
         Ok(blog)
     }
 
-    pub async fn create_blog(pool: &Pool<Postgres>, blog: Blog) -> Result<Blog, Error> {
-        // unimplemented!("Blog isn't creatable");
+    pub async fn create_blog(&self, pool: &Pool<Postgres>) -> Result<(), Error> {
         let result = sqlx::query(
             "INSERT INTO blog (id, title, summary, body, date, tags)
             VALUES ($1, $2, $3, $4)
             WHERE NOT EXISTS (SELECT id FROM blog)",
         )
-        .bind(blog.id)
-        .bind(String::from("title").as_str())
-        .bind(String::from("summary").as_str())
-        .bind(String::from("body").as_str())
-        .bind(blog.date)
-        .bind(blog.tags.join(", "))
+        .bind(&self.id)
+        .bind(self.title.as_str())
+        .bind(self.summary.as_str())
+        .bind(self.body.as_str())
+        .bind(self.date)
+        .bind(self.tags.join(", "))
         .execute(pool)
         .await;
 
         println!("{:?}", result);
 
-        Ok(blog)
+        Ok(())
     }
 }
