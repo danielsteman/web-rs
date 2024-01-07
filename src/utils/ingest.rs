@@ -1,8 +1,13 @@
 use std::fs;
 
+use crate::crud::blog::Blog;
 use regex::Regex;
 
 fn main() {
+    ingest_articles()
+}
+
+pub fn ingest_articles() {
     match fs::read_dir("./articles") {
         Ok(files) => {
             for file in files {

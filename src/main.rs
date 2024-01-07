@@ -1,11 +1,12 @@
+mod crud;
+mod routes;
+mod utils;
+
 use axum::{routing::get, Router};
 use sqlx::postgres::PgPoolOptions;
 use std::env;
 use tower_http::services::ServeDir;
-
-mod crud;
-mod routes;
-mod utils;
+use utils::ingest;
 
 #[cfg(debug_assertions)]
 fn load_env() {
@@ -31,6 +32,8 @@ async fn main() {
         .run(&pool)
         .await
         .expect("Failed to perform database migrations");
+
+    ingest::ingest_articles();
 
     let app = Router::new()
         .nest_service("/assets", ServeDir::new("assets"))
