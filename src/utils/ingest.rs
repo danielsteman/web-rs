@@ -19,10 +19,9 @@ pub async fn ingest_articles() -> Option<()> {
                     println!("{:?}", blog);
                     let pool = get_db().await;
 
-                    match blog.create_blog(&pool).await {
-                        Ok(res) => println!("{:?}", res),
-                        Err(e) => println!("Something went wrong while creating a blog: {}", e),
-                    }
+                    blog.create_blog(&pool).await.unwrap_or_else(|err| {
+                        eprintln!("Error inserting blog: {}", err);
+                    })
                 } else {
                     println!("No metadata found in file")
                 }

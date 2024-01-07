@@ -45,19 +45,21 @@ impl Blog {
     }
 
     pub async fn create_blog(&self, pool: &Pool<Postgres>) -> Result<(), Error> {
+        let tags_array: Vec<&str> = self.tags.iter().map(|s| s.as_str()).collect();
+
         let result = sqlx::query(
             "INSERT INTO blog (id, title, summary, body, date, tags)
             VALUES ($1, $2, $3, $4, $5, $6)
-            WHERE NOT EXISTS (SELECT id FROM blog)",
+            ON CONFLICT (id) DO NOTHING",
         )
         .bind(&self.id)
         .bind(&self.title)
         .bind(&self.summary)
         .bind(&self.body)
         .bind(&self.date)
-        .bind(&self.tags.join(", "))
+        .bind(&tags_array)
         .execute(pool)
-        .await;
+        .await?;
 
         println!("{:?}", result);
 
