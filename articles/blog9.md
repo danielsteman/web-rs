@@ -47,7 +47,7 @@ CMD celery -A tasks worker --loglevel=INFO --concurrency=1
 
 The worker image can be deployed as a replicaset on Kubernetes, where the number of replicas can scale when the workload increases. This means that both the broker nodes and worker nodes are horizontal scalable, as displayed in the high-level diagram showed below.
 
-![Diagram](../images/k8s_celery_scaling.svg)
+![Diagram](assets/images/k8s_celery_scaling.svg)
 
 I left the results backend out of scope for the first iteration, but according to the Celery docs, [Redis](https://redis.io/) (which is also horizontal scalable) is a popular choice to complement RabbitMQ. If something more persistent is required, a Postgres database is also an option. I also left monitoring out of scope, but [Flower 🌸](https://flower.readthedocs.io/en/latest/features.html) seems like an amazing tool to monitor Celery events in real-time. Monitoring is still possible through the [RabbitMQ management API](https://www.rabbitmq.com/management.html) which is exposed on port `15672` by default. In fact, Flower consumes data from the management API to show information about the workers.
 
