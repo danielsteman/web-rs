@@ -1,5 +1,3 @@
-# Taking ergonomics to the next level with a split ergo mech keyboard 🖖
-
 % id: 7
 % title: Taking ergonomics to the next level with a split ergo mech keyboard 🖖
 % date: 2023-04-24
