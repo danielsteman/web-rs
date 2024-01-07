@@ -3,10 +3,8 @@ mod routes;
 mod utils;
 
 use axum::{routing::get, Router};
-use sqlx::postgres::PgPoolOptions;
-use std::env;
 use tower_http::services::ServeDir;
-use utils::ingest;
+use utils::{db::get_db, ingest};
 
 #[cfg(debug_assertions)]
 fn load_env() {
@@ -20,13 +18,7 @@ fn load_env() {}
 async fn main() {
     load_env();
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set.");
-
-    let pool = PgPoolOptions::new()
-        .max_connections(5)
-        .connect(&database_url)
-        .await
-        .expect("Failed to create pool");
+    let pool = get_db().await;
 
     sqlx::migrate!()
         .run(&pool)

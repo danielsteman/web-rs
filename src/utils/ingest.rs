@@ -1,14 +1,10 @@
 use std::fs;
 
-use crate::crud::blog::Blog;
+use crate::{crud::blog::Blog, utils::db::get_db};
 use regex::Regex;
 use time::{macros::format_description, Date};
 
-fn main() {
-    ingest_articles()
-}
-
-pub fn ingest_articles() {
+pub async fn ingest_articles() {
     match fs::read_dir("./articles") {
         Ok(files) => {
             for file in files {
@@ -18,7 +14,11 @@ pub fn ingest_articles() {
                     .expect(format!("Error reading from {:?}", str_path).as_str());
 
                 if let Some(metadata) = get_metadata(content.as_str()) {
-                    println!("{:?}", metadata)
+                    println!("{:?}", metadata);
+                    let blog = metadata_to_blog(metadata).unwrap();
+                    println!("{:?}", blog);
+                    let pool = get_db().await;
+                    // blog.create_blog(pool)
                 } else {
                     println!("No metadata found in file")
                 }
