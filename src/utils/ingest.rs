@@ -1,7 +1,4 @@
-use std::{
-    fs::{self, File},
-    io::{Read, Result},
-};
+use std::fs;
 
 use regex::Regex;
 
