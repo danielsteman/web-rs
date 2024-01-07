@@ -32,3 +32,12 @@ body[class*="blog"] code:not(pre code) {
   border-radius: 0.25rem;
   color: #f3f4f6;
 }
+
+/*
+h2 headers that are rendered by markdown.rs
+*/
+
+body[class*="blog"] h2 {
+  padding: 32px 0px 8px 0px;
+  font-weight: 700;
+}
