@@ -51,11 +51,11 @@ impl Blog {
             WHERE NOT EXISTS (SELECT id FROM blog)",
         )
         .bind(&self.id)
-        .bind(self.title.as_str())
-        .bind(self.summary.as_str())
-        .bind(self.body.as_str())
-        .bind(self.date)
-        .bind(self.tags.join(", "))
+        .bind(&self.title)
+        .bind(&self.summary)
+        .bind(&self.body)
+        .bind(&self.date)
+        .bind(&self.tags.join(", "))
         .execute(pool)
         .await;
 

@@ -4,7 +4,7 @@ use crate::{crud::blog::Blog, utils::db::get_db};
 use regex::Regex;
 use time::{macros::format_description, Date};
 
-pub async fn ingest_articles() {
+pub async fn ingest_articles() -> Option<()> {
     match fs::read_dir("./articles") {
         Ok(files) => {
             for file in files {
@@ -18,7 +18,11 @@ pub async fn ingest_articles() {
                     let blog = metadata_to_blog(metadata).unwrap();
                     println!("{:?}", blog);
                     let pool = get_db().await;
-                    // blog.create_blog(pool)
+
+                    match blog.create_blog(&pool).await {
+                        Ok(res) => println!("{:?}", res),
+                        Err(e) => println!("Something went wrong while creating a blog: {}", e),
+                    }
                 } else {
                     println!("No metadata found in file")
                 }
@@ -26,6 +30,7 @@ pub async fn ingest_articles() {
         }
         Err(e) => eprintln!("Error reading from dir `articles`: {}", e),
     }
+    Some(())
 }
 
 fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
