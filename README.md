@@ -1,6 +1,13 @@
 # web-rs
 
-Let's build a blog page with Axum, Askama, HTMX and Tailwind. As I like to write in Markdown files, I'm using [pandoc](https://github.com/jgm/pandoc) to convert `md` to `hmtl` and adding styling to Markdown code blocks.
+Let's build a blog page with Axum, Askama, HTMX and Tailwind. I like to write articles in Markdown files, so I'm checking in markdown files in the repo and I parse and ingest them into a postgres database. The parser assumes that articles metadata is provided at the top of the document:
+
+```
+% id: 1
+% title: Some blog title 🤖🧠
+% date: 1970-01-01
+% tags: ml, devops, rust
+```
 
 ## Development
 

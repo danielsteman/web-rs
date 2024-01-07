@@ -15,7 +15,7 @@ The top image is from [the Seldon docs](https://docs.seldon.io/projects/seldon-c
 
 Next up, a ML model should be packaged in a Docker image and pushed to a registry, such that Kubernetes can pull the image and serve the model as a microservice. The first step is to serialize a trained model with [joblib](https://joblib.readthedocs.io/en/latest/). This example code serializes a simple cluster model and `dump`s it in the neighbouring `serialized_models` directory:
 
-```python
+```py
 from joblib import dump
 from sklearn.cluster import KMeans
 
@@ -26,7 +26,7 @@ dump(kmeans, "serialized_models/cluster_model.joblib")
 
 The prediction service is declared in Python code, as a class that should have a `predict` method that returns the prediction or classification and a constructor that loads the serialized model. To safeguard consistency among model deployments, I created this ML library-agnostic base class:
 
-```python
+```py
 from abc import ABC, abstractmethod
 import numpy as np
 
@@ -44,7 +44,7 @@ class PredictionServiceBase(ABC):
 
 An implementation could look like this:
 
-```python
+```py
 from joblib import load
 import numpy as np
 

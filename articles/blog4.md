@@ -34,7 +34,7 @@ pub fn greet() {
 }
 ```
 
-```javascript
+```js
 import * as wasm from "wasm-project";
 ```
 

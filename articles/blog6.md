@@ -11,7 +11,7 @@ For a project I was working on, we needed more than just the service, we also ne
 
 Before, a client calls the ML micro service directly with a post request and a body, where the body contains the data that will be used to predict. An example `cURL` request looks like the snippet below.
 
-```
+```bash
 curl -X POST -H 'Content-Type: application/json' -d '{"ndarray":{"data":[[1,3,3]]}}' http://application.cluster-domain:9000/api/v1.0/predictions
 ```
 
@@ -22,7 +22,7 @@ With an API in between, we can do anything we'd like with the incoming requests 
 
 Enough about [MLOps things](https://ml-ops.org/). The tree below shows how I layered the application according to the tasks each component is fulfilling.
 
-```
+```bash
 .
 ├── alembic
 │   ├── env.py
@@ -64,7 +64,7 @@ Let's start with `alembic`. [This](https://alembic.sqlalchemy.org/en/latest/) is
 
 Each database table is also declared by a class with a `Base` parent class. To construct the `Base`, the [declarative API](https://docs.sqlalchemy.org/en/13/orm/extensions/declarative/api.html#sqlalchemy.ext.declarative.declared_attr) of `sqlalchemy` is used to map model class names to table names, for example:
 
-```
+```py
 from typing import Any
 from sqlalchemy.orm import as_declarative, declared_attr
 
@@ -86,7 +86,7 @@ These are `pydantic` classes that are used to validate requests and responses, b
 
 Endpoints can be declared directly in `app/main.py` but I always find it more convenient to group endpoints in `Router`s and use the `include_router` method to attach them to the `App` object. In the below example, the `router` is not encapusulated in a separate file for demostration but should be in a real project.
 
-```
+```py
 from fastapi import FastAPI, APIRouter
 
 router = APIRouter(prefix="/classification")
@@ -97,7 +97,7 @@ app.include_router(router)
 
 From the router, we can inject the ML model such that we can fetch predictions when we receive a request with features. The `app.ml.classifier.Classifier` model class is responsible for sending requests to the ML micro service, hence it should be [injected as a dependency](https://fastapi.tiangolo.com/tutorial/dependencies/).
 
-```
+```py
 from fastapi import Depends
 
 @router.post("/classify/")
@@ -112,7 +112,7 @@ The `Classifier` makes requests with the `requests` module, and because we are c
 
 In the above exmaple we return the prediction immediately, but that's not neccesary. Instead, we can implement logic in between receiving the request (and its payload as argument `X`) and returning something. For example, we can insert the prediction into the database.
 
-```
+```py
 from fastapi import Depends
 from app import crud
 from app.db.session import get_db
