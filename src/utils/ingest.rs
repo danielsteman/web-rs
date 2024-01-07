@@ -2,6 +2,7 @@ use std::fs;
 
 use crate::crud::blog::Blog;
 use regex::Regex;
+use time::{macros::format_description, Date};
 
 fn main() {
     ingest_articles()
@@ -24,6 +25,38 @@ pub fn ingest_articles() {
             }
         }
         Err(e) => eprintln!("Error reading from dir `articles`: {}", e),
+    }
+}
+
+fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
+    if metadata.is_complete() {
+        let id = metadata.id.unwrap().parse::<i32>().ok()?;
+        let title = metadata.title.clone().unwrap();
+
+        let string_date = metadata.date.clone().unwrap();
+        let date_format = format_description!("[year]-[month]-[day]");
+        let date = Date::parse(string_date.as_str(), &date_format).unwrap();
+
+        let tags = metadata
+            .tags
+            .clone()
+            .unwrap()
+            .split(", ")
+            .map(String::from)
+            .collect();
+
+        let blog = Blog {
+            id,
+            title,
+            summary: String::new(),
+            body: String::new(),
+            date,
+            tags,
+        };
+
+        Some(blog)
+    } else {
+        None
     }
 }
 

@@ -47,7 +47,7 @@ impl Blog {
     pub async fn create_blog(&self, pool: &Pool<Postgres>) -> Result<(), Error> {
         let result = sqlx::query(
             "INSERT INTO blog (id, title, summary, body, date, tags)
-            VALUES ($1, $2, $3, $4)
+            VALUES ($1, $2, $3, $4, $5, $6)
             WHERE NOT EXISTS (SELECT id FROM blog)",
         )
         .bind(&self.id)
