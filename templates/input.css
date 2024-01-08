@@ -10,11 +10,11 @@
 style hrefs in blog articles but not in the blogs overview
 */
 
-body[class*="blog"] a {
+body[class*="blog"] a:not(.footer) {
   background-color: #f472b6;
 }
 
-body[class*="blog"] a:hover {
+body[class*="blog"] a:not(.footer):hover {
   background-color: #ec4899;
 }
 

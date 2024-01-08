@@ -46,6 +46,7 @@
     </header>
     <div class="font-bold font-mono text-gray-900">{{ date }}</div>
     <div class="font-mono text-gray-900">{{ body|safe }}</div>
+    {% include "footer.html" %}
   </div>
 </body>
-{% include "footer.html" %} {% endblock %}
+{% endblock %}
