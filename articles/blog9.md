@@ -22,6 +22,7 @@ Almost every part of Celery can be extended or used on its own, Custom pool impl
 With Celery, there are still some decisions that have to be made based on the use case. One of the first things is choosing a message broker and a result backend. The message broker sends messages from the Celery application to the workers. For this, I relied on RabbitMQ, which is also the default broker. The [RabbitMQ cluster operator](https://www.rabbitmq.com/kubernetes/operator/operator-overview.html) makes is easy to deploy, manage and operate a RabbitMQ cluster, so that is what I used after going through the Celery documentation with a local RabbitMQ service. Testing a local Celery application with a distributed broker is still possible by port-forwarding the service of the RabbitMQ cluster operator. I always like this approach because it allows me to get my application from running locally to running on a cluster in phases. Having the message broker set up in a distributed fashion makes that part of the application very scalable and fault tolerant, as data is replicated on several nodes so data loss can be prevented.
 
 To run workloads on Celery workers, Python code needs to be wrapped in a `task`. The `task` is linked to a `Celery` instance that gets the entrypoint of the RabbitMQ cluster as an argument. In the example below, the `broker` URL depends on where the Celery workers and the message broker are running. When the complete application is deployed, this should be the internal Kubernetes DNS record of the RabbitMQ service.
+\
 
 ```py
 from celery import Celery
