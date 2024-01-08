@@ -12,7 +12,10 @@ For a project I was working on, we needed more than just the service, we also ne
 Before, a client calls the ML micro service directly with a post request and a body, where the body contains the data that will be used to predict. An example `cURL` request looks like the snippet below.
 
 ```bash
-curl -X POST -H 'Content-Type: application/json' -d '{"ndarray":{"data":[[1,3,3]]}}' http://application.cluster-domain:9000/api/v1.0/predictions
+curl -X POST \
+  -H 'Content-Type: application/json' \
+  -d '{"ndarray":{"data":[[1,3,3]]}}' \
+  http://application.cluster-domain:9000/api/v1.0/predictions
 ```
 
 The body, `[1,3,3]`, is the input `X`, an argument of the `predict` method of a trained [Scikit Learn](https://scikit-learn.org/stable/) model (or model trained with another library, which might have a different standard method).
