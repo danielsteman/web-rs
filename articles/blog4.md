@@ -38,4 +38,4 @@ pub fn greet() {
 import * as wasm from "wasm-project";
 ```
 
-The [book](https://rustwasm.github.io/docs/book/game-of-life/setup.html) implements an animation of [the game of life](https://playgameoflife.com/), for which Google has an [easter egg](https://www.google.com/search?q=game+of+life+) as I discovered while writing this, which consists of a lot of calculations that can be performed more efficiently with a low-level language such as Rust. Hopefully this gave you a glance of what Rust can do in the context of web development, I for one can see its potential :smiley:.
+The [book](https://rustwasm.github.io/docs/book/game-of-life/setup.html) implements an animation of [the game of life](https://playgameoflife.com/), for which Google has an [easter egg](https://www.google.com/search?q=game+of+life+) as I discovered while writing this, which consists of a lot of calculations that can be performed more efficiently with a low-level language such as Rust.

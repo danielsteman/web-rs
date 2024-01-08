@@ -123,4 +123,4 @@ spec:
       replicas: 1
 ```
 
-These examples are copied directly from [the docs](https://docs.seldon.io/projects/seldon-core/en/latest/graph/private_registries.html). The `SeldonDeployment` resource can be deployed on Kubernetes with a simple `kubectl apply -f {path to yaml file or EOF-block}`. It's also possible to deploy resources like these in a CD pipeline, which I will cover in a future post. That's it for now!
+These examples are copied directly from [the docs](https://docs.seldon.io/projects/seldon-core/en/latest/graph/private_registries.html). The `SeldonDeployment` resource can be deployed on Kubernetes with a simple `kubectl apply -f {path to yaml file or EOF-block}`. It's also possible to deploy resources like these in a CD pipeline, which I will cover in a future post.

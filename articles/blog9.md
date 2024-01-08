@@ -22,7 +22,6 @@ Almost every part of Celery can be extended or used on its own, Custom pool impl
 With Celery, there are still some decisions that have to be made based on the use case. One of the first things is choosing a message broker and a result backend. The message broker sends messages from the Celery application to the workers. For this, I relied on RabbitMQ, which is also the default broker. The [RabbitMQ cluster operator](https://www.rabbitmq.com/kubernetes/operator/operator-overview.html) makes is easy to deploy, manage and operate a RabbitMQ cluster, so that is what I used after going through the Celery documentation with a local RabbitMQ service. Testing a local Celery application with a distributed broker is still possible by port-forwarding the service of the RabbitMQ cluster operator. I always like this approach because it allows me to get my application from running locally to running on a cluster in phases. Having the message broker set up in a distributed fashion makes that part of the application very scalable and fault tolerant, as data is replicated on several nodes so data loss can be prevented.
 
 To run workloads on Celery workers, Python code needs to be wrapped in a `task`. The `task` is linked to a `Celery` instance that gets the entrypoint of the RabbitMQ cluster as an argument. In the example below, the `broker` URL depends on where the Celery workers and the message broker are running. When the complete application is deployed, this should be the internal Kubernetes DNS record of the RabbitMQ service.
-\
 
 ```py
 from celery import Celery
@@ -52,4 +51,4 @@ The worker image can be deployed as a replicaset on Kubernetes, where the number
 
 I left the results backend out of scope for the first iteration, but according to the Celery docs, [Redis](https://redis.io/) (which is also horizontal scalable) is a popular choice to complement RabbitMQ. If something more persistent is required, a Postgres database is also an option. I also left monitoring out of scope, but [Flower 🌸](https://flower.readthedocs.io/en/latest/features.html) seems like an amazing tool to monitor Celery events in real-time. Monitoring is still possible through the [RabbitMQ management API](https://www.rabbitmq.com/management.html) which is exposed on port `15672` by default. In fact, Flower consumes data from the management API to show information about the workers.
 
-This basic setup was sufficient to get a feeling of its scaling potential and serves as a good starting point for further iterations. In a next post I'll write about other scaling issues, which are always there 😉, and how I've overcome them.
+This basic setup was sufficient to get a feeling of its scaling potential and serves as a good starting point for further iterations.
