@@ -34,5 +34,8 @@ COPY --from=builder /usr/src/app/target/release/web-rs ./
 # Copy articles to migrate
 COPY articles ./articles
 
+# Copy assets such as favicon
+COPY assets ./assets
+
 # Run the binary
 CMD ["./web-rs"]
