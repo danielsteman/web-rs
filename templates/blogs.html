@@ -1,24 +1,31 @@
 {% extends "base.html" %} {% block content %}
 <body class="h-full">
-  <div class="w-full h-full">
-    <div class="bg-indigo-400 h-full">
-      <div class="p-4 w-full grid gap-4 grid-cols-1 lg:grid-cols-2">
-        {% for blog in blogs %}
-        <a href="/blog/{{blog.id}}">
-          <div class="h-fit rounded-lg bg-indigo-500 flex flex-col gap-2 p-2">
-            <div
-              class="font-mono px-4 py-2 rounded-lg text-white bg-purple-500"
-            >
-              {{blog.title}}
-            </div>
-            <div class="font-mono px-4 py-2 rounded-lg text-white bg-pink-500">
-              {{blog.summary}}
-            </div>
+  <div class="bg-indigo-400 h-full w-full pt-24">
+    <div
+      class="p-4 w-full grid gap-4 grid-cols-1 lg:grid-cols-2 max-w-screen-lg mx-auto"
+    >
+      {% for blog in blogs %}
+      <a href="/blog/{{blog.id}}">
+        <div
+          class="relative h-fit rounded-lg bg-indigo-500 flex flex-col gap-2 p-2"
+        >
+          <div
+            class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-purple-500"
+          >
+            {{blog.title}}
           </div>
-        </a>
-        {% endfor %}
-      </div>
+          <div class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-pink-500">
+            {{blog.summary}}
+          </div>
+          <div
+            class="rounded-lg text-gray-100 font-mono absolute inset-0 flex items-center justify-center bg-black opacity-0 hover:opacity-50 transition-opacity"
+          >
+            reaaad
+          </div>
+        </div>
+      </a>
+      {% endfor %}
     </div>
   </div>
 </body>
-{% endblock %}
+{% include "footer.html" %} {% endblock %}
