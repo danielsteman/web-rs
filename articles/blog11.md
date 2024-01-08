@@ -1,5 +1,5 @@
 % id: 11
-% title: Deploying Databricks asset bundles using Gitlab CI
+% title: Deploying Databricks asset bundles using Gitlab CI 🧱
 % date: 2023-12-15
 % tags: data, devops
 
