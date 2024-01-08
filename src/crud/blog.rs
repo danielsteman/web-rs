@@ -16,9 +16,11 @@ pub struct Blog {
 
 impl Blog {
     pub async fn get_blogs(pool: &Pool<Postgres>) -> Result<Vec<Blog>, Error> {
-        let blogs: Vec<Blog> = sqlx::query_as::<_, Blog>("SELECT * FROM blog")
+        let mut blogs: Vec<Blog> = sqlx::query_as::<_, Blog>("SELECT * FROM blog")
             .fetch_all(pool)
             .await?;
+
+        blogs.sort_by(|a, b| b.id.cmp(&a.id));
 
         Ok(blogs)
     }
