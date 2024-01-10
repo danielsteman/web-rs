@@ -27,7 +27,7 @@ yarn dev
 
 [Open your browser](http://localhost:3000)
 
-Run Postgres locally:
+Run Postgres locally (only for development purposes):
 
 ```
 docker run -d \
