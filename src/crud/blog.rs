@@ -34,7 +34,12 @@ impl Blog {
         let file_path = format!("articles/blog{}.md", id);
 
         let content = match fs::read_to_string(&file_path) {
-            Ok(content) => content,
+            Ok(content) => {
+                let lines: Vec<&str> = content.lines().collect();
+                let content_without_metadata = lines[4..].to_vec();
+                let remaining_content = content_without_metadata.join("\n");
+                remaining_content
+            }
             Err(e) => {
                 panic!("Failed to read file: {}", e);
             }
