@@ -39,7 +39,9 @@ async fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
         let id = metadata.id.unwrap().parse::<i32>().ok()?;
         let title = metadata.title.clone().unwrap();
         let body = metadata.body.clone().unwrap();
-        let summary = summarize(&body).await.unwrap();
+        let summary = summarize(&body, generate_blog_summary_prompt)
+            .await
+            .unwrap();
         let string_date = metadata.date.clone().unwrap();
         let date_format = format_description!("[year]-[month]-[day]");
         let date = Date::parse(string_date.as_str(), &date_format).unwrap();
@@ -118,11 +120,14 @@ fn get_metadata(text: &str) -> Option<Metadata> {
     }
 }
 
-async fn summarize(text: &str) -> Result<String, reqwest::Error> {
+async fn summarize(
+    text: &str,
+    prompt_generator: fn(&str) -> String,
+) -> Result<String, reqwest::Error> {
     let api_url = "https://api.openai.com/v1/chat/completions";
     let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY must be set.");
 
-    let input_text = create_prompt(text);
+    let input_text = prompt_generator(text);
     let client = reqwest::Client::new();
     let response = client
         .post(api_url)
@@ -130,20 +135,48 @@ async fn summarize(text: &str) -> Result<String, reqwest::Error> {
         .header("Authorization", format!("Bearer {}", api_key))
         .json(&json!({
             "prompt": input_text,
-            "max_tokens": 50,
+            "model": "gpt-3.5-turbo-1106"
         }))
         .send()
         .await?;
 
-    let summary = response.json::<serde_json::Value>().await?;
-    let summarized_text = summary["choices"][0]["text"].as_str().unwrap_or_default();
+    println!("{:?}", response.text().await);
 
-    println!("Summarized Text: {}", summarized_text);
+    Ok(String::from("hoi"))
 
-    Ok(String::from(summarized_text))
+    // match response.error_for_status() {
+    //     Ok(res) => {
+    //         let summary = res.json::<serde_json::Value>().await?;
+    //         let summarized_text = summary["choices"][0]["text"].as_str().unwrap_or_default();
+
+    //         println!("Summarized Text: {}", summarized_text);
+
+    //         Ok(String::from(summarized_text))
+    //     }
+    //     Err(err) => {
+    //         eprintln!("{}", err);
+    //         panic!("Something went wrong during summarization using OpenAI")
+    //     }
+    // }
 }
 
-fn create_prompt(text: &str) -> String {
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn generate_test_prompt(text: &str) -> String {
+        String::from(text)
+    }
+
+    #[tokio::test]
+    async fn test_summarizer() {
+        let prompt = "return only the string pass, and nothing else";
+        let summary = summarize(prompt, generate_test_prompt).await.unwrap();
+        assert_eq!(summary, "pass")
+    }
+}
+
+fn generate_blog_summary_prompt(text: &str) -> String {
     let prompt = format!("This following piece of text is a blog post. What I would like is a three sentence summary of what the blog post is about. It should read as a preview and make the reader curious but the tone of voice should similar to the blog post itself: {}", text);
     prompt
 }
