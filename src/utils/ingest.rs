@@ -1,7 +1,9 @@
-use std::fs;
+use std::{env, fs};
 
 use crate::{crud::blog::Blog, utils::db::get_db};
 use regex::Regex;
+use reqwest;
+use serde_json::json;
 use time::{macros::format_description, Date};
 
 pub async fn ingest_articles() -> Option<()> {
@@ -15,7 +17,7 @@ pub async fn ingest_articles() -> Option<()> {
 
                 if let Some(metadata) = get_metadata(content.as_str()) {
                     println!("{:?}", metadata);
-                    let blog = metadata_to_blog(metadata).unwrap();
+                    let blog = metadata_to_blog(metadata).await.unwrap();
                     println!("{:?}", blog);
                     let pool = get_db().await;
 
@@ -23,7 +25,7 @@ pub async fn ingest_articles() -> Option<()> {
                         eprintln!("Error inserting blog: {}", err);
                     })
                 } else {
-                    println!("No metadata found in file")
+                    eprintln!("No metadata found in file")
                 }
             }
         }
@@ -32,11 +34,12 @@ pub async fn ingest_articles() -> Option<()> {
     Some(())
 }
 
-fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
+async fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
     if metadata.is_complete() {
         let id = metadata.id.unwrap().parse::<i32>().ok()?;
         let title = metadata.title.clone().unwrap();
-
+        let body = metadata.body.clone().unwrap();
+        let summary = summarize(&body).await.unwrap();
         let string_date = metadata.date.clone().unwrap();
         let date_format = format_description!("[year]-[month]-[day]");
         let date = Date::parse(string_date.as_str(), &date_format).unwrap();
@@ -52,8 +55,8 @@ fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
         let blog = Blog {
             id,
             title,
-            summary: String::new(),
-            body: String::new(),
+            summary,
+            body,
             date,
             tags,
         };
@@ -68,6 +71,7 @@ fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
 struct Metadata {
     id: Option<String>,
     title: Option<String>,
+    body: Option<String>,
     date: Option<String>,
     tags: Option<String>,
 }
@@ -82,14 +86,19 @@ fn get_metadata(text: &str) -> Option<Metadata> {
     let mut metadata = Metadata {
         id: None,
         title: None,
+        body: None,
         date: None,
         tags: None,
     };
 
-    let re = Regex::new(r"% (\w+): (.+)").unwrap();
+    let metadata_re = Regex::new(r"% (\w+): (.+)").unwrap();
+
+    let text_as_lines: Vec<&str> = text.lines().collect();
+    let body_lines = text_as_lines[4..].to_vec();
+    metadata.body = Some(body_lines.join("\n"));
 
     for line in text.lines() {
-        if let Some(capture) = re.captures(line) {
+        if let Some(capture) = metadata_re.captures(line) {
             if let (Some(key), Some(value)) = (capture.get(1), capture.get(2)) {
                 match key.as_str() {
                     "id" => metadata.id = Some(value.as_str().to_string()),
@@ -107,4 +116,34 @@ fn get_metadata(text: &str) -> Option<Metadata> {
     } else {
         None
     }
+}
+
+async fn summarize(text: &str) -> Result<String, reqwest::Error> {
+    let api_url = "https://api.openai.com/v1/chat/completions";
+    let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY must be set.");
+
+    let input_text = create_prompt(text);
+    let client = reqwest::Client::new();
+    let response = client
+        .post(api_url)
+        .header("Content-Type", "application/json")
+        .header("Authorization", format!("Bearer {}", api_key))
+        .json(&json!({
+            "prompt": input_text,
+            "max_tokens": 50,
+        }))
+        .send()
+        .await?;
+
+    let summary = response.json::<serde_json::Value>().await?;
+    let summarized_text = summary["choices"][0]["text"].as_str().unwrap_or_default();
+
+    println!("Summarized Text: {}", summarized_text);
+
+    Ok(String::from(summarized_text))
+}
+
+fn create_prompt(text: &str) -> String {
+    let prompt = format!("This following piece of text is a blog post. What I would like is a three sentence summary of what the blog post is about. It should read as a preview and make the reader curious but the tone of voice should similar to the blog post itself: {}", text);
+    prompt
 }
