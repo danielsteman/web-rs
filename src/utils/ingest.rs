@@ -134,30 +134,34 @@ async fn summarize(
         .header("Content-Type", "application/json")
         .header("Authorization", format!("Bearer {}", api_key))
         .json(&json!({
-            "prompt": input_text,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": input_text,
+                }
+            ],
             "model": "gpt-3.5-turbo-1106"
         }))
         .send()
         .await?;
 
-    println!("{:?}", response.text().await);
+    match response.error_for_status() {
+        Ok(res) => {
+            let summary = res.json::<serde_json::Value>().await?;
+            println!("summary: {}", summary);
+            let summarized_text = summary["choices"][0]["message"]["content"]
+                .as_str()
+                .unwrap_or_default();
 
-    Ok(String::from("hoi"))
+            println!("Summarized Text: {}", summarized_text);
 
-    // match response.error_for_status() {
-    //     Ok(res) => {
-    //         let summary = res.json::<serde_json::Value>().await?;
-    //         let summarized_text = summary["choices"][0]["text"].as_str().unwrap_or_default();
-
-    //         println!("Summarized Text: {}", summarized_text);
-
-    //         Ok(String::from(summarized_text))
-    //     }
-    //     Err(err) => {
-    //         eprintln!("{}", err);
-    //         panic!("Something went wrong during summarization using OpenAI")
-    //     }
-    // }
+            Ok(String::from(summarized_text))
+        }
+        Err(err) => {
+            eprintln!("{}", err);
+            panic!("Something went wrong during summarization using OpenAI")
+        }
+    }
 }
 
 #[cfg(test)]
