@@ -39,9 +39,8 @@ async fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
         let id = metadata.id.unwrap().parse::<i32>().ok()?;
         let title = metadata.title.clone().unwrap();
         let body = metadata.body.clone().unwrap();
-        let summary = summarize(&body, generate_blog_summary_prompt)
-            .await
-            .unwrap();
+        let system_message = "You are a summarizer that creates a single sentence summary of a blog post. This one sentence should be a concise preview of what the blog post is about without revealing the conclusion. Use a similar tone of voice as the blog post itself. Don't start the sentence with: this blog post is about...";
+        let summary = summarize(&body, &system_message).await.unwrap();
         let string_date = metadata.date.clone().unwrap();
         let date_format = format_description!("[year]-[month]-[day]");
         let date = Date::parse(string_date.as_str(), &date_format).unwrap();
@@ -120,14 +119,10 @@ fn get_metadata(text: &str) -> Option<Metadata> {
     }
 }
 
-async fn summarize(
-    text: &str,
-    prompt_generator: fn(&str) -> String,
-) -> Result<String, reqwest::Error> {
+async fn summarize(text: &str, system_message: &str) -> Result<String, reqwest::Error> {
     let api_url = "https://api.openai.com/v1/chat/completions";
     let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY must be set.");
 
-    let input_text = prompt_generator(text);
     let client = reqwest::Client::new();
     let response = client
         .post(api_url)
@@ -136,8 +131,12 @@ async fn summarize(
         .json(&json!({
             "messages": [
                 {
+                    "role": "system",
+                    "content": system_message,
+                },
+                {
                     "role": "user",
-                    "content": input_text,
+                    "content": text,
                 }
             ],
             "model": "gpt-3.5-turbo-1106"
@@ -174,13 +173,17 @@ mod tests {
 
     #[tokio::test]
     async fn test_summarizer() {
-        let prompt = "return only the string pass, and nothing else";
-        let summary = summarize(prompt, generate_test_prompt).await.unwrap();
+        let prompt = "return only the string pass, and nothing else.";
+        let system_message = "this is just a test, do as you're told.";
+        let summary = summarize(prompt, system_message).await.unwrap();
         assert_eq!(summary, "pass")
     }
 }
 
 fn generate_blog_summary_prompt(text: &str) -> String {
-    let prompt = format!("This following piece of text is a blog post. What I would like is a three sentence summary of what the blog post is about. It should read as a preview and make the reader curious but the tone of voice should similar to the blog post itself: {}", text);
+    let prompt = format!(
+        "Summarize the following text in a single sentence, : {}",
+        text
+    );
     prompt
 }
