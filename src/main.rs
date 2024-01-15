@@ -25,7 +25,7 @@ async fn main() {
         .await
         .expect("Failed to perform database migrations");
 
-    // ingest::ingest_articles().await;
+    ingest::ingest_articles().await;
 
     let app = Router::new()
         .nest_service("/assets", ServeDir::new("assets"))
