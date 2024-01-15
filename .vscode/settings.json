@@ -5,7 +5,11 @@
         {
           "name": "axum",
           "commands": ["cargo watch -x \"run --bin web-rs\""]
-        },
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
         {
           "name": "tailwind",
           "commands": ["yarn dev"]
