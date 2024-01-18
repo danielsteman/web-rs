@@ -2474,6 +2474,7 @@ dependencies = [
  "pulldown-cmark",
  "regex",
  "reqwest",
+ "serde",
  "serde_json",
  "sqlx",
  "time",

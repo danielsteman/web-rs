@@ -2,7 +2,10 @@ mod crud;
 mod routes;
 mod utils;
 
-use axum::{routing::get, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 use tower_http::services::ServeDir;
 use utils::{db::get_db, ingest};
 
@@ -32,6 +35,7 @@ async fn main() {
         .route("/", get(routes::root::root))
         .route("/blogs", get(routes::blogs::blogs))
         .route("/blog/:id", get(routes::blog::blog))
+        .route("/search", post(routes::search::search))
         .with_state(pool);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();

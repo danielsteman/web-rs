@@ -2,7 +2,16 @@
   <div
     class="bg-indigo-400 gap-4 p-4 flex flex-row justify-end max-w-screen-lg mx-auto border-b border-gray-500"
   >
-    <input type="text" name="q" placeholder="Search..." class="mr-auto" />
+    <input
+      hx-target="search-results"
+      type="search"
+      name="q"
+      placeholder="Search..."
+      class="mr-auto"
+      hx-post="/search"
+      hx-trigger="input changed delay:500ms, search"
+    />
+    <div id="search-results"></div>
     <a href="https://github.com/danielsteman" target="_blank">
       <svg
         xmlns="http://www.w3.org/2000/svg"
