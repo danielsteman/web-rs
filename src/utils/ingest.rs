@@ -167,10 +167,6 @@ async fn summarize(text: &str, system_message: &str) -> Result<String, reqwest::
 mod tests {
     use super::*;
 
-    fn generate_test_prompt(text: &str) -> String {
-        String::from(text)
-    }
-
     #[tokio::test]
     async fn test_summarizer() {
         let prompt = "return only the string pass, and nothing else.";
@@ -178,12 +174,4 @@ mod tests {
         let summary = summarize(prompt, system_message).await.unwrap();
         assert_eq!(summary, "pass")
     }
-}
-
-fn generate_blog_summary_prompt(text: &str) -> String {
-    let prompt = format!(
-        "Summarize the following text in a single sentence, : {}",
-        text
-    );
-    prompt
 }
