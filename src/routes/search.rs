@@ -1,5 +1,5 @@
 use askama::Template;
-use axum::extract::Query;
+use axum::extract::Form;
 use axum::{extract::State, response::IntoResponse};
 use serde::Deserialize;
 use sqlx::PgPool;
@@ -18,9 +18,9 @@ pub struct Search {
     search_string: String,
 }
 
-pub async fn search(State(pool): State<PgPool>, Query(params): Query<Search>) -> impl IntoResponse {
-    println!("{:?}", params);
-    match Blog::search_blogs(&pool, params.search_string.as_str()).await {
+pub async fn search(State(pool): State<PgPool>, Form(body): Form<Search>) -> impl IntoResponse {
+    eprintln!("{:?}", body);
+    match Blog::search_blogs(&pool, body.search_string.as_str()).await {
         Ok(blogs) => {
             let template = BlogsTemplate { blogs };
             HtmlTemplate(template)

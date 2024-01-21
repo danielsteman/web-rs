@@ -4,16 +4,13 @@
   >
     <input
       type="search"
-      name="q"
+      name="search_string"
       placeholder="Search..."
       class="mr-auto"
       hx-target="#search-results"
       hx-trigger="input changed delay:500ms, search"
       hx-post="/search"
-      hx-vals="_responseText = response.text; console.log(_responseText);"
-      hx-log="true"
     />
-    <div id="search-results"></div>
     <a href="https://github.com/danielsteman" target="_blank">
       <svg
         xmlns="http://www.w3.org/2000/svg"
