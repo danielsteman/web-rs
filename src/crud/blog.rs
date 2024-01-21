@@ -27,7 +27,7 @@ impl Blog {
 
     pub async fn search_blogs(pool: &Pool<Postgres>, search: &str) -> Result<Vec<Blog>, Error> {
         let mut blogs: Vec<Blog> = sqlx::query_as::<_, Blog>(
-            format!("SELECT * FROM blog WHERE title LIKE %{}%", search).as_str(),
+            format!("SELECT * FROM blog WHERE title ILIKE %{}%", search).as_str(),
         )
         .fetch_all(pool)
         .await?;
