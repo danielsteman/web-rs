@@ -1,5 +1,5 @@
 % id: 8
-% title: SaaS-starter wrapped in a monorepo with microservices 🚀
+% title: SaaS-starter wrapped in a monorepo with microservices
 % date: 2023-06-20
 % tags: web
 
@@ -62,7 +62,7 @@ on:
 
 Alongside the Express services, I use [Firebase](https://firebase.google.com/) services, which makes it really easy to integrate authentication and a documents database using the [client library](https://firebase.google.com/docs/firestore/client/libraries) in the frontend package (`web`), a Typescript React app created with Vite in this project. By reusing [Chakra UI](https://chakra-ui.com/) components it's easy to put Firebase to work, for example through the Modal that contains a login screen and an option to authenticate with Google.
 
-![Landing page](../images/saas-starter-0.png)
+![Landing page](../assets/images/saas-starter-0.png)
 
 ![Sign up page](../images/saas-starter-1.png)
 
