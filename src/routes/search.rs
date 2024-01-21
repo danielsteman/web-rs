@@ -13,12 +13,13 @@ struct BlogsTemplate {
     blogs: Vec<Blog>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct Search {
     search_string: String,
 }
 
 pub async fn search(State(pool): State<PgPool>, Query(params): Query<Search>) -> impl IntoResponse {
+    println!("{:?}", params);
     match Blog::search_blogs(&pool, params.search_string.as_str()).await {
         Ok(blogs) => {
             let template = BlogsTemplate { blogs };

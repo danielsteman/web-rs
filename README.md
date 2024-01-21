@@ -44,3 +44,7 @@ The corresponding database URL would be `postgresql://admin:admin@localhost/webr
 ## Troubleshooting
 
 If the page is not loading, check if `sqlx` made a connection and didn't timeout. A timeout indicates that Postgres is not up.
+
+## To do
+
+- [ ] Use `aide` to generate openapi spec
