@@ -8,6 +8,7 @@ use axum::{
 };
 use tower_http::services::ServeDir;
 use utils::db::get_db;
+// use utils::ingest;
 
 #[cfg(debug_assertions)]
 fn load_env() {

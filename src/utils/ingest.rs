@@ -6,6 +6,12 @@ use reqwest;
 use serde_json::json;
 use time::{macros::format_description, Date};
 
+// read content from file
+// extract id
+// get id from db
+// if exists: nothing
+// if not exists: extract content and create Blog
+
 pub async fn ingest_articles() -> Option<()> {
     match fs::read_dir("./articles") {
         Ok(files) => {
@@ -16,9 +22,7 @@ pub async fn ingest_articles() -> Option<()> {
                     .expect(format!("Error reading from {:?}", str_path).as_str());
 
                 if let Some(metadata) = get_metadata(content.as_str()) {
-                    println!("{:?}", metadata);
                     let blog = metadata_to_blog(metadata).await.unwrap();
-                    println!("{:?}", blog);
                     let pool = get_db().await;
 
                     blog.create_blog(&pool).await.unwrap_or_else(|err| {
@@ -81,6 +85,27 @@ impl Metadata {
     fn is_complete(&self) -> bool {
         self.id.is_some() && self.title.is_some() && self.date.is_some() && self.tags.is_some()
     }
+}
+
+async fn get_id(text: &str) -> bool {
+    let pool = get_db().await;
+    let id_re = Regex::new(r"% id: (.+)").unwrap();
+    for line in text.lines() {
+        if let Some(capture) = id_re.captures(line) {
+            if let Some(id) = capture.get(2) {
+                let parsed_id = id.as_str().parse::<i32>().unwrap();
+                match Blog::get_blog(&pool, parsed_id).await {
+                    Ok(_) => return true,
+                    Err(e) => {
+                        println!("{}", format!("Blog with id {} not found", parsed_id));
+                        eprintln!("{}", e);
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    false
 }
 
 fn get_metadata(text: &str) -> Option<Metadata> {
