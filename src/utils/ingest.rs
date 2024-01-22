@@ -21,6 +21,9 @@ pub async fn ingest_articles() -> Option<()> {
                 let content = fs::read_to_string(&path)
                     .expect(format!("Error reading from {:?}", &path).as_str());
 
+                let temp = get_id(content.as_str()).await.unwrap();
+                println!("{:?}", blog_exists(&temp).await);
+
                 if let Some(blog_id) = get_id(content.as_str()).await {
                     if !blog_exists(&blog_id).await {
                         if let Some(metadata) = get_metadata(content.as_str()) {
@@ -57,9 +60,10 @@ async fn get_id(text: &str) -> Option<i32> {
 
 async fn blog_exists(id: &i32) -> bool {
     let pool = get_db().await;
-    let blog = Blog::get_blog(&pool, *id).await;
-    println!("{:?}", blog);
-    true
+    match Blog::get_blog(&pool, *id).await {
+        Ok(_) => return true,
+        _ => return false,
+    }
 }
 
 async fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
