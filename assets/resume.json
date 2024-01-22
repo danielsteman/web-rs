@@ -1,0 +1,18 @@
+{
+  "experience": [
+    {
+      "title": "data engineer",
+      "period": {
+        "from": "october 2023",
+        "to": "present"
+      }
+    },
+    {
+      "title": "software engineer",
+      "period": {
+        "from": "january 2021",
+        "to": "september 2023"
+      }
+    }
+  ]
+}
