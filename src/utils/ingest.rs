@@ -225,10 +225,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_if_nonexistent_blog_exists() {
-        let content = read_file("articles/test.md");
-        let id = get_id(content.as_str())
-            .await
-            .expect("Couldn't find id in markdown file");
+        let id = 6969;
         let exists = blog_exists(&id).await;
         assert_eq!(exists, false)
     }
