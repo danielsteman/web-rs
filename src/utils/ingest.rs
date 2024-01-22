@@ -20,22 +20,53 @@ pub async fn ingest_articles() -> Option<()> {
                 let str_path = path.as_os_str();
                 let content = fs::read_to_string(str_path)
                     .expect(format!("Error reading from {:?}", str_path).as_str());
+                if let Some(blog_id) = get_id(content.as_str()).await {
+                    if blog_exists(&blog_id).await {
+                        println!("{}", format!("Blog {} already exists", &blog_id))
+                    } else {
+                        if let Some(metadata) = get_metadata(content.as_str()) {
+                            let blog = metadata_to_blog(metadata).await.unwrap();
+                            let pool = get_db().await;
 
-                if let Some(metadata) = get_metadata(content.as_str()) {
-                    let blog = metadata_to_blog(metadata).await.unwrap();
-                    let pool = get_db().await;
-
-                    blog.create_blog(&pool).await.unwrap_or_else(|err| {
-                        eprintln!("Error inserting blog: {}", err);
-                    })
-                } else {
-                    eprintln!("No metadata found in file")
+                            blog.create_blog(&pool).await.unwrap_or_else(|err| {
+                                eprintln!("Error inserting blog: {}", err);
+                            })
+                        } else {
+                            eprintln!("No metadata found in file")
+                        }
+                    }
                 }
             }
         }
         Err(e) => eprintln!("Error reading from dir `articles`: {}", e),
     }
     Some(())
+}
+
+fn read_file(path: &str) -> String {
+    let content =
+        fs::read_to_string(path).expect(format!("Error reading from {:?}", path).as_str());
+    content
+}
+
+async fn get_id(text: &str) -> Option<i32> {
+    let id_re = Regex::new(r"% id: (.+)").unwrap();
+    for line in text.lines() {
+        if let Some(capture) = id_re.captures(line) {
+            if let Some(id) = capture.get(1) {
+                let parsed_id = id.as_str().parse::<i32>().unwrap();
+                return Some(parsed_id);
+            }
+        }
+    }
+    return None;
+}
+
+async fn blog_exists(id: &i32) -> bool {
+    let pool = get_db().await;
+    let blog = Blog::get_blog(&pool, *id).await;
+    println!("{:?}", blog);
+    true
 }
 
 async fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
@@ -85,27 +116,6 @@ impl Metadata {
     fn is_complete(&self) -> bool {
         self.id.is_some() && self.title.is_some() && self.date.is_some() && self.tags.is_some()
     }
-}
-
-async fn get_id(text: &str) -> bool {
-    let pool = get_db().await;
-    let id_re = Regex::new(r"% id: (.+)").unwrap();
-    for line in text.lines() {
-        if let Some(capture) = id_re.captures(line) {
-            if let Some(id) = capture.get(2) {
-                let parsed_id = id.as_str().parse::<i32>().unwrap();
-                match Blog::get_blog(&pool, parsed_id).await {
-                    Ok(_) => return true,
-                    Err(e) => {
-                        println!("{}", format!("Blog with id {} not found", parsed_id));
-                        eprintln!("{}", e);
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-    false
 }
 
 fn get_metadata(text: &str) -> Option<Metadata> {
@@ -198,5 +208,24 @@ mod tests {
         let system_message = "this is just a test, do as you're told.";
         let summary = summarize(prompt, system_message).await.unwrap();
         assert_eq!(summary, "pass")
+    }
+
+    #[tokio::test]
+    async fn test_get_id() {
+        let content = read_file("articles/test.md");
+        let id = get_id(content.as_str())
+            .await
+            .expect("Couldn't find id in markdown file");
+        assert_eq!(id, 420)
+    }
+
+    #[tokio::test]
+    async fn test_if_nonexistent_blog_exists() {
+        let content = read_file("articles/test.md");
+        let id = get_id(content.as_str())
+            .await
+            .expect("Couldn't find id in markdown file");
+        let exists = blog_exists(&id).await;
+        assert_eq!(exists, false)
     }
 }
