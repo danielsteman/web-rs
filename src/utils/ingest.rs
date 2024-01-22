@@ -17,13 +17,12 @@ pub async fn ingest_articles() -> Option<()> {
         Ok(files) => {
             for file in files {
                 let path = file.unwrap().path();
-                let str_path = path.as_os_str();
-                let content = fs::read_to_string(str_path)
-                    .expect(format!("Error reading from {:?}", str_path).as_str());
+
+                let content = fs::read_to_string(&path)
+                    .expect(format!("Error reading from {:?}", &path).as_str());
+
                 if let Some(blog_id) = get_id(content.as_str()).await {
-                    if blog_exists(&blog_id).await {
-                        println!("{}", format!("Blog {} already exists", &blog_id))
-                    } else {
+                    if !blog_exists(&blog_id).await {
                         if let Some(metadata) = get_metadata(content.as_str()) {
                             let blog = metadata_to_blog(metadata).await.unwrap();
                             let pool = get_db().await;
@@ -41,12 +40,6 @@ pub async fn ingest_articles() -> Option<()> {
         Err(e) => eprintln!("Error reading from dir `articles`: {}", e),
     }
     Some(())
-}
-
-fn read_file(path: &str) -> String {
-    let content =
-        fs::read_to_string(path).expect(format!("Error reading from {:?}", path).as_str());
-    content
 }
 
 async fn get_id(text: &str) -> Option<i32> {
@@ -202,6 +195,12 @@ async fn summarize(text: &str, system_message: &str) -> Result<String, reqwest::
 mod tests {
     use super::*;
 
+    fn read_file(path: &str) -> String {
+        let content =
+            fs::read_to_string(path).expect(format!("Error reading from {:?}", path).as_str());
+        content
+    }
+
     #[tokio::test]
     async fn test_summarizer() {
         let prompt = "return only the string pass, and nothing else.";
@@ -212,7 +211,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_id() {
-        let content = read_file("articles/test.md");
+        let path = "articles/test.md";
+        let content = read_file(path);
         let id = get_id(content.as_str())
             .await
             .expect("Couldn't find id in markdown file");
