@@ -1,5 +1,6 @@
 use askama::Template;
 use axum::response::IntoResponse;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Map, Value};
 
 use crate::utils::html::HtmlTemplate;
@@ -9,7 +10,24 @@ use crate::utils::html::HtmlTemplate;
 #[derive(Template)]
 #[template(path = "resume.html")]
 struct ResumeTemplate {
-    resume_data: Map<String, Value>,
+    resume_data: Resume,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Period {
+    from: String,
+    to: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Experience {
+    title: String,
+    period: Period,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct Resume {
+    experience: Vec<Experience>,
 }
 
 pub async fn resume() -> impl IntoResponse {
@@ -30,11 +48,12 @@ pub async fn resume() -> impl IntoResponse {
                 }
             }
         ]
-    })
-    .as_object()
-    .unwrap()
-    .to_owned();
+    });
 
-    let template = ResumeTemplate { resume_data };
+    let deser_resume_data: Resume = serde_json::from_value(resume_data).unwrap();
+
+    let template = ResumeTemplate {
+        resume_data: deser_resume_data,
+    };
     HtmlTemplate(template)
 }
