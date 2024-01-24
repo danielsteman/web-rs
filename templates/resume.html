@@ -4,14 +4,12 @@
     <header class="font-mono text-xl text-gray-900 font-black py-4">
       Experience
     </header>
+    {% for job in resume_data.experience %}
     <div class="flex flex-row gap-2">
-      <div class="mr-auto">Data Engineer @ company B</div>
-      <div class="">October 2023 - present</div>
+      <div class="mr-auto">{{ job.title }} @ {{ job.employer }}</div>
+      <div class="">{{ job.period.from }} - {{ job.period.to }}</div>
     </div>
-    <div class="flex flex-row gap-2">
-      <div class="mr-auto">Software Engineer @ company A</div>
-      <div class="">January 2021 - September 2023</div>
-    </div>
+    {% endfor %}
   </div>
 </body>
 {% endblock %}

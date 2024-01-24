@@ -21,6 +21,7 @@ struct Period {
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Experience {
+    employer: String,
     title: String,
     period: Period,
 }
@@ -34,17 +35,19 @@ pub async fn resume() -> impl IntoResponse {
     let resume_data = json!({
         "experience": [
             {
-                "title": "data engineer",
+                "employer": "Bridgefund",
+                "title": "Data engineer",
                 "period": {
-                    "from": "october 2023",
-                    "to": "present"
+                    "from": "October 2023",
+                    "to": "Present"
                 }
             },
             {
-                "title": "software engineer",
+                "employer": "a.s.r.",
+                "title": "Software engineer",
                 "period": {
-                    "from": "january 2021",
-                    "to": "september 2023"
+                    "from": "January 2021",
+                    "to": "September 2023"
                 }
             }
         ]
