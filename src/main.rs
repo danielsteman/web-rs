@@ -37,6 +37,7 @@ async fn main() {
         .route("/blogs", get(routes::blogs::blogs))
         .route("/blog/:id", get(routes::blog::blog))
         .route("/resume", get(routes::resume::resume))
+        .route("/radar", get(routes::radar::radar))
         .route("/search", post(routes::search::search))
         .with_state(pool);
 
