@@ -27,8 +27,16 @@ struct Experience {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
+struct Study {
+    school: String,
+    title: String,
+    period: Period,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 struct Resume {
     experience: Vec<Experience>,
+    education: Vec<Study>,
 }
 
 pub async fn resume() -> impl IntoResponse {
@@ -48,6 +56,32 @@ pub async fn resume() -> impl IntoResponse {
                 "period": {
                     "from": "January 2021",
                     "to": "September 2023"
+                }
+            }
+        ],
+        "education": [
+            {
+                "school": "MOOC",
+                "title": "Full Stack Open",
+                "period": {
+                    "from": "September 2020",
+                    "to": "December 2020"
+                }
+            },
+            {
+                "school": "Vrije Universiteit Amsterdam",
+                "title": "MSc Finance & Technology (honours programme)",
+                "period": {
+                    "from": "February 2019",
+                    "to": "August 2020"
+                }
+            },
+            {
+                "school": "The Hague University of Applied Sciences",
+                "title": "BSc International Business",
+                "period": {
+                    "from": "September 2013",
+                    "to": "August 2017"
                 }
             }
         ]
