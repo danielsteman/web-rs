@@ -47,4 +47,6 @@ If the page is not loading, check if `sqlx` made a connection and didn't timeout
 
 ## To do
 
-- [ ] Use `aide` to generate openapi spec
+- [ ] Use `aide`, or something like that, to generate openapi spec
+- [ ] Render `shiki` code snippets on the server
+- [ ] Render the tech radar on the server
