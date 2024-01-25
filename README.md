@@ -41,6 +41,14 @@ docker run -d \
 
 The corresponding database URL would be `postgresql://admin:admin@localhost/webrs` which is expected to be passed as environment variable `DATABASE_URL`. Just for development purposes, this variable can also be set in `./.env`.
 
+## Build release
+
+Build Docker image and deploy wherever you like.
+
+```
+docker build -t webrs .
+```
+
 ## Troubleshooting
 
 If the page is not loading, check if `sqlx` made a connection and didn't timeout. A timeout indicates that Postgres is not up.

@@ -29,7 +29,7 @@ FROM debian:buster-slim
 WORKDIR /usr/src/app
 
 # Copy the built executable from the builder stage to the final image
-COPY --from=builder /usr/src/app/target/release/web-rs ./
+COPY --from=builder /usr/src/app/target/release/webrs ./
 
 # Copy articles to migrate
 COPY articles ./articles
@@ -38,4 +38,4 @@ COPY articles ./articles
 COPY assets ./assets
 
 # Run the binary
-CMD ["./web-rs"]
+CMD ["./webrs"]
