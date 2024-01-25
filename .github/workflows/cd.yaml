@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to GAR
+        id: auth
+        uses: docker/login-action@v3
+        with:
+          registry: europe-west4-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.GAR_SA_KEY }}
+
+      - id: docker-push-web-tagged
+        name: Tag webrs image
+        uses: docker/build-push-action@v5
+        with:
+          file: Dockerfile
+          push: true
+          tags: |
+            europe-west4-docker.pkg.dev/web-rs/webrs/webrs:${{ github.sha }}
+            europe-west4-docker.pkg.dev/web-rs/webrs/webrs:latest
