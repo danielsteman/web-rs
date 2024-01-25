@@ -1,7 +1,7 @@
 use askama::Template;
 use axum::response::IntoResponse;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Map, Value};
+use serde_json::json;
 
 use crate::utils::html::HtmlTemplate;
 
