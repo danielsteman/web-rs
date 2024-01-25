@@ -1,10 +1,238 @@
 {
-  "date": "2024-01-24",
+  "date": "2024-01-25",
   "entries": [
     {
       "label": "Python",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "scikit-learn",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "PySpark",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Pandas",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "xgboost",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "statsmodels",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Langchain",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "SQL",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "scala",
+      "quadrant": 2,
+      "ring": 2,
+      "moved": 0
+    },
+    {
+      "label": "s3",
+      "quadrant": 1,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "PostgreSQL",
+      "quadrant": 1,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "SQLAlchemy",
+      "quadrant": 1,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Google Storage Bucket",
+      "quadrant": 1,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Firestore",
+      "quadrant": 1,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Alembic",
+      "quadrant": 1,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Redis",
+      "quadrant": 1,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Typescript",
+      "quadrant": 0,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Javascript",
+      "quadrant": 0,
+      "ring": 3,
+      "moved": 0
+    },
+    {
+      "label": "Axum",
+      "quadrant": 0,
+      "ring": 1,
+      "moved": 0
+    },
+    {
+      "label": "Rust",
+      "quadrant": 0,
+      "ring": 1,
+      "moved": 0
+    },
+    {
+      "label": "Flask",
+      "quadrant": 0,
+      "ring": 3,
+      "moved": 0
+    },
+    {
+      "label": "FastAPI",
+      "quadrant": 0,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Django",
+      "quadrant": 0,
+      "ring": 2,
+      "moved": 0
+    },
+    {
+      "label": "React",
+      "quadrant": 0,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Express.js",
+      "quadrant": 0,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "NextJS",
+      "quadrant": 0,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Vue",
+      "quadrant": 0,
+      "ring": 2,
+      "moved": 0
+    },
+    {
+      "label": "HTMX",
+      "quadrant": 0,
+      "ring": 2,
+      "moved": 0
+    },
+    {
+      "label": "TailwindCSS",
+      "quadrant": 0,
+      "ring": 2,
+      "moved": 0
+    },
+    {
+      "label": "OpenAPI",
+      "quadrant": 0,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Kubernetes",
+      "quadrant": 3,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Docker",
+      "quadrant": 3,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Github Actions",
+      "quadrant": 3,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "GCP Cloud Run",
+      "quadrant": 3,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "AWS Lambda",
       "quadrant": 3,
       "ring": 2,
+      "moved": 0
+    },
+    {
+      "label": "GCP Artifact Registy",
+      "quadrant": 3,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Heroku",
+      "quadrant": 3,
+      "ring": 3,
+      "moved": 0
+    },
+    {
+      "label": "CockroachDB",
+      "quadrant": 3,
+      "ring": 2,
+      "moved": 0
+    },
+    {
+      "label": "Firebase Functions",
+      "quadrant": 3,
+      "ring": 1,
       "moved": 0
     }
   ]

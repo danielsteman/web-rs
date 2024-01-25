@@ -1,6 +1,28 @@
 {% extends "base.html" %} {% block content %}
-<body>
+<body class="bg-gray-100">
   <script src="assets/radar.js"></script>
+  <div
+    class="flex justify-center flex-col gap-4 pt-24 px-4 max-w-screen-md mx-auto"
+  >
+    <header class="font-mono text-2xl text-gray-900 font-black">Radar</header>
+    <div>
+      This radar was
+      <a href="https://github.com/zalando/tech-radar" class="font-semibold"
+        >open-sourced by Zalando</a
+      >. It seemed like a good way to visualize the tools I'm currently using or
+      have used in the past. Why these four quadrants?
+      <text class="font-semibold">Adopt</text>
+      is the label for technologies I'm actively using and I understand well.
+      <text class="font-semibold">Trial</text> is the label for technologies I'm
+      using in a project to give them a shot but don't feel comfortable enough
+      with to the extend that it would be my go-to tool in a next project.
+      <text class="font-semibold">Assess</text> bundles technologies that seem
+      promising and worth investing some research in.
+      <text class="font-semibold">Hold</text> contains technologies I have used
+      in the path but wouldn't choose again because I have found a better
+      alternative, for my use cases at least.
+    </div>
+  </div>
   <svg id="radar"></svg>
 </body>
 {% endblock %}
