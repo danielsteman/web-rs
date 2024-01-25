@@ -7,9 +7,6 @@ WORKDIR /usr/src/app
 # Copy the Cargo.toml and Cargo.lock files to the container
 COPY Cargo.toml Cargo.lock ./
 
-# Build the project dependencies (this step can be cached)
-RUN cargo build --release
-
 # Copy the source code to the container
 COPY src ./src
 
