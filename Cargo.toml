@@ -3,10 +3,6 @@ name = "web-rs"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]]
-name = "webrs"
-path = "src/main.rs"
-
 [dependencies]
 askama = { version = "0.12.1", features = ["markdown"] }
 axum = "0.7.1"
