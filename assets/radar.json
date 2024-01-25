@@ -26,6 +26,24 @@
       "moved": 0
     },
     {
+      "label": "Matplotlib",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Seaborn",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "visx",
+      "quadrant": 2,
+      "ring": 2,
+      "moved": 0
+    },
+    {
       "label": "xgboost",
       "quadrant": 2,
       "ring": 0,
@@ -33,6 +51,12 @@
     },
     {
       "label": "statsmodels",
+      "quadrant": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Docker",
       "quadrant": 2,
       "ring": 0,
       "moved": 0
@@ -50,7 +74,7 @@
       "moved": 0
     },
     {
-      "label": "scala",
+      "label": "Scala",
       "quadrant": 2,
       "ring": 2,
       "moved": 0
@@ -68,13 +92,19 @@
       "moved": 0
     },
     {
+      "label": "MongoDB",
+      "quadrant": 1,
+      "ring": 2,
+      "moved": 0
+    },
+    {
       "label": "SQLAlchemy",
       "quadrant": 1,
       "ring": 0,
       "moved": 0
     },
     {
-      "label": "Google Storage Bucket",
+      "label": "GCP Storage Bucket",
       "quadrant": 1,
       "ring": 0,
       "moved": 0
@@ -83,6 +113,12 @@
       "label": "Firestore",
       "quadrant": 1,
       "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "ArgoCD",
+      "quadrant": 2,
+      "ring": 2,
       "moved": 0
     },
     {
@@ -136,6 +172,18 @@
     {
       "label": "Django",
       "quadrant": 0,
+      "ring": 1,
+      "moved": 0
+    },
+    {
+      "label": "Kotlin",
+      "quadrant": 0,
+      "ring": 2,
+      "moved": 0
+    },
+    {
+      "label": "SvelteKit",
+      "quadrant": 0,
       "ring": 2,
       "moved": 0
     },
@@ -166,13 +214,19 @@
     {
       "label": "HTMX",
       "quadrant": 0,
-      "ring": 2,
+      "ring": 1,
       "moved": 0
     },
     {
       "label": "TailwindCSS",
       "quadrant": 0,
-      "ring": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "Chakra UI",
+      "quadrant": 0,
+      "ring": 0,
       "moved": 0
     },
     {
@@ -233,6 +287,12 @@
       "label": "Firebase Functions",
       "quadrant": 3,
       "ring": 1,
+      "moved": 0
+    },
+    {
+      "label": "Airflow",
+      "quadrant": 3,
+      "ring": 0,
       "moved": 0
     }
   ]
