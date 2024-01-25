@@ -6,12 +6,6 @@ use reqwest;
 use serde_json::json;
 use time::{macros::format_description, Date};
 
-// read content from file
-// extract id
-// get id from db
-// if exists: nothing
-// if not exists: extract content and create Blog
-
 pub async fn ingest_articles() -> Option<()> {
     match fs::read_dir("./articles") {
         Ok(files) => {
