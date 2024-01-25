@@ -21,9 +21,6 @@ pub async fn ingest_articles() -> Option<()> {
                 let content = fs::read_to_string(&path)
                     .expect(format!("Error reading from {:?}", &path).as_str());
 
-                let temp = get_id(content.as_str()).await.unwrap();
-                println!("{:?}", blog_exists(&temp).await);
-
                 if let Some(blog_id) = get_id(content.as_str()).await {
                     if !blog_exists(&blog_id).await {
                         if let Some(metadata) = get_metadata(content.as_str()) {
@@ -34,7 +31,7 @@ pub async fn ingest_articles() -> Option<()> {
                                 eprintln!("Error inserting blog: {}", err);
                             })
                         } else {
-                            eprintln!("No metadata found in file")
+                            eprintln!("No metadata found, skipping file.")
                         }
                     }
                 }
