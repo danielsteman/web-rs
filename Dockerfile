@@ -24,6 +24,9 @@ COPY Cargo.toml Cargo.lock ./
 # Copy the source code to the container
 COPY src ./src
 
+# Copy templates
+COPY templates ./templates
+
 # DB migrations
 COPY migrations ./migrations
 
