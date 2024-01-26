@@ -45,6 +45,9 @@ COPY --from=builder /usr/src/app/target/release/webrs ./
 # Copy articles to migrate
 COPY articles ./articles
 
+# Copy templates
+COPY templates ./templates
+
 # Copy assets such as favicon
 COPY assets ./assets
 
