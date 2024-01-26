@@ -2,13 +2,11 @@
 <body class="h-full bg-indigo-400">
   {% include "header.html" %}
   <div class="flex flex-col w-full">
-    <div
-      class="p-4 w-full grid gap-4 grid-cols-1 lg:grid-cols-2 max-w-screen-lg mx-auto"
-    >
+    <div class="p-4 w-full gap-4 flex flex-wrap justify-center">
       {% for blog in blogs %}
-      <a href="/blog/{{blog.id}}">
+      <a href="/blog/{{blog.id}}" class="w-1/3">
         <div
-          class="relative h-fit rounded-lg bg-indigo-500 flex flex-col gap-2 p-2"
+          class="relative h-fit rounded-lg bg-indigo-500 flex-1 flex flex-col gap-2 p-2"
         >
           <div
             class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-purple-500"
