@@ -21,7 +21,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           file: Dockerfile
-          push: true
+          push: false
           tags: |
             europe-west4-docker.pkg.dev/web-rs/webrs/webrs:${{ github.sha }}
             europe-west4-docker.pkg.dev/web-rs/webrs/webrs:latest
