@@ -1,26 +1,23 @@
 {% extends "base.html" %} {% block content %}
 <body class="h-full bg-indigo-400">
   {% include "header.html" %}
-  <div class="flex flex-col w-full">
-    <div class="p-4 w-full gap-4 flex flex-wrap justify-center">
+  <div class="flex flex-col w-full h-[calc(full+20%)]">
+    <div class="p-4 gap-4 columns-2">
       {% for blog in blogs %}
-      <a href="/blog/{{blog.id}}" class="w-1/3">
+      <a
+        href="/blog/{{blog.id}}"
+        class="break-inside-avoid-column relative gap-2 mb-4 p-2 flex flex-col h-fit rounded-lg bg-indigo-500"
+      >
+        <div class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-purple-500">
+          {{blog.title}}
+        </div>
+        <div class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-pink-500">
+          {{blog.summary}}
+        </div>
         <div
-          class="relative h-fit rounded-lg bg-indigo-500 flex-1 flex flex-col gap-2 p-2"
+          class="rounded-lg text-gray-100 font-mono absolute inset-0 flex items-center justify-center bg-black opacity-0 hover:opacity-50 transition-opacity"
         >
-          <div
-            class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-purple-500"
-          >
-            {{blog.title}}
-          </div>
-          <div class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-pink-500">
-            {{blog.summary}}
-          </div>
-          <div
-            class="rounded-lg text-gray-100 font-mono absolute inset-0 flex items-center justify-center bg-black opacity-0 hover:opacity-50 transition-opacity"
-          >
-            👀
-          </div>
+          👀
         </div>
       </a>
       {% endfor %}

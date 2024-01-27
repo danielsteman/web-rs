@@ -58,4 +58,5 @@ If the page is not loading, check if `sqlx` made a connection and didn't timeout
 - [ ] Use `aide`, or something like that, to generate openapi spec
 - [ ] Render `shiki` code snippets on the server
 - [ ] Render the tech radar on the server
-- [ ] Get rid of the gaps in /blogs
+- [x] Get rid of the gaps in /blogs
+- [ ] Logically order /blogs
