@@ -59,4 +59,7 @@ If the page is not loading, check if `sqlx` made a connection and didn't timeout
 - [ ] Render `shiki` code snippets on the server
 - [ ] Render the tech radar on the server
 - [x] Get rid of the gaps in /blogs
-- [ ] Logically order /blogs
+- [x] Logically order /blogs
+- [ ] Add pagination for /blogs
+- [ ] Host somewhere
+- [ ] Responsive navbar

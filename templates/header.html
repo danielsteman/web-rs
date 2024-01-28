@@ -1,6 +1,6 @@
 <div class="bg-indigo-400 w-full px-4">
   <div
-    class="bg-indigo-400 gap-4 p-4 flex flex-row justify-end max-w-screen-md mx-auto border-b border-gray-500"
+    class="bg-indigo-400 gap-4 p-4 flex flex-row justify-end items-center max-w-screen-md mx-auto border-b border-gray-500"
   >
     <input
       class="mr-auto rounded py-1.5 px-3 bg-indigo-500 text-gray-100 placeholder:text-gray-100 font-mono"
@@ -11,7 +11,57 @@
       hx-trigger="input changed delay:500ms, search"
       hx-post="/search"
     />
-    <a href="/radar" target="_blank">
+    <svg
+      class="block visible cursor-pointer"
+      x="0"
+      y="0"
+      height="24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 10 10"
+      stroke="#000"
+      stroke-width=".6"
+      fill="rgba(0,0,0,0)"
+      stroke-linecap="round"
+    >
+      <path d="M2,3L5,3L8,3M2,5L8,5M2,7L5,7L8,7">
+        <animate
+          dur="0.2s"
+          attributeName="d"
+          values="M2,3L5,3L8,3M2,5L8,5M2,7L5,7L8,7;M3,3L5,5L7,3M5,5L5,5M3,7L5,5L7,7"
+          fill="freeze"
+          begin="start.begin"
+        />
+        <animate
+          dur="0.2s"
+          attributeName="d"
+          values="M3,3L5,5L7,3M5,5L5,5M3,7L5,5L7,7;M2,3L5,3L8,3M2,5L8,5M2,7L5,7L8,7"
+          fill="freeze"
+          begin="reverse.begin"
+        />
+      </path>
+      <rect width="10" height="10" stroke="none">
+        <animate dur="2s" id="reverse" attributeName="width" begin="click" />
+      </rect>
+      <rect width="10" height="10" stroke="none">
+        <animate
+          dur="0.001s"
+          id="start"
+          attributeName="width"
+          values="10;0"
+          fill="freeze"
+          begin="click"
+        />
+        <animate
+          dur="0.001s"
+          attributeName="width"
+          values="0;10"
+          fill="freeze"
+          begin="reverse.begin"
+        />
+      </rect>
+    </svg>
+    <a class="hidden sm:block" href="/radar" target="_blank">
       <svg
         version="1.1"
         id="Layer_1"
@@ -38,7 +88,11 @@
         </g>
       </svg>
     </a>
-    <a href="https://github.com/danielsteman" target="_blank">
+    <a
+      class="hidden sm:block"
+      href="https://github.com/danielsteman"
+      target="_blank"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="24"
@@ -52,7 +106,11 @@
         />
       </svg>
     </a>
-    <a href="https://stackoverflow.com/users/11383969/dsteman" target="_blank">
+    <a
+      class="hidden sm:block"
+      href="https://stackoverflow.com/users/11383969/dsteman"
+      target="_blank"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="24"
@@ -66,7 +124,11 @@
         />
       </svg>
     </a>
-    <a href="https://www.linkedin.com/in/danielsteman/" target="_blank">
+    <a
+      class="hidden sm:block"
+      href="https://www.linkedin.com/in/danielsteman/"
+      target="_blank"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="24"
@@ -80,7 +142,11 @@
         />
       </svg>
     </a>
-    <a href="https://www.last.fm/user/daniel-steman" target="_blank">
+    <a
+      class="hidden sm:block"
+      href="https://www.last.fm/user/daniel-steman"
+      target="_blank"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="24"
@@ -94,7 +160,11 @@
         />
       </svg>
     </a>
-    <a href="https://open.spotify.com/user/116885657" target="_blank">
+    <a
+      class="hidden sm:block"
+      href="https://open.spotify.com/user/116885657"
+      target="_blank"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="24"
@@ -108,7 +178,11 @@
         />
       </svg>
     </a>
-    <a href="https://www.imdb.com/user/ur27266239/" target="_blank">
+    <a
+      class="hidden sm:block"
+      href="https://www.imdb.com/user/ur27266239/"
+      target="_blank"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         height="24"
