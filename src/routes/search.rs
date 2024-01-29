@@ -8,7 +8,7 @@ use crate::crud::blog::Blog;
 use crate::utils::html::HtmlTemplate;
 
 #[derive(Template)]
-#[template(path = "search.html")]
+#[template(path = "blogs-search-results.html")]
 struct BlogsTemplate {
     blogs: Vec<Blog>,
 }
