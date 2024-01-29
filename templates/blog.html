@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block content %}
 <body class="blog bg-gray-100">
   <script type="module">
-    import { getHighlighter } from "https://esm.sh/shiki@0.14.0";
+    import { getHighlighter } from "https://esm.sh/shiki@1.0.0-beta.0";
 
     async function highlightCodeWithShiki() {
       const codeElements = document.querySelectorAll("code");
@@ -15,13 +15,11 @@
         const codeContent = codeElement.textContent;
         const language = codeElement.className.split("-")[1];
 
-        console.log(codeElement.className.split("-")[1]);
-
         if (language !== undefined) {
-          const highlightedCode = await highlighter.codeToHtml(
-            codeContent,
-            codeElement.className.split("-")[1]
-          );
+          const highlightedCode = await highlighter.codeToHtml(codeContent, {
+            lang: codeElement.className.split("-")[1],
+            theme: "github-light",
+          });
 
           const tempDiv = document.createElement("div");
           tempDiv.innerHTML = highlightedCode;

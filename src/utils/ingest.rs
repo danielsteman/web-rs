@@ -25,7 +25,7 @@ pub async fn ingest_articles() -> Option<()> {
                                 eprintln!("Error inserting blog: {}", err);
                             })
                         } else {
-                            eprintln!("No metadata found, skipping file.")
+                            eprintln!("No metadata found, skipping blog {}", blog_id)
                         }
                     }
                 }

@@ -2,6 +2,8 @@ mod crud;
 mod routes;
 mod utils;
 
+use std::env;
+
 use axum::{
     routing::{get, post},
     Router,
@@ -29,7 +31,11 @@ async fn main() {
         .await
         .expect("Failed to perform database migrations");
 
-    ingest::ingest_articles().await;
+    if let Ok(env) = env::var("ENV") {
+        if env == "PROD" {
+            ingest::ingest_articles().await;
+        }
+    }
 
     let app = Router::new()
         .nest_service("/assets", ServeDir::new("assets"))
