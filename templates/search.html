@@ -1,0 +1,36 @@
+<div class="p-4 gap-4 columns-1 sm:columns-2">
+  {% for blog in blogs %}
+  <a
+    href="/blog/{{blog.id}}"
+    class="break-inside-avoid-column relative gap-2 mb-4 p-2 flex flex-col h-fit rounded-lg bg-indigo-500"
+  >
+    <div class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-purple-500">
+      {{blog.title}}
+    </div>
+    <div
+      class="font-mono px-4 py-2 rounded-lg text-sm text-gray-100 bg-indigo-400"
+    >
+      {{blog.date}}
+    </div>
+    <div class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-pink-500">
+      {{blog.summary}}
+    </div>
+    <div
+      class="flex flex-row font-mono gap-2 px-2 py-2 rounded-lg text-gray-100 text-sm bg-indigo-400"
+    >
+      {% for tag in blog.tags %}
+      <div
+        class="text-gray-100 text-ellipsis bg-indigo-300 rounded-lg px-2 py-1"
+      >
+        {{tag}}
+      </div>
+      {% endfor %}
+    </div>
+    <div
+      class="rounded-lg text-gray-100 font-mono absolute inset-0 flex items-center justify-center bg-black opacity-0 hover:opacity-50 transition-opacity"
+    >
+      👀
+    </div>
+  </a>
+  {% endfor %}
+</div>

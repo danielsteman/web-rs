@@ -8,7 +8,7 @@ use crate::crud::blog::Blog;
 use crate::utils::html::HtmlTemplate;
 
 #[derive(Template)]
-#[template(path = "blogs.html")]
+#[template(path = "search.html")]
 struct BlogsTemplate {
     blogs: Vec<Blog>,
 }
@@ -19,7 +19,6 @@ pub struct Search {
 }
 
 pub async fn search(State(pool): State<PgPool>, Form(body): Form<Search>) -> impl IntoResponse {
-    eprintln!("{:?}", body);
     match Blog::search_blogs(&pool, body.search_string.as_str()).await {
         Ok(blogs) => {
             let template = BlogsTemplate { blogs };

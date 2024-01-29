@@ -26,11 +26,11 @@ impl Blog {
     }
 
     pub async fn search_blogs(pool: &Pool<Postgres>, search: &str) -> Result<Vec<Blog>, Error> {
-        let mut blogs: Vec<Blog> = sqlx::query_as::<_, Blog>(
-            format!("SELECT * FROM blog WHERE title ILIKE %{}%", search).as_str(),
-        )
-        .fetch_all(pool)
-        .await?;
+        let mut blogs: Vec<Blog> =
+            sqlx::query_as::<_, Blog>("SELECT * FROM blog WHERE title ILIKE $1")
+                .bind(format!("%{}%", search))
+                .fetch_all(pool)
+                .await?;
 
         blogs.sort_by(|a, b| b.id.cmp(&a.id));
 
@@ -83,5 +83,21 @@ impl Blog {
         println!("{:?}", result);
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::utils::db::get_db;
+
+    use super::*;
+
+    #[ignore]
+    #[tokio::test]
+    async fn test_search() {
+        let pool = get_db().await;
+        let result = Blog::search_blogs(&pool, "hoi").await.unwrap();
+        assert_eq!(result.len() > 0, true);
+        assert_eq!(result[0].id, 420);
     }
 }

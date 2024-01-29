@@ -5,8 +5,6 @@ use serde_json::json;
 
 use crate::utils::html::HtmlTemplate;
 
-// TODO: serialize json into Rust types that implement Display
-
 #[derive(Template)]
 #[template(path = "resume.html")]
 struct ResumeTemplate {
