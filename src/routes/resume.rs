@@ -18,6 +18,12 @@ struct Period {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
+struct School {
+    name: String,
+    url: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 struct Experience {
     employer: String,
     title: String,
@@ -26,7 +32,7 @@ struct Experience {
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Study {
-    school: String,
+    school: School,
     title: String,
     period: Period,
 }
@@ -59,7 +65,10 @@ pub async fn resume() -> impl IntoResponse {
         ],
         "education": [
             {
-                "school": "MOOC",
+                "school": {
+                    "name": "MOOC",
+                    "url": "https://fullstackopen.com/en/"
+                },
                 "title": "Full Stack Open",
                 "period": {
                     "from": "September 2020",
@@ -67,7 +76,10 @@ pub async fn resume() -> impl IntoResponse {
                 }
             },
             {
-                "school": "Vrije Universiteit Amsterdam",
+                "school": {
+                    "name": "Vrije Universiteit Amsterdam",
+                    "url": "https://vu.nl/en/education/master/finance-duisenberg-honours-programme-in-finance-and-technology"
+                },
                 "title": "MSc Finance & Technology (honours programme)",
                 "period": {
                     "from": "February 2019",
@@ -75,7 +87,10 @@ pub async fn resume() -> impl IntoResponse {
                 }
             },
             {
-                "school": "The Hague University of Applied Sciences",
+                "school": {
+                    "name": "The Hague University of Applied Sciences",
+                    "url": "https://www.dehaagsehogeschool.nl/opleidingen/hbo-bachelor/international-business-4-jaar"
+                },
                 "title": "BSc International Business",
                 "period": {
                     "from": "September 2013",
