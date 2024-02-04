@@ -1,10 +1,10 @@
-<div class="bg-indigo-400 w-full px-4">
+<div class="bg-indigo-400 w-full px-4 overflow-x-auto">
   <div
-    class="bg-indigo-400 gap-4 p-4 flex flex-row justify-end items-center max-w-screen-md mx-auto border-b border-gray-500 sm: pr-2"
+    class="bg-indigo-400 gap-4 p-4 flex flex-row justify-end items-center max-w-screen-md min-w-fit mx-auto border-b border-gray-500 sm: pr-2 pl-0"
   >
     <input
       id="search-input"
-      class="mr-auto rounded py-1.5 px-3 bg-indigo-500 text-gray-100 placeholder:text-gray-100 font-mono"
+      class="w-48 mr-auto rounded py-1.5 px-3 bg-indigo-500 text-gray-100 placeholder:text-gray-100 font-mono"
       type="search"
       name="search_string"
       placeholder="Search... (⌘+k)"
@@ -12,55 +12,24 @@
       hx-trigger="input changed delay:500ms, search"
       hx-post="/search"
     />
-    <div class="cursor-pointer block sm:hidden">
-      {% include "icons/menu.html" %}
-    </div>
-    <a href="/resume" target="_blank" class="hidden sm:block">
-      {% include "icons/resume.html" %}
-    </a>
-    <a class="hidden sm:block" href="/radar" target="_blank">
-      {% include "icons/radar.html" %}
-    </a>
-    <a
-      class="hidden sm:block"
-      href="https://github.com/danielsteman"
-      target="_blank"
-    >
+    <a href="/resume" target="_blank"> {% include "icons/resume.html" %} </a>
+    <a href="/radar" target="_blank"> {% include "icons/radar.html" %} </a>
+    <a href="https://github.com/danielsteman" target="_blank">
       {% include "icons/github.html" %}
     </a>
-    <a
-      class="hidden sm:block"
-      href="https://stackoverflow.com/users/11383969/dsteman"
-      target="_blank"
-    >
+    <a href="https://stackoverflow.com/users/11383969/dsteman" target="_blank">
       {% include "icons/stackoverflow.html" %}
     </a>
-    <a
-      class="hidden sm:block"
-      href="https://www.linkedin.com/in/danielsteman/"
-      target="_blank"
-    >
+    <a href="https://www.linkedin.com/in/danielsteman/" target="_blank">
       {% include "icons/linkedin.html" %}
     </a>
-    <a
-      class="hidden sm:block"
-      href="https://www.last.fm/user/daniel-steman"
-      target="_blank"
-    >
+    <a href="https://www.last.fm/user/daniel-steman" target="_blank">
       {% include "icons/lastfm.html" %}
     </a>
-    <a
-      class="hidden sm:block"
-      href="https://open.spotify.com/user/116885657"
-      target="_blank"
-    >
+    <a href="https://open.spotify.com/user/116885657" target="_blank">
       {% include "icons/spotify.html" %}
     </a>
-    <a
-      class="hidden sm:block"
-      href="https://www.imdb.com/user/ur27266239/"
-      target="_blank"
-    >
+    <a href="https://www.imdb.com/user/ur27266239/" target="_blank">
       {% include "icons/imdb.html" %}
     </a>
   </div>
