@@ -1,6 +1,8 @@
 % id: 12
 % title: A lightweight stack for a simple web app
 
+## On the client side
+
 The problem I recently ran into was that I wanted to apply search engine optimization (SEO) techniques on my single-page React application. This proved to be very challenging, as the HTML that represented my application was rendered completely on the client side. This introduced some issues for search engine crawlers, such as, but not limited to:
 
 1. Crawlers process static HTML content. I believe that nowadays, crawlers are more advanced and can execute the javascript that renders the HTML and process that. However, if a search engine doesn't do this (for a number of reasons) a lot of content won't be available.
@@ -81,3 +83,7 @@ const SearchComponent = () => {
 ```
 
 Also, the hypermedia that is shipped by the server is much more sensible to search engine crawlers than minified HTML, which would be the case with SPA (React SPA in this example). On the other hand, minified HTML has the benefit of being smaller in size and increasing overall site speed.
+
+## On the server side
+
+After having used several server side technologies I wanted to try something new. Since some time [rust](https://www.rust-lang.org/) has become my preferred language for side-projects because its type system helps me to prevent making mistakes and when I make mistakes, the compiler usually knows how to pinpoint the problem. Also, it provides a way to get more experienced with memory management, as opposed to dynamic interpreted languages like Python where this trait is less apparent. Anyways, I decided to use [axum](https://github.com/tokio-rs/axum) as a web framework to serve HTML files. This decision was made quite arbitrarily and based on Reddit hype, and after reading the first part of the docs it seemed workable.
