@@ -22,7 +22,7 @@ The bundle configuration is defined in `databricks.yml`. You can cut the configu
 
 ```yaml
 bundle:
-  name: credit_risk_model
+  name: my_bundle
 
 include:
   - resources/*.yml

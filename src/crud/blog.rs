@@ -1,5 +1,3 @@
-use std::fs;
-
 use sqlx::error::Error;
 use sqlx::types::time::Date;
 use sqlx::{Pool, Postgres};
@@ -43,19 +41,8 @@ impl Blog {
             .fetch_one(pool)
             .await?;
 
-        let file_path = format!("articles/blog{}.md", id);
-
-        let content = match fs::read_to_string(&file_path) {
-            Ok(content) => {
-                let lines: Vec<&str> = content.lines().collect();
-                let content_without_metadata = lines[4..].to_vec();
-                let remaining_content = content_without_metadata.join("\n");
-                remaining_content
-            }
-            Err(e) => {
-                panic!("Failed to read file: {}", e);
-            }
-        };
+        let lines: Vec<&str> = blog.body.lines().collect();
+        let content = lines.join("\n");
 
         let html = markdown::to_html(&content);
         blog.body = html;

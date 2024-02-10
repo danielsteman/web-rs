@@ -26,11 +26,15 @@ async fn main() {
 
     let pool = get_db().await;
 
+    println!("Starting migration");
+
     sqlx::migrate!()
         .set_locking(false)
         .run(&pool)
         .await
         .expect("Failed to perform database migrations");
+
+    println!("Finished migration");
 
     if let Ok(env) = env::var("ENV") {
         if env == "PROD" {
