@@ -64,4 +64,4 @@ If the page is not loading, check if `sqlx` made a connection and didn't timeout
 - [x] Logically order /blogs
 - [ ] Add pagination for /blogs
 - [ ] Host somewhere
-- [ ] Responsive navbar
+- [x] Responsive navbar
