@@ -28,7 +28,7 @@ repos:
 
 From top to bottom: `black` is a Python code formatter that adheres to the [PEP8](https://peps.python.org/pep-0008/) style guide and is opinioniated. With this small addition to your `settings.json` in VSCode, you can use `black` to format your code when you save the file:
 
-```toml
+```json
 "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.formatOnSave": true
