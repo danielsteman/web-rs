@@ -23,7 +23,8 @@ pub async fn ingest_articles() -> Option<()> {
 
                             blog.create_blog(&pool).await.unwrap_or_else(|err| {
                                 eprintln!("Error inserting blog: {}", err);
-                            })
+                            });
+                            println!("Added blog {}", blog.id);
                         } else {
                             eprintln!("No metadata found, skipping blog {}", blog_id)
                         }
@@ -170,7 +171,6 @@ async fn summarize(text: &str, system_message: &str) -> Result<String, reqwest::
     match response.error_for_status() {
         Ok(res) => {
             let summary = res.json::<serde_json::Value>().await?;
-            println!("summary: {}", summary);
             let summarized_text = summary["choices"][0]["message"]["content"]
                 .as_str()
                 .unwrap_or_default();

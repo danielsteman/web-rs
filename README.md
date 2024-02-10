@@ -11,6 +11,18 @@ Let's build a blog page with Axum, Askama, HTMX and Tailwind. I like to write ar
 
 ## Development
 
+Run Postgres locally:
+
+```
+docker run -d \
+    --name webrs-postgres \
+    -e POSTGRES_DB=webrs \
+    -e POSTGRES_USER=admin \
+    -e POSTGRES_PASSWORD=admin \
+    -p 5432:5432 \
+    postgres:latest
+```
+
 Run the server:
 
 ```
@@ -27,18 +39,6 @@ yarn dev
 
 [Open your browser](http://localhost:3000)
 
-Run Postgres locally (only for development purposes):
-
-```
-docker run -d \
-    --name webrs-postgres \
-    -e POSTGRES_DB=webrs \
-    -e POSTGRES_USER=admin \
-    -e POSTGRES_PASSWORD=admin \
-    -p 5432:5432 \
-    postgres:latest
-```
-
 The corresponding database URL would be `postgresql://admin:admin@localhost/webrs` which is expected to be passed as environment variable `DATABASE_URL`. Just for development purposes, this variable can also be set in `./.env`.
 
 Likewise, OPENAI_API_KEY is set to generate summaries of the articles. This is only needed for initial ingestion.
@@ -54,6 +54,8 @@ docker build -t webrs .
 ## Troubleshooting
 
 If the page is not loading, check if `sqlx` made a connection and didn't timeout. A timeout indicates that Postgres is not up.
+
+CockroachDB doesn't support locking the database prior to migrations. Hence, `sqlx::migrate!().set_locking(false)`.
 
 ## To do
 

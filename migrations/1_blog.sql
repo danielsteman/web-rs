@@ -1,5 +1,5 @@
 CREATE TABLE blog (
-    id INTEGER PRIMARY KEY,
+    id INT4 PRIMARY KEY,
     title TEXT,
     summary TEXT,
     body TEXT,
