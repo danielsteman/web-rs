@@ -34,6 +34,9 @@
           });
 
           codeElement.innerHTML = tempDiv.innerHTML;
+          codeElement.style.overflowX = "auto";
+          codeElement.style.display = "block";
+          codeElement.style.width = "100%";
         }
       });
     }
@@ -49,9 +52,7 @@
       {{ title }}
     </header>
     <div class="font-bold font-mono text-gray-900">{{ date }}</div>
-    <div class="font-mono text-gray-900 overflow-x-auto w-full">
-      {{ body|safe }}
-    </div>
+    <div class="font-mono text-gray-900 w-full">{{ body|safe }}</div>
     {% include "footer.html" %}
   </div>
 </body>
