@@ -8,6 +8,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use lambda_http::{run, Error};
 use tower_http::services::ServeDir;
 use utils::db::get_db;
 use utils::ingest;
@@ -21,8 +22,9 @@ fn load_env() {
 fn load_env() {}
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Error> {
     load_env();
+    // set_var("AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH", "true");
 
     let pool = get_db().await;
 
@@ -50,8 +52,10 @@ async fn main() {
         .route("/resume", get(routes::resume::resume))
         .route("/radar", get(routes::radar::radar))
         .route("/search", post(routes::search::search))
+        .route("/health/", get(routes::health::health_check))
         .with_state(pool);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    // let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    // axum::serve(listener, app).await.unwrap();
+    run(app).await
 }
