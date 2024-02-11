@@ -43,13 +43,15 @@
     });
   </script>
   <div
-    class="flex justify-center flex-col gap-4 pt-24 px-4 max-w-screen-md mx-auto sm:pt-4"
+    class="flex justify-center flex-col gap-4 pt-4 px-4 max-w-screen-md mx-auto sm:pt-24"
   >
     <header class="font-mono text-2xl text-gray-900 font-black">
       {{ title }}
     </header>
     <div class="font-bold font-mono text-gray-900">{{ date }}</div>
-    <div class="font-mono text-gray-900">{{ body|safe }}</div>
+    <div class="font-mono text-gray-900 overflow-x-auto w-full">
+      {{ body|safe }}
+    </div>
     {% include "footer.html" %}
   </div>
 </body>
