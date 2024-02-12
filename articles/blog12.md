@@ -87,3 +87,35 @@ Also, the hypermedia that is shipped by the server is much more sensible to sear
 ## On the server side
 
 After having used several server side technologies I wanted to try something new. Since some time [rust](https://www.rust-lang.org/) has become my preferred language for side-projects because its type system helps me to prevent making mistakes and when I make mistakes, the compiler usually knows how to pinpoint the problem. Also, it provides a way to get more experienced with memory management, as opposed to dynamic interpreted languages like Python where this trait is less apparent. Anyways, I decided to use [axum](https://github.com/tokio-rs/axum), a web framework written in rust that supposedly is very modular because it uses [tower](https://docs.rs/tower/latest/tower/trait.Service.html) middleware, not its own, and because it seems ergonomic, looking at the minimal examples in [the documentation](https://github.com/tokio-rs/axum?tab=readme-ov-file). Not that loading hypermedia would ever take long, but axum also seems performant, as its only a thin wrapper around the low-level HTTP implementation for rust. See the [performance benchmark](https://github.com/programatik29/rust-web-benchmarks/blob/master/result/hello-world.md) for yourself.
+
+To make the application more extendable, I used [askama](https://github.com/djc/askama), a type-safe template engine that uses syntax similar to jinja. Type-safety is enforced through user defined structs. For example, this is a blog struct that fills in the `blog.html` template, which is situated (and expected by default) in `templates/`.
+
+```rust
+use askama::Template;
+use sqlx::types::time::Date;
+
+#[derive(Template)]
+#[template(path = "blog.html")]
+struct BlogTemplate {
+    title: String,
+    body: String,
+    date: Date,
+}
+```
+
+Where `blog.html` has placeholders for the struct fields. The example also reveals the possibility to include other templates, in this case a footer. This would still allow you to create [a component tree](https://legacy.reactjs.org/docs/higher-order-components.html) as is often seen in React projects. At last, I'm explicitly telling the compiler that `body` is `safe`, as it contains HTML, which might [not be a very good idea](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/11-Client-side_Testing/03-Testing_for_HTML_Injection), but that's something for later and not so critical for an example blog page.
+
+```html
+<div
+  class="flex justify-center flex-col gap-4 pt-4 px-4 max-w-screen-md mx-auto sm:pt-24"
+>
+  <header class="font-mono text-2xl text-gray-900 font-black">
+    {{ title }}
+  </header>
+  <div class="font-bold font-mono text-gray-900">{{ date }}</div>
+  <div class="font-mono text-gray-900 w-full">{{ body|safe }}</div>
+  {% include "footer.html" %}
+</div>
+```
+
+The way that I used it is with a `templates` folder that contains a number of HTML files, for each route and even components in routes, such as a header and footer.

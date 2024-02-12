@@ -2,7 +2,7 @@ mod crud;
 mod routes;
 mod utils;
 
-use std::env;
+use std::env::{self, set_var};
 
 use axum::{
     routing::{get, post},
@@ -24,7 +24,13 @@ fn load_env() {}
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     load_env();
-    // set_var("AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH", "true");
+    set_var("AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH", "true");
+
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::INFO)
+        .with_target(false)
+        .without_time()
+        .init();
 
     let pool = get_db().await;
 
