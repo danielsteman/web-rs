@@ -1,5 +1,7 @@
 % id: 12
 % title: A lightweight stack for a simple web app
+% date: 2024-02-13
+% tags: web
 
 ## On the client side
 
