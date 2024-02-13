@@ -11,7 +11,7 @@ Let's build a blog page with Axum, Askama, HTMX and Tailwind. I like to write ar
 
 This project is deployed on serverless compute (AWS Lambda), using the Rust runtime. To make things easier, it uses `cargo-lambda` to [run, build and deploy](https://www.cargo-lambda.info/).
 
-```
+```bash
 brew tap cargo-lambda/cargo-lambda
 brew install cargo-lambda
 ```
@@ -20,7 +20,7 @@ brew install cargo-lambda
 
 Run Postgres locally:
 
-```
+```bash
 docker run -d \
     --name webrs-postgres \
     -e POSTGRES_DB=webrs \
@@ -32,13 +32,13 @@ docker run -d \
 
 Run the server:
 
-```
+```bash
 cargo lambda watch
 ```
 
 Run Tailwind (styling):
 
-```
+```bash
 yarn install
 yarn dev
 ```
@@ -51,13 +51,13 @@ Likewise, OPENAI_API_KEY is set to generate summaries of the articles. This is o
 
 ## Build release
 
-```
+```bash
 cargo lambda build --release
 ```
 
 Or build Docker image and deploy wherever you like.
 
-```
+```bash
 docker build -t webrs .
 ```
 

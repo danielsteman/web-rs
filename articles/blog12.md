@@ -84,9 +84,40 @@ const SearchComponent = () => {
 
 Also, the hypermedia that is shipped by the server is much more sensible to search engine crawlers than minified HTML, which would be the case with SPA (React SPA in this example). On the other hand, minified HTML has the benefit of being smaller in size and increasing overall site speed.
 
+### Styling
+
+For styling I used TailwindCSS. It works really well together with htmx because at this point most client-side logic and styling is embedded in the HTML served by Axum, making the resulting code concise. Setting up Tailwind was as straight forward as `yarn add tailwindcss`. For development and production runs I added to following scripts to my `package.json`.
+
+```json
+"scripts": {
+  "dev": "npx tailwindcss -i ./templates/input.css -o ./assets/output.css --watch",
+  "prod": "npx tailwindcss -i ./templates/input.css -o ./assets/output.css --minify"
+}
+```
+
+Tailwind utilities are imported in `input.css`. It's possible to append styling rules to this file, as they will be included in the generated output.
+
+```css
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/*
+As an example of custom styles on top of tailwind
+that applies to h2 headers that are rendered by markdown.rs
+*/
+
+body[class*="blog"] h2 {
+  padding: 32px 0px 8px 0px;
+  font-weight: 700;
+}
+```
+
 ## On the server side
 
 After having used several server side technologies I wanted to try something new. Since some time [rust](https://www.rust-lang.org/) has become my preferred language for side-projects because its type system helps me to prevent making mistakes and when I make mistakes, the compiler usually knows how to pinpoint the problem. Also, it provides a way to get more experienced with memory management, as opposed to dynamic interpreted languages like Python where this trait is less apparent. Anyways, I decided to use [axum](https://github.com/tokio-rs/axum), a web framework written in rust that supposedly is very modular because it uses [tower](https://docs.rs/tower/latest/tower/trait.Service.html) middleware, not its own, and because it seems ergonomic, looking at the minimal examples in [the documentation](https://github.com/tokio-rs/axum?tab=readme-ov-file). Not that loading hypermedia would ever take long, but axum also seems performant, as its only a thin wrapper around the low-level HTTP implementation for rust. See the [performance benchmark](https://github.com/programatik29/rust-web-benchmarks/blob/master/result/hello-world.md) for yourself.
+
+### Templates
 
 To make the application more extendable, I used [askama](https://github.com/djc/askama), a type-safe template engine that uses syntax similar to jinja. Type-safety is enforced through user defined structs. For example, this is a blog struct that fills in the `blog.html` template, which is situated (and expected by default) in `templates/`.
 
@@ -118,4 +149,47 @@ Where `blog.html` has placeholders for the struct fields. The example also revea
 </div>
 ```
 
-The way that I used it is with a `templates` folder that contains a number of HTML files, for each route and even components in routes, such as a header and footer.
+### Database
+
+A content management system is usually overkill for a simple project and in case of my blog, I basically write articles in markdown and commit them. Transforming markdown to HTML is made easy with the `to_html()` method of [markdown.rs](). To prevent that each markdown file needs to be transformed to HTML everytime the blogs page is loaded, I decided to setup a postgres database. A simple ingestion script performs the job of parsing the markdown files in `/articles/` and pushing articles to the database.
+
+To interact with the database, I have used `sqlx`. This package makes it easy to make migrations with the `sqlx::migrate!()` macro. By default, it expects SQL scripts to be stored in `/migrations/` with a number prefix (`_1`) such that it's clear in which order the migrations need to be applied. For example, ensuring that the `blog` table exists in the postgres database the application is connected to, is as easy as have a file, `migrations/1_blog.sql`, with the query below.
+
+```sql
+CREATE TABLE blog (
+    id INT4 PRIMARY KEY,
+    title TEXT,
+    summary TEXT,
+    body TEXT,
+    date DATE,
+    tags TEXT[]
+);
+```
+
+The documentation of `sqlx` is quite clear and implementing a struct that gets blogs from the database was straight forward. The only thing that was tricky was matching rust types with postgres types. For example, `INT4` in postgres maps to `i32` in rust and I explicitly needed to create the `id` column with the `INT4` type for the application to work with some managed cloud instance of postgres. If you're using a different database, this is something keep in mind.
+
+```rs
+#[derive(PartialEq, Debug, sqlx::FromRow)]
+pub struct Blog {
+    pub id: i32,
+    pub title: String,
+    pub summary: String,
+    pub body: String,
+    pub date: Date,
+    pub tags: Vec<String>,
+}
+
+impl Blog {
+    pub async fn get_blogs(pool: &Pool<Postgres>) -> Result<Vec<Blog>, Error> {
+        let mut blogs: Vec<Blog> = sqlx::query_as::<_, Blog>("SELECT * FROM blog")
+            .fetch_all(pool)
+            .await?;
+
+        blogs.sort_by(|a, b| b.id.cmp(&a.id));
+
+        Ok(blogs)
+    }
+}
+```
+
+The whole development experience that I got from building this example was pleasant and refreshing. The fact that most client-side code is embedded in HTML makes the project concise and ergonomic. I'm not sure if htmx will be the answer for larger projects that require much more user interaction, as it would be hard to refactor more complex logic. But if you're building a prototype and want to experience something else than a mainstream javascript framework, I can highly recommend this stack.
