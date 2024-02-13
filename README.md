@@ -9,6 +9,13 @@ Let's build a blog page with Axum, Askama, HTMX and Tailwind. I like to write ar
 % tags: ml, devops, rust
 ```
 
+This project is deployed on serverless compute (AWS Lambda), using the Rust runtime. To make things easier, it uses `cargo-lambda` to [run, build and deploy](https://www.cargo-lambda.info/).
+
+```
+brew tap cargo-lambda/cargo-lambda
+brew install cargo-lambda
+```
+
 ## Development
 
 Run Postgres locally:
@@ -26,8 +33,7 @@ docker run -d \
 Run the server:
 
 ```
-cargo install cargo-watch
-cargo watch -x "run --bin web-rs"
+cargo lambda watch
 ```
 
 Run Tailwind (styling):
@@ -45,7 +51,11 @@ Likewise, OPENAI_API_KEY is set to generate summaries of the articles. This is o
 
 ## Build release
 
-Build Docker image and deploy wherever you like.
+```
+cargo lambda build --release
+```
+
+Or build Docker image and deploy wherever you like.
 
 ```
 docker build -t webrs .
@@ -53,9 +63,11 @@ docker build -t webrs .
 
 ## Troubleshooting
 
-If the page is not loading, check if `sqlx` made a connection and didn't timeout. A timeout indicates that Postgres is not up.
+If the page is not loading, check if `sqlx` made a connection and didn't timeout. A timeout indicates that local Postgres is not up.
 
 CockroachDB doesn't support locking the database prior to migrations. Hence, `sqlx::migrate!().set_locking(false)`.
+
+CockroachDB is going to log warnings on startup due to `sqlx` migration queries that take time to execute. This is only on startup though, so it shouldn't be an issue.
 
 ## To do
 
