@@ -1,20 +1,59 @@
 {% extends "base.html" %} {% block content %}
-<body class="h-full bg-gray-100 max-w-screen-md mx-auto py-24">
-  <div class="grid grid-cols-2 gap-y-4 gap-x-8">
-    <header class="col-span-2 font-mono text-xl text-gray-900 font-black">
-      Experience
-    </header>
-    {% for job in resume_data.experience %}
-    <div class="">{{ job.title }} @ {{ job.employer }}</div>
-    <div class="">{{ job.period.from }} - {{ job.period.to }}</div>
-    {% endfor %}
-    <header class="col-span-2 font-mono text-xl text-gray-900 font-black">
-      Education
-    </header>
-    {% for job in resume_data.education %}
-    <div class="">{{ job.title }} @ {{ job.school.name }}</div>
-    <div class="">{{ job.period.from }} - {{ job.period.to }}</div>
-    {% endfor %}
+<body class="bg-gray-100">
+  <div class="h-full max-w-screen-md mx-auto px-4">
+    <div class="grid grid-cols-4 gap-y-2 gap-x-4 sm:gap-y-4 sm:gap-x-8">
+      <div class="col-span-4 py-2 text-lg">
+        <a href="/" class="hover:bg-purple-500">👈</a>
+      </div>
+      <header class="col-span-4 font-mono text-xl text-gray-900 font-black">
+        Manifest
+      </header>
+      <div class="col-span-4 mb-8">
+        I'm a self-taught software developer who found his passion relatively
+        late in university. In my last academic year I have taken several
+        computer science courses that taught me some fundamentals. Since then, I
+        have built upon this fundament. I'm doing that through reading fora,
+        blogs and books, being active in communities (Reddit, Stack Overflow or
+        physically at work) and building many, many side projects. Although I'm
+        constantly testing out new technology, I live by the philosophy "learn
+        concepts, not tools".
+      </div>
+      <header
+        class="col-span-4 font-mono text-xl text-gray-900 font-black sm:col-span-2 mb-2 sm:mb-0"
+      >
+        Experience
+      </header>
+      <div class="text-gray-900 font-mono font-black py-1 hidden sm:block">
+        From
+      </div>
+      <div class="text-gray-900 font-mono font-black py-1 hidden sm:block">
+        To
+      </div>
+      {% for job in resume_data.experience %}
+      <div class="col-span-4 sm:col-span-2">
+        {{ job.title }} @ {{ job.employer }}
+      </div>
+      <div class="col-span-2 sm:col-span-1">{{ job.period.from }}</div>
+      <div class="col-span-2 mb-4 sm:col-span-1 sm:mb-0">
+        {{ job.period.to }}
+      </div>
+      {% endfor %}
+      <header
+        class="col-span-4 font-mono text-xl text-gray-900 font-black mt-8 mb-2 sm:mb-0"
+      >
+        Education
+      </header>
+      {% for job in resume_data.education %}
+      <div class="col-span-4 sm:col-span-2">
+        {{ job.title }} @ {{ job.school.name }}
+      </div>
+      <div class="col-span-2 sm:col-span-1">{{ job.period.from }}</div>
+      <div class="col-span-2 mb-4 sm:col-span-1 sm:mb-0">
+        {{ job.period.to }}
+      </div>
+      {% endfor %}
+    </div>
+    {% include "footer.html" %}
   </div>
 </body>
 {% endblock %}
