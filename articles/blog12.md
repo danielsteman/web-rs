@@ -193,3 +193,5 @@ impl Blog {
 ```
 
 The whole development experience that I got from building this example was pleasant and refreshing. The fact that most client-side code is embedded in HTML makes the project concise and ergonomic. I'm not sure if htmx will be the answer for larger projects that require much more user interaction, as it would be hard to refactor more complex logic. But if you're building a prototype and want to experience something else than a mainstream javascript framework, I can highly recommend this stack.
+
+This stack also tackles the SEO issues I had before, because all content is now available without executing javascript, but also because it follows a conventional sitemap and loads pages quickly. It must be noted that these tools have worked well for me in this project but that they might not be the best choice for another project. As a wise person once said: "learn concepts, not tools".
