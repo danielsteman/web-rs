@@ -13,7 +13,15 @@
   </script>
   {% include "header.html" %}
   <div class="flex flex-col w-full max-w-screen-md mx-auto" id="search-results">
-    {% include "blogs-search-results.html" %} {% include "footer.html" %}
+    {% include "blogs-search-results.html" %}
+    <div class="flex flex-row gap-4 justify-center mx-auto">
+      <div class="cursor-pointer text-lg">👈</div>
+      <div class="font-mono text-sm py-1">
+        {{pagination.page}} / {{pagination.page}}
+      </div>
+      <div class="cursor-pointer text-lg">👉</div>
+    </div>
+    {% include "footer.html" %}
   </div>
 </body>
 {% endblock %}

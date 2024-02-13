@@ -13,10 +13,17 @@ pub struct Blog {
 }
 
 impl Blog {
-    pub async fn get_blogs(pool: &Pool<Postgres>) -> Result<Vec<Blog>, Error> {
-        let mut blogs: Vec<Blog> = sqlx::query_as::<_, Blog>("SELECT * FROM blog")
-            .fetch_all(pool)
-            .await?;
+    pub async fn get_blogs(
+        pool: &Pool<Postgres>,
+        offset: usize,
+        limit: usize,
+    ) -> Result<Vec<Blog>, Error> {
+        let mut blogs: Vec<Blog> =
+            sqlx::query_as::<_, Blog>("SELECT * FROM blog LIMIT $1 OFFSET $2")
+                .bind(format!("%{}%", limit))
+                .bind(format!("{}", offset))
+                .fetch_all(pool)
+                .await?;
 
         blogs.sort_by(|a, b| b.id.cmp(&a.id));
 
