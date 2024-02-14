@@ -4,7 +4,7 @@
       "splitTerminals": [
         {
           "name": "axum",
-          "commands": ["cargo watch -x \"run --bin webrs\""]
+          "commands": ["cargo lambda watch"]
         }
       ]
     },

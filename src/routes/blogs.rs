@@ -20,23 +20,30 @@ pub struct Pagination {
     per_page: usize,
 }
 
-impl Default for Pagination {
-    fn default() -> Pagination {
-        Pagination {
+// impl Default for Pagination {
+//     fn default() -> Pagination {
+//         Pagination {
+//             page: 1,
+//             per_page: 10,
+//         }
+//     }
+// }
+
+pub async fn blogs(
+    State(pool): State<PgPool>,
+    pagination: Option<Query<Pagination>>,
+) -> impl IntoResponse {
+    let pagination = match pagination {
+        Some(pagination) => Pagination { ..*pagination },
+        None => Pagination {
             page: 1,
             per_page: 10,
-        }
-    }
-}
+        },
+    };
 
-/// For handling values being empty vs missing see the [query-params-with-empty-strings][example]
-/// example.
-///
-/// [example]: https://github.com/tokio-rs/axum/blob/main/examples/query-params-with-empty-strings/src/main.rs
-
-pub async fn blogs(State(pool): State<PgPool>, pagination: Query<Pagination>) -> impl IntoResponse {
     let limit = pagination.per_page;
-    let offset = pagination.page * limit;
+    let offset = (pagination.page - 1) * limit;
+
     match Blog::get_blogs(&pool, limit, offset).await {
         Ok(blogs) => {
             let pagination_data = Pagination {
