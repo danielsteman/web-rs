@@ -67,6 +67,12 @@ Or build Docker image and deploy wherever you like.
 docker build -t webrs .
 ```
 
+## Deploy
+
+```
+cargo lambda deploy --env-var DATABASE_URL="$DATABASE_URL" --include migrations --include templates --include assets webrs
+```
+
 ## Troubleshooting
 
 If the page is not loading, check if `sqlx` made a connection and didn't timeout. A timeout indicates that local Postgres is not up.
