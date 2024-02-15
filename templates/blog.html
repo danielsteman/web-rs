@@ -8,7 +8,17 @@
 
       const highlighter = await getHighlighter({
         themes: ["github-light"],
-        langs: ["yaml", "bash", "python", "markdown", "dockerfile", "toml"],
+        langs: [
+          "yaml",
+          "bash",
+          "python",
+          "markdown",
+          "dockerfile",
+          "toml",
+          "html",
+          "rust",
+          "jsx",
+        ],
       });
 
       codeElements.forEach(async (codeElement) => {
