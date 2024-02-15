@@ -30,10 +30,16 @@ docker run -d \
     postgres:latest
 ```
 
-Run the server:
+Run the server locally:
 
 ```bash
 cargo lambda watch
+```
+
+Test lambda function invokation:
+
+```bash
+cargo lambda invoke --data-file examples/example-request.json
 ```
 
 Run Tailwind (styling):
