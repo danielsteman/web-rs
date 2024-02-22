@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: SAM template for Rust binary
 Resources:
@@ -8,14 +8,37 @@ Resources:
       BuildMethod: rust-cargolambda
       BuildProperties: function_a
     Properties:
-      Architectures:
-        - arm64
       CodeUri: ./target/lambda/webrs/
       Handler: bootstrap
       Runtime: provided.al2023
-  RustApi:
-    Type: AWS::Serverless:Api
-    StageName: prod
+      Environment:
+        Variables:
+          DATABASE_URL:
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          title: "HTML API"
+          version: "1.0"
+        paths:
+          /:
+            get:
+              produces:
+                - text/html
+              responses:
+                "200":
+                  description: "HTML content"
+                  schema:
+                    type: "string"
+                    example: "<!DOCTYPE html><html><head><title>Hello</title></head><body><h1>Hello, world!</h1></body></html>"
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: AWS_PROXY
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${RustFunction.Arn}/invocations"
+
 Outputs:
   RustFunction:
     Description: "Lambda Function ARN"
