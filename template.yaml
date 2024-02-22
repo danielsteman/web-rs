@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template for Rust binary
+Resources:
+  RustFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: rust-cargolambda
+      BuildProperties: function_a
+    Properties:
+      Architectures:
+        - arm64
+      CodeUri: ./target/lambda/webrs/
+      Handler: bootstrap
+      Runtime: provided.al2023
+  RustApi:
+    Type: AWS::Serverless:Api
+    StageName: prod
+Outputs:
+  RustFunction:
+    Description: "Lambda Function ARN"
+    Value: !GetAtt RustFunction.Arn
