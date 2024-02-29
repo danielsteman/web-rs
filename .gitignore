@@ -17,3 +17,6 @@ assets/output.css
 
 # SAM default build folder
 .aws-sam/
+
+# certs
+*.pem
