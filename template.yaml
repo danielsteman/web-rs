@@ -8,9 +8,12 @@ Resources:
       BuildMethod: rust-cargolambda
       BuildProperties: function_a
     Properties:
+      FunctionName: WebRs
       CodeUri: ./target/lambda/webrs/
       Handler: bootstrap
       Runtime: provided.al2023
+      FunctionUrlConfig:
+        AuthType: NONE
       Tracing: Active
       Environment:
         Variables:
@@ -19,14 +22,18 @@ Resources:
         ApiEvent:
           Type: Api
           Properties:
-            Path: /
-            Method: get
+            Path: /{proxy+}
+            Method: ANY
             RestApiId:
               Ref: ApiGatewayApi
+  RustFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/WebRs
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: prod
+      StageName: Prod
 Outputs:
   RustFunction:
     Description: Lambda Function ARN

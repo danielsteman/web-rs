@@ -8,6 +8,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use include_dir::include_dir;
 use lambda_http::{run, Error};
 use tower_http::services::ServeDir;
 use utils::db::get_db;
@@ -24,7 +25,10 @@ fn load_env() {}
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     load_env();
-    set_var("AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH", "true");
+    set_var("AWS_LAMBDA_HTTP_IGNORE_STAGE_IN_PATH", "false");
+
+    include_dir!("$CARGO_MANIFEST_DIR/assets");
+    include_dir!("$CARGO_MANIFEST_DIR/migrations");
 
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)

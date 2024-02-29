@@ -6,9 +6,9 @@ beta_features = true
 beta_features = true
 
 [default.deploy.parameters]
-stack_name = "sam-app"
+stack_name = "webrs"
 resolve_s3 = true
-s3_prefix = "sam-app"
+s3_prefix = "webrs"
 region = "eu-central-1"
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
