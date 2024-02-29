@@ -2,13 +2,13 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: SAM template for Rust binary
 Resources:
-  RustFunction:
+  WebRsFunction:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: rust-cargolambda
       BuildProperties: function_a
     Properties:
-      FunctionName: WebRs
+      FunctionName: WebRsFunction
       CodeUri: ./target/lambda/webrs/
       Handler: bootstrap
       Runtime: provided.al2023
@@ -24,17 +24,11 @@ Resources:
           Properties:
             Path: /{proxy+}
             Method: ANY
-            RestApiId:
-              Ref: ApiGatewayApi
-  RustFunctionLogGroup:
+  WebRsFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: /aws/lambda/WebRs
-  ApiGatewayApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: Prod
+      LogGroupName: /aws/lambda/WebRsLogs
 Outputs:
-  RustFunction:
+  WebRsFunction:
     Description: Lambda Function ARN
-    Value: !GetAtt RustFunction.Arn
+    Value: !GetAtt WebRsFunction.Arn
