@@ -2,10 +2,6 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: SAM template for Rust binary
 Resources:
-  # WebRsRestApi:
-  #   Type: AWS::ApiGateway::RestApi
-  #   Properties:
-  #     Name: WebRsRestApi
   WebRsFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -21,18 +17,16 @@ Resources:
       Tracing: Active
       Environment:
         Variables:
-          DATABASE_URL:
+          DATABASE_URL: postgresql://daniel:7zw0C9QkVn7hnQlJ2_2ALQ@dry-reptile-8706.7tc.aws-eu-central-1.cockroachlabs.cloud:26257/webrs?sslmode=verify-full
       Events:
         RootApiEvent:
           Type: Api
           Properties:
-            # RestApiId: !Ref WebRsRestApi
             Path: /
             Method: ANY
         AnyApiEvent:
           Type: Api
           Properties:
-            # RestApiId: !Ref WebRsRestApi
             Path: /{proxy+}
             Method: ANY
   WebRsFunctionLogGroup:
@@ -42,7 +36,7 @@ Resources:
   WebRsCustomDomain:
     Type: AWS::ApiGateway::DomainName
     Properties:
-      DomainName: danielsteman.com # Your custom domain name
+      DomainName: danielsteman.com
       RegionalCertificateArn: arn:aws:acm:eu-central-1:730335219622:certificate/f54b77ad-9ded-4c03-9f73-bea389d86eca
       EndpointConfiguration:
         Types:
