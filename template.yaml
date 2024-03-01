@@ -2,10 +2,10 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: SAM template for Rust binary
 Resources:
-  WebRsRestApi:
-    Type: AWS::ApiGateway::RestApi
-    Properties:
-      Name: WebRsRestApi
+  # WebRsRestApi:
+  #   Type: AWS::ApiGateway::RestApi
+  #   Properties:
+  #     Name: WebRsRestApi
   WebRsFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -26,13 +26,13 @@ Resources:
         RootApiEvent:
           Type: Api
           Properties:
-            RestApiId: !Ref WebRsRestApi
+            # RestApiId: !Ref WebRsRestApi
             Path: /
             Method: ANY
         AnyApiEvent:
           Type: Api
           Properties:
-            RestApiId: !Ref WebRsRestApi
+            # RestApiId: !Ref WebRsRestApi
             Path: /{proxy+}
             Method: ANY
   WebRsFunctionLogGroup:
