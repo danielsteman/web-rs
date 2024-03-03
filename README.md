@@ -36,12 +36,6 @@ Run the server locally:
 cargo lambda watch
 ```
 
-Test lambda function invokation:
-
-```bash
-cargo lambda invoke --data-file examples/example-request.json
-```
-
 Run Tailwind (styling):
 
 ```bash
@@ -69,8 +63,16 @@ docker build -t webrs .
 
 ## Deploy
 
+Compile and copy assets to target:
+
+```bash
+yarn prod
 ```
-cargo lambda deploy --env-var DATABASE_URL="$DATABASE_URL" --include migrations --include templates --include assets webrs
+
+I'm using the [AWS Serverless Application Model (SAM)](https://aws.amazon.com/serverless/sam/) to deploy the Rust binary, along with assets, on S3 and AWS Lambda:
+
+```bash
+sam deploy --parameter-overrides DATABASE_URL="$DATABASE_URL"
 ```
 
 ## Troubleshooting

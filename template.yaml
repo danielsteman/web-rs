@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: SAM template for Rust binary
+Parameters:
+  DatabaseUrl:
+    Type: String
 Resources:
   WebRsFunction:
     Type: AWS::Serverless::Function
@@ -18,6 +21,7 @@ Resources:
       Environment:
         Variables:
           DATABASE_URL:
+            Ref: DatabaseUrl
       Events:
         RootApiEvent:
           Type: Api

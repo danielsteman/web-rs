@@ -5,7 +5,7 @@ async function drawRadar() {
     svg_id: "radar",
     width: 1450,
     height: 1000,
-    scale: 1.0,
+    scale: 1,
     colors: {
       background: "#f3f4f6",
       grid: "#111827",
