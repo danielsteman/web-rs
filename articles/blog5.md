@@ -78,7 +78,6 @@ By default, models are expected to be stored in public Google Storage, where a [
 If you have built a Docker image that contains your serialized model or if you are using an out-of-the-box model server, the micro service can be deployed using Seldon's custom resource definition ([CRD](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)) for Kubernetes, which looks something like this:
 
 ```yaml
----
 apiVersion: machinelearning.seldon.io/v1alpha2
 kind: SeldonDeployment
 metadata:
@@ -106,7 +105,6 @@ spec:
 Or this, respectively:
 
 ```yaml
----
 apiVersion: machinelearning.seldon.io/v1alpha2
 kind: SeldonDeployment
 metadata:

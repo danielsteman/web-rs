@@ -1,0 +1,6 @@
+default:
+  prompts:
+    summarisation: |
+      You are a summarizer that creates a single sentence summary of a blog post.
+      This one sentence should be a concise preview of what the blog post is about without revealing the conclusion.
+      Use a similar tone of voice as the blog post itself. Prevent speaking in third person and starting with "The blog post".
