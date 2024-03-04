@@ -48,7 +48,8 @@ impl Blog {
         let content = lines.join("\n");
 
         let html = markdown::to_html(&content);
-        blog.body = html;
+        let extra_white_space_html = html.replace("</p><p>", "</p><br><p>");
+        blog.body = extra_white_space_html;
 
         Ok(blog)
     }

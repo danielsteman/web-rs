@@ -7,6 +7,28 @@
 @import "tailwindcss/utilities";
 
 /*
+default style for lists
+*/
+
+ul,
+ol {
+  list-style-type: none;
+  padding-left: 0.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+li {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+li::before {
+  content: "\1F449"; /* Unicode for the emoji */
+  margin-right: 0.5rem;
+}
+
+/*
 style hrefs in blog articles but not in the blogs overview
 */
 

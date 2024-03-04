@@ -151,7 +151,7 @@ Where `blog.html` has placeholders for the struct fields. The example also revea
 </div>
 ```
 
-### Database
+## Database
 
 A content management system is usually overkill for a simple project and in case of my blog, I basically write articles in markdown and commit them. Transforming markdown to HTML is made easy with the `to_html()` method of [markdown.rs](). To prevent that each markdown file needs to be transformed to HTML everytime the blogs page is loaded, I decided to setup a postgres database. A simple ingestion script performs the job of parsing the markdown files in `/articles/` and pushing articles to the database.
 
