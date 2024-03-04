@@ -86,7 +86,7 @@ const SearchComponent = () => {
 
 Also, the hypermedia that is shipped by the server is much more sensible to search engine crawlers than minified HTML, which would be the case with SPA (React SPA in this example). On the other hand, minified HTML has the benefit of being smaller in size and increasing overall site speed.
 
-### Styling
+## Styling
 
 For styling I used TailwindCSS. It works really well together with htmx because at this point most client-side logic and styling is embedded in the HTML served by Axum, making the resulting code concise. Setting up Tailwind was as straight forward as `yarn add tailwindcss`. For development and production runs I added to following scripts to my `package.json`.
 
@@ -119,7 +119,7 @@ body[class*="blog"] h2 {
 
 After having used several server side technologies I wanted to try something new. Since some time [rust](https://www.rust-lang.org/) has become my preferred language for side-projects because its type system helps me to prevent making mistakes and when I make mistakes, the compiler usually knows how to pinpoint the problem. Also, it provides a way to get more experienced with memory management, as opposed to dynamic interpreted languages like Python where this trait is less apparent. Anyways, I decided to use [axum](https://github.com/tokio-rs/axum), a web framework written in rust that supposedly is very modular because it uses [tower](https://docs.rs/tower/latest/tower/trait.Service.html) middleware, not its own, and because it seems ergonomic, looking at the minimal examples in [the documentation](https://github.com/tokio-rs/axum?tab=readme-ov-file). Not that loading hypermedia would ever take long, but axum also seems performant, as its only a thin wrapper around the low-level HTTP implementation for rust. See the [performance benchmark](https://github.com/programatik29/rust-web-benchmarks/blob/master/result/hello-world.md) for yourself.
 
-### Templates
+## Templates
 
 To make the application more extendable, I used [askama](https://github.com/djc/askama), a type-safe template engine that uses syntax similar to jinja. Type-safety is enforced through user defined structs. For example, this is a blog struct that fills in the `blog.html` template, which is situated (and expected by default) in `templates/`.
 

@@ -64,7 +64,9 @@
       {{ title }}
     </header>
     <div class="font-bold font-mono text-gray-900">{{ date }}</div>
-    <div class="font-mono text-gray-900 w-full">{{ body|safe }}</div>
+    <div class="font-mono text-gray-900 w-full flex flex-col gap-4">
+      {{ body|safe }}
+    </div>
     {% include "footer.html" %}
   </div>
 </body>
