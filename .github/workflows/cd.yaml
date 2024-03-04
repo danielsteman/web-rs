@@ -8,20 +8,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Login to GAR
-        id: auth
-        uses: docker/login-action@v3
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
         with:
-          registry: europe-west4-docker.pkg.dev
-          username: _json_key
-          password: ${{ secrets.GAR_SA_KEY }}
+          toolchain: stable
+      - run: cargo build --release --all-features
 
-      - id: docker-push-web-tagged
-        name: Tag webrs image
-        uses: docker/build-push-action@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          file: Dockerfile
-          push: false
-          tags: |
-            europe-west4-docker.pkg.dev/web-rs/webrs/webrs:${{ github.sha }}
-            europe-west4-docker.pkg.dev/web-rs/webrs/webrs:latest
+          node-version: "18.18"
+
+      - name: Install dependencies
+        run: |
+          yarn install
+          yarn prod
