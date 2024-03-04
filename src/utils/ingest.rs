@@ -68,6 +68,7 @@ async fn metadata_to_blog(metadata: Metadata) -> Option<Blog> {
         let title = metadata.title.clone().unwrap();
         let body = metadata.body.clone().unwrap();
         let system_message = settings.default.prompts.summarisation;
+        println!("prompt: {}", system_message);
         let summary = summarize(&body, &system_message).await.unwrap();
         let string_date = metadata.date.clone().unwrap();
         let date_format = format_description!("[year]-[month]-[day]");

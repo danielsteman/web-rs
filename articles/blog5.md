@@ -9,7 +9,7 @@ To solve this issue, the trained model needs to be exposed, which can be done by
 
 You might ask, why Seldon Core and not [BentoML](https://github.com/bentoml/BentoML) or [Kubeflow](https://github.com/kubeflow/kubeflow) or another tool that has recently risen among the wave of [MLOps](https://ml-ops.org/) tools? The honest answer is: I don't know. You have to start somewhere, and Seldon Core seemed to match our (future) requirements. There are also managed solutions such as Azure ML, AWS Sagemaker and Google Cloud ML, but those provide less flexibility in keeping track of your models and exposing them.
 
-![Seldon Core high level overview](../images/seldon-core-high-level.jpg)
+![Seldon Core high level overview](/assets/images/seldon-core-high-level.jpg)
 
 The top image is from [the Seldon docs](https://docs.seldon.io/projects/seldon-core/en/latest/workflow/github-readme.html) and shows a simple example and a more elaborate example that uses more features. For my experiment, I went with a single model and focused on model serving. Getting started with Seldon Core is straight forward and if you already have a Kubernetes cluster running, you can use [this Helm chart](https://docs.seldon.io/projects/seldon-core/en/latest/charts/seldon-core-operator.html).
 

@@ -7,7 +7,7 @@ In my [previous post](https://www.danielsteman.com/blog/5) I wrote about deployi
 
 For a project I was working on, we needed more than just the service, we also needed to store predictions and apply some business logic. Hence, I built a wrapping API and giving our Python-focused stack, my weapon of choice was [FastAPI](https://fastapi.tiangolo.com/). I inspired the design on [an example](https://github.com/tiangolo/full-stack-fastapi-postgresql) that was built by [the maker](https://github.com/tiangolo) of FastAPI, so I would advice you to check that out as well. A very high level design is shown below.
 
-![API design high level overview](../images/api_design.png)
+![API design high level overview](/assets/images/api_design.png)
 
 Before, a client calls the ML micro service directly with a post request and a body, where the body contains the data that will be used to predict. An example `cURL` request looks like the snippet below.
 

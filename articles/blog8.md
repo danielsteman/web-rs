@@ -62,9 +62,9 @@ on:
 
 Alongside the Express services, I use [Firebase](https://firebase.google.com/) services, which makes it really easy to integrate authentication and a documents database using the [client library](https://firebase.google.com/docs/firestore/client/libraries) in the frontend package (`web`), a Typescript React app created with Vite in this project. By reusing [Chakra UI](https://chakra-ui.com/) components it's easy to put Firebase to work, for example through the Modal that contains a login screen and an option to authenticate with Google.
 
-![Landing page](../assets/images/saas-starter-0.png)
+![Landing page](/assets/images/saas-starter-0.png)
 
-![Sign up page](../images/saas-starter-1.png)
+![Sign up page](/assets/images/saas-starter-1.png)
 
 For the next iteration I'm planning to integrate [Stripe](https://stripe.com/) to handle the payment checkout. The biggest challenge would be to align the user database in Firebase with the customer database in Stripe. Luckily, this is made easy by the [Firebase-provided cloud functions](https://firebase.google.com/docs/tutorials/payments-stripe).
 

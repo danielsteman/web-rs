@@ -19,14 +19,14 @@ After countless hours of research I decided to go with a wireless Corne Cherry v
 - Mill Max Socket Pins
 - OEM Dye Sub Keycap Set for 40% Ortholinear Keyboards
 
-![Parts](../images/ckbrd_packaging.jpg)
+![Parts](/assets/images/ckbrd_packaging.jpg)
 
 As the PCB design is open sourced you can basically order those parts at any PCB printing shop. The other parts are quite generic and widely available from other shops as well. After receiving the parts it was time to for assembly. You'll need a soldering iron and a steady hand to mount all the parts on the PCB. Without that much experience in soldering, this was quite doable, so don't let that discourage you. The Nice!Nano is really easy to flash, thanks to the [clear instructions and accompanied Github actions](https://github.com/foostan/crkbd/blob/main/corne-cherry/doc/v3/buildguide_en.md), so you don't have to bother with building the firmware yourself. [This](https://github.com/danielsteman/ckbrd) is my fork, which contains the keymap in `/config/corne.keymap`.
 
-![Parts](../images/ckbrd_soldering.jpg)
+![Parts](/assets/images/ckbrd_soldering.jpg)
 
-![Parts](../images/ckbrd_switches.jpg)
+![Parts](/assets/images/ckbrd_switches.jpg)
 
-![Parts](../images/ckbrd_assembled.jpg)
+![Parts](/assets/images/ckbrd_assembled.jpg)
 
 By now I can say that it definitely takes some time to get used to the Corne, but it definitely makes work more chill. A split keyboard makes it easier to keep a good posture for a longer time working behind a desk. In the beginning you probably want to have an open tab with the keymap to check the position of a layered key that you maybe don't use as often. Also, due to the ortholinear layout you will misfire occasionally. But that's alright. After you wrapped your brain around the new positions and keymap, you'll notice the potential it has in terms of typing speed ⚡.

@@ -1,6 +1,8 @@
 default:
   prompts:
     summarisation: |
-      You are a summarizer that creates a single sentence summary of a blog post.
+      Summarise the blog post in one sentence.
       This one sentence should be a concise preview of what the blog post is about without revealing the conclusion.
-      Use a similar tone of voice as the blog post itself. Prevent speaking in third person and starting with "The blog post".
+      Use a similar tone of voice as the blog post itself. Do not summarise in third person.
+      Do not start the summary with "The blog post". Seriously though, don't start with "the blog".
+      Also don't start with "this post".
