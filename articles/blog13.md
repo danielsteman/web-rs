@@ -1,0 +1,10 @@
+% id: 13
+% title: PyPI over notebooks
+% date: 2024-02-13
+% tags: data
+
+## Developing with Databricks
+
+Recently I have been working a lot with Databricks and quite honestly, wasn't very content with the developer experience. All interaction takes place in the browser, in Databricks' flavor of [Jupyter notebooks](https://jupyter.org/). This seems to ignore software engineering best practices. First of all, it won't let you use your developer workflow that you've been optimising over the past years. Think of a short key to view the definition of a function, automatic format-on-save, or an integration for Github copilot, to name a few. Second, Databricks has a git integration but doesn't support pre-commit hooks. I trust that my colleagues write clean code but I often find myself making tiny errors that are caught by pre-commit. Third, interaction is slow. I'm grateful for the performance that Firefox delivers but let's agree that you're not supposed to use it as an IDE. Yes, I'm looking at you [VS Code Web](https://code.visualstudio.com/docs/editor/vscode-web). At last, feedback-loops associated with development in Databricks are usually long because tasks are performed on remote compute. However, this is not inherently a limitation of Databricks but rather an unavoidable trait when dealing with large datasets that don't fit in memory of your own machine. As an engineer I like to think about solutions and so, I tried out a couple of things.
+
+Before continuing, I must say that Databricks is a great product to get started with a datalake. Aside from the managed [Spark](https://spark.apache.org/docs/latest/api/python/index.html) runtime that runs notebooks that have been developed in the browser, it also comes with a [workflow orchestrator](https://docs.databricks.com/en/workflows/index.html), to run notebooks on a schedule. Such a notebook may train a machine learning model that can be tracked with the [MLflow integration](https://mlflow.org/), for example. And then there is the other [fancy stuff](https://docs.databricks.com/en/getting-started/concepts.html) Databricks advocates to ~~up the bill~~ help you become data-driven.
