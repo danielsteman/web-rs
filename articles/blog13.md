@@ -1,6 +1,6 @@
 % id: 13
 % title: PyPI over notebooks
-% date: 2024-02-13
+% date: 2024-03-08
 % tags: data
 
 ## The Databricks ecosystem
@@ -50,4 +50,8 @@ publish:
       when: on_success
 ```
 
-What I really like about Gitlab pipelines is that quite a few variables (everything prefixed with `$`) are predefined. The variables referenced in the pipeline snippet are used to authenticate with the private PyPI repository.
+What I really like about Gitlab pipelines is that quite a few variables (everything prefixed with `$`) are predefined and can be used to authenticate with a private PyPI repository. It's also possible to abstract repetitive YAML in templates and use it in several repositories. In practice, you might not want to publish the package right away but perform linting and automated testing before. When the package is published, you'll be able to find it in the private package registry of the project. This is different for other Git hosting platforms such as Azure DevOps, where you'll have a central repository for packages published by different projects (or repositories, I use those terms indifferently in this context).
+
+## Using private packages in notebooks
+
+Databricks notebooks can become bloated very quickly. The interactive nature of a notebook doesn't enforce separating code in files or modules as you can run each cell in a notebook independently. This is also an advantage for quick prototyping. For code that runs in production, not so much. A way to minimize the lines of code in a notebook, is to out source as much logic to a private PyPI package. For example, I recently refactored a notebook that fetches data from a third-party API. I contained all logic that sends requests, handles errors, pagination and more, in a package that I install and import in the Databricks runtime.
