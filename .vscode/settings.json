@@ -1,21 +1,21 @@
 {
   "restoreTerminals.terminals": [
-    {
-      "splitTerminals": [
-        {
-          "name": "axum",
-          "commands": ["cargo lambda watch"]
-        }
-      ]
-    },
-    {
-      "splitTerminals": [
-        {
-          "name": "tailwind",
-          "commands": ["yarn dev"]
-        }
-      ]
-    }
+    // {
+    //   "splitTerminals": [
+    //     {
+    //       "name": "axum",
+    //       "commands": ["cargo lambda watch"]
+    //     }
+    //   ]
+    // },
+    // {
+    //   "splitTerminals": [
+    //     {
+    //       "name": "tailwind",
+    //       "commands": ["yarn dev"]
+    //     }
+    //   ]
+    // }
   ],
   "rust-analyzer.linkedProjects": ["./Cargo.toml"],
   "yaml.customTags": [
