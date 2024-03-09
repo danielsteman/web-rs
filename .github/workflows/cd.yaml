@@ -20,6 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           yarn install
+          mkdir ./target/lambda/webrs/assets
           yarn prod
       - uses: aws-actions/setup-sam@v2
         with:
