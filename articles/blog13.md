@@ -1,11 +1,11 @@
 % id: 13
 % title: PyPI over notebooks
-% date: 2024-03-08
+% date: 2024-03-09
 % tags: data
 
 ## The Databricks ecosystem
 
-Recently I have been working a lot with Databricks and quite honestly, wasn't very content with the developer experience. All interaction takes place in the browser, in Databricks-flavoured [Jupyter notebooks](https://jupyter.org/) that make it easy to collaborate in real-time (like with Google docs). This seems to ignore software engineering best practices. First of all, it won't let you use your developer workflow that you've been optimising over the past years, as these notebooks are not integrated development environment (IDE) agnostic. Think of the ability to view a definition of a function, automatic format-on-save, or boiler plate code generation and other magic that intellisense performs. Second, Databricks has a git integration but doesn't support pre-commit hooks. I believe it doesn't matter how experienced you are, pre-commit will catch tiny errors and prevent them from being pushed. You can still perform these checks in the continuous integration (CI) pipeline, but this will increase the feedback loop significantly. Third, interaction is slow. I'm grateful for the performance that Firefox delivers but let's agree that you're not supposed to use it as an IDE. Yes, I'm looking at you [VS Code Web](https://code.visualstudio.com/docs/editor/vscode-web). At last, feedback-loops associated with development in Databricks are usually long because tasks are performed on remote compute. However, this is not inherently a limitation of Databricks but rather an unavoidable trait when dealing with large datasets that don't fit in memory of your own machine. As an engineer I like to think about solutions and so, I tried out a couple of things.
+Recently, I have been working a lot with Databricks and, quite honestly, I haven't been very content with the developer experience. All interaction takes place in the browser, in Databricks-flavoured [Jupyter notebooks](https://jupyter.org/) that make it easy to collaborate in real-time (like with Google docs). This seems to ignore software engineering best practices. First of all, it won't let you use your developer workflow that you've been optimising over the past years, as these notebooks are not integrated development environment (IDE) agnostic. Think of the ability to view a definition of a function with a short cut, automatic format-on-save, or boiler plate code generation and other magic that intellisense performs. Second, Databricks has a git integration but doesn't support pre-commit hooks. I believe it doesn't matter how experienced you are, pre-commit will catch tiny errors and prevent them from being pushed. You can still perfor`m these checks in the continuous integration (CI) pipeline, but this will increase the feedback loop significantly. Third, interaction is slow. I'm grateful for the performance that Firefox delivers but let's agree that you're not supposed to use it as an IDE. Yes, I'm looking at you [VS Code Web](https://code.visualstudio.com/docs/editor/vscode-web). At last, feedback-loops associated with development in Databricks are usually long because tasks are performed on remote compute. However, this is not inherently a limitation of Databricks but rather an unavoidable trait when dealing with large datasets that don't fit in memory of your own machine. As an engineer I like to think about solutions and so, I tried out a couple of things.
 
 Before continuing, I must say that Databricks is a great product to get started with a datalake. Aside from the managed [Spark](https://spark.apache.org/docs/latest/api/python/index.html) runtime that runs notebooks that have been developed in the browser, it also comes with a [workflow orchestrator](https://docs.databricks.com/en/workflows/index.html), to run notebooks on a schedule. Such a notebook may train a machine learning model that can be tracked with the [MLflow integration](https://mlflow.org/), for example. And then there is the other [fancy stuff](https://docs.databricks.com/en/getting-started/concepts.html) Databricks advocates to ~~up the bill~~ help you become data-driven.
 
@@ -26,7 +26,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 ```
 
-Using a Gitlab personal access token (PAT), it's possible to build and publish this package from your local machine. But the preferred channel is the continuous delivery (CD) pipeline, that runs only after new code is merged into your `(main|master)` branch. A simple pipeline that does this looks like this.
+Using a GitLab personal access token (PAT), it's possible to build and publish this package from your local machine. But the preferred channel is the continuous delivery (CD) pipeline, that runs only after new code is merged into your `(main|master)` branch. A simple pipeline that does this looks like this.
 
 ```yaml
 stages:
@@ -50,8 +50,36 @@ publish:
       when: on_success
 ```
 
-What I really like about Gitlab pipelines is that quite a few variables (everything prefixed with `$`) are predefined and can be used to authenticate with a private PyPI repository. It's also possible to abstract repetitive YAML in templates and use it in several repositories. In practice, you might not want to publish the package right away but perform linting and automated testing before. When the package is published, you'll be able to find it in the private package registry of the project. This is different for other Git hosting platforms such as Azure DevOps, where you'll have a central repository for packages published by different projects (or repositories, I use those terms indifferently in this context).
+What I really like about GitLab pipelines is that quite a few variables (everything prefixed with `$`) are predefined and can be used to authenticate with a private PyPI repository. It's also possible to abstract repetitive YAML in templates and use it in several repositories. In practice, you might not want to publish the package right away but perform linting and automated testing before. When the package is published, you'll be able to find it in the private package registry of the project. This is different for other Git hosting platforms such as Azure DevOps, where you'll have a central repository for packages published by different projects (or repositories, I use those terms indifferently in this context).
 
 ## Using private packages in notebooks
 
-Databricks notebooks can become bloated very quickly. The interactive nature of a notebook doesn't enforce separating code in files or modules as you can run each cell in a notebook independently. This is also an advantage for quick prototyping. For code that runs in production, not so much. A way to minimize the lines of code in a notebook, is to out source as much logic to a private PyPI package. For example, I recently refactored a notebook that fetches data from a third-party API. All logic that sends requests, handles errors, pagination and more, is contained in a package that can be installed and imported in a Databricks notebook (so essentially on the Databricks Spark runtime). This approach is also beneficial for code stability and robustness, as package code can be (and should be) unit tested.
+Databricks notebooks can become bloated very quickly. The interactive nature of a notebook doesn't enforce separating code in files or modules as you can run each cell in a notebook independently. This is also an advantage for quick prototyping. For code that runs in production, not so much. A way to minimize the lines of code in a notebook, is to out source as much logic to a private PyPI package as possible. For example, I recently refactored a notebook that fetches data from a third-party API. All logic that sends requests, handles errors, pagination and more, is contained in a package that can be installed and imported in a Databricks notebook (so essentially on the Databricks Spark runtime). This approach is also beneficial for code stability and robustness, as package code can be (and should be) unit tested.
+
+To install a private package, a common method to authenticate is through a personal access token (PAT). There are [several ways](https://pip.pypa.io/en/stable/topics/authentication/) to authenticate, but to start simple, it's chill to use the `--extra-index-url` [argument](https://pip.pypa.io/en/stable/cli/pip_install/) of the `pip` command. In a Databricks notebook, shell commands need to be prefixed with `%`:
+
+```bash
+%pip install private-package==0.1.0 --index-url=https://__token__:{PAT}@gitlab.com/api/v4/projects/{PROJECT_ID}/packages/pypi/simple
+```
+
+And that's it. For deloying a notebook that installs private packages, be mindful of exposing your PAT, as it is a secret value that can be abused by others. The PAT, and other secrets such as API keys, can be passed throug environment variables, indirectly through [widgets](https://docs.databricks.com/en/notebooks/widgets.html). Even better would be to use a [secrets manager](https://aws.amazon.com/secrets-manager/). For my third party API data fetching use case, I created a `Manager` that handles the data fetching. A minimal hypothetical example of what the final notebook would look like is this:
+
+```py
+import os
+from private_package.managers import Manager
+from private_package.exceptions import MissingApiKeyError
+from private_package import schemas
+
+try:
+    api_key=os.environ["API_KEY"]
+except IndexError:
+    raise MissingApiKeyError()
+
+manager = Manager(api_key=api_key)
+manager.get_items()
+
+df = spark.createDataFrame(manager.data["items"], schema=schemas.items)
+df.write.mode("append").saveAsTable("catalog.schema.table")
+```
+
+Without going in too much details, I would like to mention that I perform validation of the API response data with [pydantic](https://docs.pydantic.dev/latest/) schemas, which I map to PySpark schemas that I use to validate and write data to tables, like I'm doing in the example above (`schema=schemas.items`). I very much like this approach because the schemas represent some kind of contract that is kept in version control and needs to pass reviews when it's changed.
