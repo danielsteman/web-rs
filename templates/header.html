@@ -1,4 +1,4 @@
-<div class="bg-indigo-400 w-full px-4 overflow-x-auto">
+<div class="bg-indigo-400 z-10 w-full px-4 overflow-x-auto relative">
   <div
     class="bg-indigo-400 gap-4 p-4 relative flex flex-row justify-end items-center max-w-screen-md min-w-fit mx-auto border-b border-gray-500 sm: pr-2 pl-0"
   >
@@ -27,10 +27,17 @@
       </div>
     </div>
 
-    <a href="/radar" target="_blank"> {% include "icons/radar.html" %} </a>
-    <a href="https://github.com/danielsteman" target="_blank">
-      {% include "icons/github.html" %}
-    </a>
+    <a href="/radar"> {% include "icons/radar.html" %} </a>
+    <div class="group relative">
+      <a href="https://github.com/danielsteman" target="_blank">
+        {% include "icons/github.html" %}
+      </a>
+      <div
+        class="hidden group-hover:block fixed -translate-x-1/2 z-50 mt-2 bg-pink-500 rounded-md p-1"
+      >
+        Github
+      </div>
+    </div>
     <a href="https://stackoverflow.com/users/11383969/dsteman" target="_blank">
       {% include "icons/stackoverflow.html" %}
     </a>
