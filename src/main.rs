@@ -59,6 +59,7 @@ async fn main() -> Result<(), Error> {
         .route("/radar", get(routes::radar::radar))
         .route("/search", post(routes::search::search))
         .route("/health/", get(routes::health::health_check))
+        .route("/subscribe", get(routes::subscribe::subscribe))
         .with_state(pool);
 
     run(app).await

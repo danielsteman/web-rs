@@ -5,3 +5,4 @@ pub mod radar;
 pub mod resume;
 pub mod root;
 pub mod search;
+pub mod subscribe;
