@@ -20,15 +20,19 @@ impl Subscriber {
         Ok(())
     }
 
-    pub async fn get_subscriber(pool: &Pool<Postgres>, email: String) -> Result<(), Error> {
-        let result = sqlx::query("SELECT * FROM subscriber WHERE (email) = ($1)")
-            .bind(email)
-            .execute(pool)
-            .await?;
+    pub async fn get_subscribers(
+        pool: &Pool<Postgres>,
+        email: String,
+    ) -> Result<Vec<Subscriber>, Error> {
+        let subscribers: Vec<Subscriber> =
+            sqlx::query_as::<_, Subscriber>("SELECT * FROM subscriber WHERE email ILIKE $1")
+                .bind(email)
+                .fetch_all(pool)
+                .await?;
 
-        println!("{:?}", result);
+        println!("{:?}", subscribers);
 
-        Ok(())
+        Ok(subscribers)
     }
 
     pub async fn delete_subscriber(pool: &Pool<Postgres>, email: String) -> Result<(), Error> {
@@ -60,8 +64,9 @@ mod tests {
         Subscriber::create_subscriber(&pool, String::from(email))
             .await
             .unwrap();
-        // let res = subscriber.get_subscriber()
-        // assert_eq!(result.len() > 0, true);
-        // assert_eq!(result[0].id, 420);
+        let res = Subscriber::get_subscribers(&pool, String::from(email))
+            .await
+            .unwrap();
+        assert_eq!(res.len() > 0, true);
     }
 }
