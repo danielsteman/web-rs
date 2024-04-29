@@ -12,7 +12,7 @@ pub struct Subscribe {
 
 pub async fn subscribe(State(pool): State<PgPool>, Form(body): Form<Subscribe>) {
     match Subscriber::create_subscriber(&pool, body.email.as_str()).await {
-        Ok(subscriber) => {
+        Ok(_) => {
             println!("New subscriber: {}", body.email)
         }
         Err(error) => {
