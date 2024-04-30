@@ -47,7 +47,7 @@ impl Blog {
         let lines: Vec<&str> = blog.body.lines().collect();
         let content = lines.join("\n");
 
-        let html = markdown::to_html(&content);
+        let html = markdown::to_html_with_options(&content, &markdown::Options::gfm()).unwrap();
         blog.body = html;
 
         Ok(blog)
