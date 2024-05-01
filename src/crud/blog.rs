@@ -1,6 +1,10 @@
+use std::env;
+use std::fs::read_to_string;
+
 use sqlx::error::Error;
 use sqlx::types::time::Date;
 use sqlx::{Pool, Postgres};
+use time::Month;
 
 #[derive(PartialEq, Debug, sqlx::FromRow)]
 pub struct Blog {
@@ -39,6 +43,22 @@ impl Blog {
     }
 
     pub async fn get_blog(pool: &Pool<Postgres>, id: i32) -> Result<Blog, Error> {
+        if let Ok(env) = env::var("ENV") {
+            if env == "DEV" {
+                let filename = format!("articles/blog{}.md", id);
+                let markdown_content = read_to_string(filename)?;
+                let markdown_blog = Blog {
+                    id,
+                    title: String::from("test"),
+                    summary: String::from("test"),
+                    body: markdown_content,
+                    date: Date::from_calendar_date(2019, Month::January, 1).unwrap(),
+                    tags: vec![String::from("hoi")],
+                };
+                return Ok(markdown_blog);
+            }
+        }
+
         let mut blog: Blog = sqlx::query_as::<_, Blog>("SELECT * FROM blog WHERE id = $1")
             .bind(id)
             .fetch_one(pool)
