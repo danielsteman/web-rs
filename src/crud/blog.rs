@@ -42,16 +42,23 @@ impl Blog {
         Ok(blogs)
     }
 
+    pub fn text_to_html(text: String) -> String {
+        let html = markdown::to_html_with_options(&text, &markdown::Options::gfm()).unwrap();
+        html
+    }
+
     pub async fn get_blog(pool: &Pool<Postgres>, id: i32) -> Result<Blog, Error> {
         if let Ok(env) = env::var("ENV") {
             if env == "DEV" {
                 let filename = format!("articles/blog{}.md", id);
-                let markdown_content = read_to_string(filename)?;
+                let markdown_string = read_to_string(filename)?;
+                let markdown_body = Blog::text_to_html(markdown_string);
+
                 let markdown_blog = Blog {
                     id,
                     title: String::from("test"),
                     summary: String::from("test"),
-                    body: markdown_content,
+                    body: markdown_body,
                     date: Date::from_calendar_date(2019, Month::January, 1).unwrap(),
                     tags: vec![String::from("hoi")],
                 };
@@ -64,10 +71,7 @@ impl Blog {
             .fetch_one(pool)
             .await?;
 
-        let lines: Vec<&str> = blog.body.lines().collect();
-        let content = lines.join("\n");
-
-        let html = markdown::to_html_with_options(&content, &markdown::Options::gfm()).unwrap();
+        let html = Blog::text_to_html(blog.body);
         blog.body = html;
 
         Ok(blog)
