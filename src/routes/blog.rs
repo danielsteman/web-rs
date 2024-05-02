@@ -1,4 +1,4 @@
-use core::panic;
+use time::Month;
 
 use axum::{
     extract::{Path, State},
@@ -27,9 +27,10 @@ pub async fn blog(State(pool): State<PgPool>, Path(id): Path<i32>) -> impl IntoR
             body: blog.body.clone(),
             date: blog.date,
         }),
-        Err(err) => {
-            println!("Error fetching blog: {}", err);
-            panic!("Error fetching blog")
-        }
+        Err(_) => HtmlTemplate(BlogTemplate {
+            title: "Not Found".to_string(),
+            body: "This blog hasn't been written yet...".to_string(),
+            date: Date::from_calendar_date(1995, Month::April, 13).unwrap(),
+        }),
     }
 }
