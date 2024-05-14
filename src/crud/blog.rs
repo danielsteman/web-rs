@@ -43,7 +43,9 @@ impl Blog {
     }
 
     pub fn text_to_html(text: String) -> String {
-        let html = markdown::to_html_with_options(&text, &markdown::Options::gfm()).unwrap();
+        let mut options = markdown::Options::gfm();
+        options.compile.allow_dangerous_html = true;
+        let html = markdown::to_html_with_options(&text, &options).unwrap();
         html
     }
 
