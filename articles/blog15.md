@@ -9,15 +9,32 @@ Since a while I've been using Databricks as a data lake, a centralized place to 
 
 <pre class="mermaid">
     flowchart LR
-        database --> dl[data lake]
-        SaaS --> dl
-        sd[static dump] --> dl
-        dl --> analytics
-        dl --> ds[data science projects]
+        style note opacity:0
+        style note fontSize: 10px
+
+        database --> uc[unity catalog*]
+        SaaS --> uc
+        sd[static dump] --> uc
+        uc --> analytics
+        uc --> ds[data science projects]
+
         subgraph sources
-        database
-        SaaS
-        sd
+            database
+            SaaS
+            sd
+        end
+
+        subgraph dl[data lake]
+            uc
+            analytics
+            ds
+        end
+        
+        subgraph note [" "]
+            uc -.- ucnote[*tables in databricks
+            are governed by 'unity catalog', 
+            so whenever you read 'unity catalog', 
+            just think of a collection of tables]
         end
 </pre>
 
