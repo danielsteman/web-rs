@@ -44,4 +44,4 @@ Through a number of ingestion pipelines, data is inserted into the data lake. On
 
 The flow of data (lineage) is very straight forward and there is a clear separation of concerns where the data lake (Databricks) only reads from production systems. 
 
-A risk that arises as your data platform matures is that it the data platform contains new tables, created from transformed source data, which can be useful for production systems. At that point, it might be tempting for source systems to read from the data platform. This feedback loop
+A risk that arises as your data platform matures is that it the data platform contains new tables, created from transformed source data, which can be useful for production systems. At that point, it might be tempting for source systems to read from the data platform to leverage the new tables. For example, 
