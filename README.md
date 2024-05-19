@@ -90,6 +90,6 @@ CockroachDB is going to log warnings on startup due to `sqlx` migration queries 
 - [ ] Render the tech radar on the server
 - [x] Get rid of the gaps in /blogs
 - [x] Logically order /blogs
-- [ ] Add pagination for /blogs
-- [ ] Host somewhere
+- [x] Add pagination for /blogs
+- [x] Host somewhere
 - [x] Responsive navbar
