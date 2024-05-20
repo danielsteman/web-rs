@@ -42,8 +42,6 @@ Through a number of ingestion pipelines, data is inserted into the data lake. On
         end
 </pre>
 
-The flow of data (lineage) is very straight forward and there is a clear separation of concerns where the data lake (Databricks) only reads from production systems. 
+### Lineage
 
-A risk that arises as your data platform matures is that it the data platform contains new tables, created from transformed source data, which can be useful for production systems. At that point, it might be tempting for source systems to read from the data platform to leverage the new tables. 
-For example, a relational database contains a user table and transaction table. For each user there exists a bulk of transactions. In the data platform this data is transformed and transactions are aggregated per user per month and some extra details about the user are joined. An application that shows an overview of transactions would need to either get and transform data from the database or simply fetch transformed data from the data platform.
-With the latter solution
+The flow of data (lineage) is very straight forward and there is a clear separation of concerns where the data lake (Databricks) only reads from production systems. With this setup, Databricks can be swapped with a different data lake solution, such as [Snowflake](https://www.snowflake.com/en/). Being able to swap out technologies within your ecosystem makes you less dependent on a tool.
