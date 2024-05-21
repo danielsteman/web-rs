@@ -44,4 +44,8 @@ Through a number of ingestion pipelines, data is inserted into the data lake. On
 
 ### Lineage
 
-The flow of data (lineage) is very straight forward and there is a clear separation of concerns where the data lake (Databricks) only reads from production systems. With this setup, Databricks can be swapped with a different data lake solution, such as [Snowflake](https://www.snowflake.com/en/). Being able to swap out technologies within your ecosystem makes you less dependent on a tool.
+The flow of data (lineage) is very straight forward and there is a clear separation of concerns where the data lake (Databricks) only reads from production systems. With this setup, Databricks can be swapped with a different data lake solution, such as [Snowflake](https://www.snowflake.com/en/). Being able to swap out technologies within your ecosystem makes you flexible and less dependent on a tool that you might outgrow at some point.
+
+## Infrastructure as code
+
+Cloud resources can be managed in the portal of your cloud provider (the [ClickOps](https://aws.amazon.com/console/) approach). A much more scalable approach is to manage infrastructure is through [infrastructure as code (IaC)](https://www.redhat.com/en/topics/automation/what-is-infrastructure-as-code-iac). Within the IaC paradigm, there are several tools that you can use, both cloud provider specific, like [Cloud Formation](https://aws.amazon.com/cloudformation/) or [Azure Resource Manager](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/overview) or cloud agnostic, like [Terraform](https://www.terraform.io/). What I personally like about Terraform is that you can use it for several cloud providers, so your knowledge about Terraform is very transferrable to other stacks. Also, it's widely adopted by now so there is a big community that you can consult.
