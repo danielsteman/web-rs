@@ -48,7 +48,7 @@ pub async fn resume() -> impl IntoResponse {
         "experience": [
             {
                 "employer": "Bridgefund",
-                "title": "Data engineer",
+                "title": "Soft Engineer - Data Platform",
                 "period": {
                     "from": "October 2023",
                     "to": "Present"
@@ -60,6 +60,14 @@ pub async fn resume() -> impl IntoResponse {
                 "period": {
                     "from": "January 2021",
                     "to": "September 2023"
+                }
+            },
+            {
+                "employer": "Virtuagym",
+                "title": "Analyst",
+                "period": {
+                    "from": "August 2017",
+                    "to": "December 2020"
                 }
             }
         ],
