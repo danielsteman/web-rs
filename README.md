@@ -72,7 +72,7 @@ yarn prod
 I'm using the [AWS Serverless Application Model (SAM)](https://aws.amazon.com/serverless/sam/) to deploy the Rust binary, along with assets, on S3 and AWS Lambda:
 
 ```bash
-AWS_ACCESS_KEY_ID={...} AWS_SECRET_ACCESS_KEY={...} deploy --parameter-overrides DatabaseUrl="$DATABASE_URL"
+AWS_ACCESS_KEY_ID={...} AWS_SECRET_ACCESS_KEY={...} sam deploy --parameter-overrides DatabaseUrl="$DATABASE_URL"
 ```
 
 ## Troubleshooting
