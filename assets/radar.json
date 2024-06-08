@@ -158,6 +158,18 @@
       "moved": 0
     },
     {
+      "label": "Go",
+      "quadrant": 0,
+      "ring": 1,
+      "moved": 0
+    },
+    {
+      "label": "Chi",
+      "quadrant": 0,
+      "ring": 1,
+      "moved": 0
+    },
+    {
       "label": "Flask",
       "quadrant": 0,
       "ring": 3,
@@ -262,7 +274,13 @@
     {
       "label": "AWS Lambda",
       "quadrant": 3,
-      "ring": 2,
+      "ring": 0,
+      "moved": 0
+    },
+    {
+      "label": "AWS SQS",
+      "quadrant": 3,
+      "ring": 0,
       "moved": 0
     },
     {
