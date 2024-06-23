@@ -1,6 +1,6 @@
 % id: 15
 % title: A disposable data platform
-% date: 2024-06-01
+% date: 2024-06-23
 % tags: devops, data platform
 
 ## Data platform
