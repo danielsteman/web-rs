@@ -1,28 +1,53 @@
 {% extends "base.html" %} {% block content %}
-<body class="h-full">
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("startReadingLink").focus();
-    });
-  </script>
-  <div
-    class="items-center justify-center w-full h-full flex flex-col bg-gray-900"
-  >
-    <header
-      class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent text-6xl py-8 text-center font-black"
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Welcome to my blog. Start reading articles on various tech related topics."
+    />
+    <meta
+      name="keywords"
+      content="blog, tech, articles, reading, interesting topics"
+    />
+    <title>Welcome to My Blog</title>
+    <link rel="stylesheet" href="path/to/your/styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Welcome to My Blog",
+        "description": "Start reading interesting articles on various tech related topics.",
+        "url": "https://www.danielsteman.com"
+      }
+    </script>
+  </head>
+  <body class="h-full">
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("startReadingLink").focus();
+      });
+    </script>
+    <div
+      class="items-center justify-center w-full h-full flex flex-col bg-gray-900"
     >
-      welcome 👋
-    </header>
-    <a
-      id="startReadingLink"
-      href="/blogs"
-      onclick="window.location.href = this.href;"
-      class="font-mono bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 font-bold py-2 px-4 rounded"
-      role="button"
-      tabindex="0"
-    >
-      start reading 📖
-    </a>
-  </div>
-</body>
+      <header
+        class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent text-6xl py-8 text-center font-black"
+      >
+        welcome 👋
+      </header>
+      <a
+        id="startReadingLink"
+        href="/blogs"
+        onclick="window.location.href = this.href;"
+        class="font-mono bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 font-bold py-2 px-4 rounded"
+        role="button"
+        tabindex="0"
+      >
+        start reading 📖
+      </a>
+    </div>
+  </body>
+</html>
 {% endblock %}
