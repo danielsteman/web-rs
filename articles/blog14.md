@@ -71,4 +71,36 @@ resource "aws_iam_role" "gitlab" {
 }
 ```
 
-This role has an ARN (Amazon Resource Name) which is a unique identifier of any resource. This ID is needed by the CI runner in order to identify as a trusted entity. You can pass this ID through a CI pipeline variable to not directly expose it.
+This role has an ARN (Amazon Resource Name) which is a unique identifier of any resource. This ID is needed by the CI runner in order to identify as a trusted entity. You can pass this ID through a CI pipeline variable, such as `ROLE_ARN`, to not directly expose it, which has been done in the following example of `.gitlab-ci.yml`.
+
+```yml
+auth:
+  image: python:3.12-slim
+  stage: auth
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://gitlab.com
+  script:
+    - pip install awscli
+    - >
+      STS=($(aws sts assume-role-with-web-identity
+      --role-arn $ROLE_ARN
+      --role-session-name "gitlab-${CI_PROJECT_ID}-${CI_PIPELINE_ID}"
+      --web-identity-token ${GITLAB_OIDC_TOKEN}
+      --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]'
+      --output text))
+
+    - export AWS_ACCESS_KEY_ID="${STS[0]}"
+    - export AWS_SECRET_ACCESS_KEY="${STS[1]}"
+    - export AWS_SESSION_TOKEN="${STS[2]}"
+
+    - echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> config.env
+    - echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> config.env
+    - echo "AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}" >> config.env
+    - aws sts get-caller-identity
+  artifacts:
+    reports:
+      dotenv: config.env
+```
+
+At the top, an ID token is added to the CI job. This token is used to authenticate with the OIDC provider. I'm using a python image on which I install the `awscli` that is needed to fetch credentials. The credentials are assigned to environment variables and these variables are exported in an artifact that is picked up by the subsequent jobs. This way, the credentials are available in the next step where you run Terraform commands. The AWS provider looks for these environment variables [by default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs).
