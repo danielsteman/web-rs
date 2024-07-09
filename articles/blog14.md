@@ -9,11 +9,13 @@ Conventionally, developers would have to create secrets in the application they 
 
 ## IaC (Infrastructure as code)
 
-There are several ways to manage infrastructure with declarative code, but what I like about [Terraform](https://www.terraform.io/) is that it is cloud provider agnostic. This means that you can use the same code base to provision resources in AWS, GCP and Azure. While the three big cloud providers are the most common use case, many SaaS solutions that have an API often also have a Terraform provider.
+There are several ways to manage infrastructure with declarative code, but what I like about [Terraform](https://www.terraform.io/) is that it is cloud provider agnostic. This means that you can use the same code base to provision resources in AWS, GCP and Azure. While the three big cloud providers are the most common use case, many SaaS solutions that have an API often also have a Terraform provider. Terraform uses [state](https://developer.hashicorp.com/terraform/language/state) to keep track of your current stack and to determine changes. State is kept in `terraform.tfstate`, which _can_ be kept locally, but _should_ be kept in remote storage. Maintaining the state remotely allows you to work on the same IaC project with others, and it's generally safer.
+
+You can `terraform refresh` to update the state with the actual state of your cloud environment. You can `terraform import` cloud resources that are not yet tracked in the state. You can `terraform plan` to compare your Terraform code with the state, which results in an overview of which resources will be created, updated or destroyed. You can 'terraform apply` this plan to let the previously reported changes take effect.
 
 ## OpenID in the CI
 
-Usually you don't want to apply a Terraform plan (a set of definitions of the infrastructure you want to deploy) from your local machine, but from a CI (continuous integration) pipeline that only runs after code has been reviewed and merged. The CI runner is the environment that runs the sequence of commands in that are described in the CI pipeline. To deploy anything in a cloud environment, [authentication and authorization](https://auth0.com/docs/get-started/identity-fundamentals/authentication-and-authorization) of the CI runner is required. However, since this requires some more cloud resources, you often have to bootstrap your Terraform project but deploying some things with Terraform from your local machine. This is not an issue since you can sync your local state with the remote state that is used by the CI runner.
+Usually you don't want to apply a Terraform plan (a set of definitions of the infrastructure you want to deploy) from your local machine, but from a CI (continuous integration) pipeline that only runs after code has been reviewed and merged. The CI runner is the environment that runs the sequence of commands in that are described in the CI pipeline. To deploy anything in a cloud environment, [authentication and authorization](https://auth0.com/docs/get-started/identity-fundamentals/authentication-and-authorization) of the CI runner is required. However, since this requires some more cloud resources, you often have to bootstrap your Terraform project but deploying some things with Terraform from your local machine. This is not an issue since you can `terraform sync` your local state with the remote state that is used by the CI runner. Gitlab even offers a [managed remote state backend](https://docs.gitlab.com/ee/user/infrastructure/iac/terraform_state.html).
 
 I want to deploy AWS infrastructure from a Gitlab CI, so the first step is to create a new OIDC provider.
 
@@ -68,3 +70,5 @@ resource "aws_iam_role" "gitlab" {
   })
 }
 ```
+
+This role has an ARN (Amazon Resource Name) which is a unique identifier of any resource. This ID is needed by the CI runner in order to identify as a trusted entity. You can pass this ID through a CI pipeline variable to not directly expose it.
