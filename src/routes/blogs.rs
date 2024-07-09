@@ -37,7 +37,7 @@ pub async fn blogs(
         Some(pagination) => Pagination { ..*pagination },
         None => Pagination {
             page: 1,
-            per_page: 10,
+            per_page: 20,
         },
     };
 

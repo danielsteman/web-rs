@@ -1,6 +1,6 @@
 % id: 14
 % title: Setting up CI/CD authentication for AWS using OpenID
-% date: 2024-04-28
+% date: 2024-07-09
 % tags: devops
 
 ## OpenID
