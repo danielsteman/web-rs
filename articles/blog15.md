@@ -1,8 +1,3 @@
-% id: 15
-% title: A disposable data platform
-
-% tags: devops, data platform
-
 ## Data platform
 
 Since a while I've been using [Databricks](https://www.databricks.com) to build a data lake, which is a fancy word for a centralized place where data is stored and processed, to make it useful for individuals or applications that look for insights about the business. The advantage of performing the whole process (going from raw data to insights) is that it scales well. The same cloud resources, like a compute unit that does calculations (like running queries), can be shared among several users. Also, it's easier to prevent duplication when you have a central data lake, since logic built by others is much more discoverable.

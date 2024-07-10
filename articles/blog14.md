@@ -5,7 +5,7 @@
 
 ## OpenID
 
-Conventionally, developers would have to create secrets in the application they want to authenticate with and store these secrets in a place where they are available for an application. This raises a security risk because secrets may be exposed if they're not handled carefully. One way of mitigating this risk is using [OpenID](https://openid.net/developers/how-connect-works/), where the application outsources authentication to an OpenID Connect (OIDC) provider. The application that requires authentication is registered with the OIDC provider and uses tokens to verify the identity of the user.
+Conventionally, developers would have to create secrets in the application they want to authenticate with and store these secrets in a place where they are available for an application. This raises a security risk because secrets may be exposed if they're not handled carefully. One way of mitigating this risk is using [OpenID](https://openid.net/developers/how-connect-works/), where the application outsources authentication to an OpenID Connect (OIDC) provider. The application that requires authentication is registered with the OIDC provider and uses tokens to verify the identity of the user. For a recent project, I wanted to authenticate a GitLab CI runner (the user) with my AWS account so the runner would be able to deploy AWS resources uing Terraform. Deploying infrastructure from a single place (CI/CD in this case) is generally a good idea if you're working on a code base with several people.
 
 <pre class="mermaid">
   sequenceDiagram
@@ -27,7 +27,7 @@ Conventionally, developers would have to create secrets in the application they 
 
 There are several ways to manage infrastructure with declarative code, but what I like about [Terraform](https://www.terraform.io/) is that it is cloud provider agnostic. This means that you can use the same code base to provision resources in AWS, GCP and Azure. While the three big cloud providers are the most common use case, many SaaS solutions that have an API often also have a Terraform provider. Terraform uses [state](https://developer.hashicorp.com/terraform/language/state) to keep track of your current stack and to determine changes. State is kept in `terraform.tfstate`, which _can_ be kept locally, but _should_ be kept in remote storage. Maintaining the state remotely allows you to work on the same IaC project with others, and it's generally safer.
 
-You can `terraform refresh` to update the state with the actual state of your cloud environment. You can `terraform import` cloud resources that are not yet tracked in the state. You can `terraform plan` to compare your Terraform code with the state, which results in an overview of which resources will be created, updated, or destroyed. You can 'terraform apply` this plan to let the previously reported changes take effect.
+You can `terraform refresh` to update the state with the actual state of your cloud environment. You can `terraform import` cloud resources that are not yet tracked in the state. You can `terraform plan` to compare your Terraform code with the state, which results in an overview of which resources will be created, updated, or destroyed. You can `terraform apply` this plan to let the previously reported changes take effect.
 
 ## OpenID in the CI
 
