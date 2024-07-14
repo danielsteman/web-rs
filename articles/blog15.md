@@ -1,5 +1,5 @@
 % id: 15
-% title: Testing Serverless Rust performance
+% title: Performance testing Serverless Rust
 
 ## The Rust programming language
 
