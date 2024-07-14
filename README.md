@@ -75,6 +75,10 @@ I'm using the [AWS Serverless Application Model (SAM)](https://aws.amazon.com/se
 AWS_ACCESS_KEY_ID={...} AWS_SECRET_ACCESS_KEY={...} sam deploy --parameter-overrides DatabaseUrl="$DATABASE_URL"
 ```
 
+## Load testing
+
+Install `artillery` globally with `npm install -g artillery@latest`.
+
 ## Troubleshooting
 
 If the page is not loading, check if `sqlx` made a connection and didn't timeout. A timeout indicates that local Postgres is not up.
