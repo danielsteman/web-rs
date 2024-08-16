@@ -59,7 +59,6 @@ async fn main() -> Result<(), Error> {
         .route("/radar", get(routes::radar::radar))
         .route("/search", post(routes::search::search))
         .route("/health/", get(routes::health::health_check))
-        .route("/subscribe", get(routes::subscribe::subscribe))
         .fallback(routes::handler_404::handler_404)
         .with_state(pool);
 
