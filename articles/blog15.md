@@ -7,6 +7,10 @@ Up until now I have created a number of data connectors that pull data from othe
 
 I'm building these connectors in Python, so I started reading the docs on [`asyncio`](https://docs.python.org/3/library/asyncio.html), which is a library used to as a foundation for other asynchronous frameworks. It uses the `async` and `await` syntax to submit tasks to the [event loop](https://docs.python.org/3/library/asyncio-eventloop.html), which runs on a single thread. That's right, async code runs concurrently and not in parallel, which can be confusing at first but it's important to [understand the difference](https://stackoverflow.com/questions/1050222/what-is-the-difference-between-concurrency-and-parallelism).
 
+## Event loop
+
+In the context of computer science, the event loop is a design pattern that waits for events and dispatches events. The event loop makes a request to some event provider and calls the appropriate handler. This request can be seen as a process that is waiting until an event has arrived. When the request is waiting, the request is [blocked](<https://en.wikipedia.org/wiki/Blocking_(computing)>). An event in this context is a trigger which can be triggered by user interactivity like a mouse click or key press, or by another process that triggers programatically.
+
 <pre class="mermaid">
   
 </pre>
