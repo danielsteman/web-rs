@@ -9,7 +9,28 @@ I'm building these connectors in Python, so I started reading the docs on [`asyn
 
 ## Generators
 
-A list of values that can be iterated upon, is called an iterable. You can traverse through its values and you can count the number of values. A generator is a kind of iterator, but is instead of having all the values available up front, each value is [lazily evaluated](https://en.wikipedia.org/wiki/Lazy_evaluation). This means that at each iteration, the value is yielded instead of returned.
+A list of values that can be iterated upon, is called an iterable. You can traverse through its values and you can count the number of values. A generator is a kind of iterator, but instead of having all the values available up front, each value is [lazily evaluated](https://en.wikipedia.org/wiki/Lazy_evaluation). In Python terms, a value in yielded at each iteration. Also, a value from a generator can only be yielded once, since the generator only knows its current state each time its yielding a value. This is my it can be memory efficient to use a generator instead of a list.
+
+```py
+def n_generator(n):
+    for i in range(n):
+        yield i
+
+generator = n_generator(3)
+
+for i in generator:
+    print(i)
+
+...
+0
+1
+2
+
+for i in generator:
+    print(i)
+
+...
+```
 
 ## Coroutines
 
