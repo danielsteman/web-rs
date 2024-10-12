@@ -47,9 +47,31 @@ for i in generator:
 >>>
 ```
 
-The second time we try to print out items from the generator, they're gone. By now, may have become clear that a generator is a type of iterator.
+The second time we try to print out items from the generator, they're gone. It is also possible to `send` values to a generator.
+
+```py
+def square():
+    while True:
+        x = yield
+        yield x ** 2
+
+square(2)
+...
+TypeError: can't send non-None value to a just-started generator
+```
+
+Interestingly, when we try to send a value to the generator, a `TypeError` is being raised. As pointed out in [PEP 342](https://peps.python.org/pep-0342/), generators begin execution at the top of the function body, meaning that there is no `yield` that can receive a value that is not `None`. This is why we first need to call `next` with the generator as argument. [David Beazley](https://dabeaz.com/coroutines/Coroutines.pdf) called this "priming", which covers it well in my opinion.
+
+```py
+next(square)
+square(2)
+...
+4
+```
 
 ## Coroutines
+
+Simply put, coroutines are program components that can be paused and resumed.
 
 Coroutines are tasks, units of asynchronous work that the event loop manages. A nice example of a coroutine is this function that makes an API call to get `items`:
 
@@ -64,7 +86,7 @@ make a request, wait for data, make the next request, wait for data, et cetera. 
 
 ## Event loop
 
-The diagram shows how the event loop is the orchestrator of coroutines and it "waits efficiently" on I/O operations.
+The diagram shows how the event loop is the orchestrator of coroutines and how it "waits efficiently" on I/O operations.
 
 <pre class="mermaid">
   sequenceDiagram
@@ -84,5 +106,3 @@ The diagram shows how the event loop is the orchestrator of coroutines and it "w
     EL->>+C2: Resume Coroutine 2
     C2-->>EL: Complete
 </pre>
-
-This diagram shows that a running event loop is
