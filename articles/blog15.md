@@ -50,28 +50,57 @@ for i in generator:
 The second time we try to print out items from the generator, they're gone. It is also possible to `send` values to a generator.
 
 ```py
-def square():
+from typing import Generator
+
+def square() -> Generator[float, float | None, None]:
     while True:
         x = yield
         yield x ** 2
 
-square(2)
+squarer = square()
+squarer.send(2)
 ...
 TypeError: can't send non-None value to a just-started generator
 ```
 
-Interestingly, when we try to send a value to the generator, a `TypeError` is being raised. As pointed out in [PEP 342](https://peps.python.org/pep-0342/), generators begin execution at the top of the function body, meaning that there is no `yield` that can receive a value that is not `None`. This is why we first need to call `next` with the generator as argument. [David Beazley](https://dabeaz.com/coroutines/Coroutines.pdf) called this "priming", which covers it well in my opinion.
+Interestingly, when we try to send a value to the generator, a `TypeError` is being raised. As pointed out in [PEP 342](https://peps.python.org/pep-0342/), generators begin execution at the top of the function body, meaning that there is no `yield` that can receive a value that is not `None`. This is why we first need to call `next` with the generator as argument. [David Beazley](https://dabeaz.com/coroutines/Coroutines.pdf) called this "priming", which covers it well in my opinion, since this operation is necessary before using the generator.
 
 ```py
-next(square)
-square(2)
+squarer = square()
+next(squarer)
+squarer.send(2)
 ...
 4
+
+next(squarer)  # continue to the next x = yield
+squarer.send(3)
+...
+9
+
+squarer.send(None)  # we can also 'prime' the generator like this
+squarer.send(4)
+...
+16
+```
+
+Now that we understand how to send data to a generator, let's examine what would happen when the generator is wrapped in another function. This is where `yield from` comes into play. This Python feature is well described in [this StackOverflow issue](https://stackoverflow.com/questions/9708902/in-practice-what-are-the-main-uses-for-the-yield-from-syntax-in-python-3-3). The following wrapper function is copied from the issue, complemented with type annotations which were introduced for generators in [PEP 484](https://peps.python.org/pep-0484/).
+
+```py
+from typing import Generator
+
+def wrapper(gen: Generator[float, float | None, None]) -> None:
+    next(gen)
+    while True:
+        try:
+            x = yield
+            gen.send(x)
+        except StopIteration:
+            pass
 ```
 
 ## Coroutines
 
-Simply put, coroutines are program components that can be paused and resumed.
+Coroutines are program components that can be paused and resumed.
 
 Coroutines are tasks, units of asynchronous work that the event loop manages. A nice example of a coroutine is this function that makes an API call to get `items`:
 
