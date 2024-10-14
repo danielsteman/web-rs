@@ -20,7 +20,6 @@ print(next(iterator))  # Output: 3
 print(next(iterator))
 ...
 StopIteration
->>>
 ```
 
 ## Generators
@@ -44,7 +43,6 @@ for i in generator:
 for i in generator:
     print(i)
 ...
->>>
 ```
 
 The second time we try to print out items from the generator, they're gone. It is also possible to `send` values to a generator.
@@ -83,7 +81,7 @@ squarer.send(4)
 16
 ```
 
-Now that we understand how to send data to a generator, let's examine what would happen when the generator is wrapped in another function. This is where `yield from` comes into play. This Python feature is well described in [this StackOverflow issue](https://stackoverflow.com/questions/9708902/in-practice-what-are-the-main-uses-for-the-yield-from-syntax-in-python-3-3). The following wrapper function is copied from the issue, complemented with type annotations which were introduced for generators in [PEP 484](https://peps.python.org/pep-0484/).
+Now that we understand how to send data to a generator, let's examine what would happen when the generator is wrapped in another function. This is where `yield from` comes into play. This Python feature is well described in [this Stack Overflow issue](https://stackoverflow.com/questions/9708902/in-practice-what-are-the-main-uses-for-the-yield-from-syntax-in-python-3-3). The following wrapper function is copied from the issue, complemented with type annotations which were introduced for generators in [PEP 484](https://peps.python.org/pep-0484/).
 
 ```py
 from typing import Generator
@@ -96,7 +94,23 @@ def wrapper(gen: Generator[float, float | None, None]) -> None:
             gen.send(x)
         except StopIteration:
             pass
+
+squarer = square()
+w = wrapper(squarer)
+w.send(None)
+w.send(2)
+...
+4
 ```
+
+The wrapper primes the generator (`gen`) by implicitly calling `__next__` with `next(gen)`. It needs to handle `StopIteration` because this is raised from within `gen`. Al this logic can be refactored into something much more elegant:
+
+```py
+def wrapper(gen: Generator[float, float | None, None]) -> None:
+    yield from gen
+```
+
+This will yield the same outcome as the previous, more elaborate function.
 
 ## Coroutines
 
