@@ -103,7 +103,7 @@ w.send(2)
 4
 ```
 
-The wrapper primes the generator (`gen`) by implicitly calling `__next__` with `next(gen)`. It needs to handle `StopIteration` because this is raised from within `gen`. Al this logic can be refactored into something much more elegant:
+The wrapper primes the generator (`gen`) by implicitly calling `__next__` with `next(gen)`. It needs to handle `StopIteration` because this is raised from within `gen` when the generator is finished ([PEP 255](https://peps.python.org/pep-0255/)👴). All this logic can be refactored into something much more elegant:
 
 ```py
 def wrapper(gen: Generator[float, float | None, None]) -> None:
