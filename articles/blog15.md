@@ -110,26 +110,31 @@ def wrapper(gen: Generator[float, float | None, None]) -> None:
     yield from gen
 ```
 
-This will yield the same outcome as the previous, more elaborate function.
+This will yield the same outcome as the previous function, but with more concise code.
 
 ## Coroutines
 
-Coroutines are program components that can be paused and resumed.
+Coroutines are program components that can be paused and resumed. Since Python 3.4 it's possible to create a coroutine using the `asyncio` standard library and its `@asyncio.coroutine` decorator in combination with the `yield from` syntax above, as code execution in the `wrapper` is momentarily paused in favor of the code execution in the sub generator. Since `yield from` is now used used for two different purposes: to transfer control from one generator to a sub generator bidirectionally and to create sub routines. That is why the more intuitive and not-conflicting `await` syntax was introduced in Python 3.5.
 
-Coroutines are tasks, units of asynchronous work that the event loop manages. A nice example of a coroutine is this function that makes an API call to get `items`:
+```py
+import asyncio
 
-```python
-async def get_items(client: httpx.AsyncClient, from: int = 0) -> dict[Any, Any]:
-    r = await client.get(f"https://www.data_provider.com/api/items?from={from}")
-    return r.json()
+async def square(x: float) -> float:
+    return x ** 2
+
+async def wrapper(x: float) -> float:
+    return await square(x)
+
+asyncio.run(wrapper(2))
+...
+4
 ```
 
-Let's assume that we there are millions of items and that they are paginated in pages of 50 items. When we run this function, we will mostly wait for the server to return data, so this function is I/O bound. With a synchronous approach, we would
-make a request, wait for data, make the next request, wait for data, et cetera. I would be much more efficient to do something while we are waiting for data to be returned, perhaps already make the next request, in an asynchronous fashion.
+You might have noticed that the wrapper function is now called using the `asyncio.run` function. This is needed to execute code on the event loop.
 
 ## Event loop
 
-The diagram shows how the event loop is the orchestrator of coroutines and how it "waits efficiently" on I/O operations.
+The event loop is an orchestrator of coroutines and can pause and resume code efficiently, given that the code is I/O-bound. The diagram shows how the event loop "waits efficiently" on I/O operations.
 
 <pre class="mermaid">
   sequenceDiagram
@@ -151,3 +156,14 @@ The diagram shows how the event loop is the orchestrator of coroutines and how i
 </pre>
 
 You might be asking yourself how the event loop knows when an IO operation has been completed. For that, `asyncio` leverages [select](https://docs.python.org/3/library/select.html) which is an interface to the Unix [`select()` system call](https://man7.org/linux/man-pages/man2/select.2.html). This system call allows a program to monitor processes and waits until one or more processes are completed.
+
+A nice example of a coroutine is this function that makes an API call to get `items`:
+
+```python
+async def get_items(client: httpx.AsyncClient, from: int = 0) -> dict[Any, Any]:
+    r = await client.get(f"https://www.data_provider.com/api/items?from={from}")
+    return r.json()
+```
+
+Let's assume that we there are millions of items and that they are paginated in pages of 50 items. When we run this function, we will mostly wait for the server to return data, so this function is I/O bound. With a synchronous approach, we would
+make a request, wait for data, make the next request, wait for data, et cetera. I would be much more efficient to do something while we are waiting for data to be returned, perhaps already make the next request, in an asynchronous fashion.
