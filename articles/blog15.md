@@ -149,3 +149,5 @@ The diagram shows how the event loop is the orchestrator of coroutines and how i
     EL->>+C2: Resume Coroutine 2
     C2-->>EL: Complete
 </pre>
+
+You might be asking yourself how the event loop knows when an IO operation has been completed. For that, `asyncio` leverages [select](https://docs.python.org/3/library/select.html) which is an interface to the Unix [`select()` system call](https://man7.org/linux/man-pages/man2/select.2.html). This system call allows a program to monitor processes and waits until one or more processes are completed.
