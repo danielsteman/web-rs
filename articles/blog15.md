@@ -1,11 +1,7 @@
 % id: 15
 % title: Concurrent data retrieval
 
-Data retrieval is often input/output [(I/O) bound](https://en.wikipedia.org/wiki/I/O_bound), which means that the speed at which one can retrieve data is often bound to the speed of the system providing the data. Sending a request to a service that provides data doesn't require a lot of resources on the client side, but might require significantly more resources on the service side, as it needs to get data from a database, for example. The request itself also needs time to travel from the client to the service.
-
-Up until now I have created a number of data connectors that pull data from other systems into a data lake, where it can be analysed. Recently I created one that gets to the I/O bound of the subsystem it is pulling data from. This was only possible with concurrency.
-
-I'm building these connectors in Python, so I started reading the docs on [`asyncio`](https://docs.python.org/3/library/asyncio.html), which is the implementation of coroutines in the Python ecosystem. It uses the `async` and `await` syntax to submit tasks to the [event loop](https://docs.python.org/3/library/asyncio-eventloop.html), which runs on a single thread. That's right, async Python code runs concurrently and not in parallel, which can be confusing at first but it's important to [understand the difference](https://stackoverflow.com/questions/1050222/what-is-the-difference-between-concurrency-and-parallelism). Before showing an example of concurrent data retrieval, let's go back to the origin.
+In data intensive applications, especially on the consumer side, many processes are [I/O bound](https://en.wikipedia.org/wiki/I/O_bound). What you see a lot with machine learning model inference services is that they receive requests with bodies of data, but require additional data. To get the additional data, a request to another application needs to be made and this takes time. The request is sent to the other application and while the request is processed and answered, the requesting application is idle. Since most applications I'm currently working on are written in Python, I started reading the docs on [`asyncio`](https://docs.python.org/3/library/asyncio.html), the implementation of coroutines in the Python ecosystem. It uses the `async` and `await` syntax to submit tasks to the [event loop](https://docs.python.org/3/library/asyncio-eventloop.html), which runs on a single thread. That's right, async Python code runs concurrently and not in parallel, which can be confusing at first but it's important to [understand the difference](https://stackoverflow.com/questions/1050222/what-is-the-difference-between-concurrency-and-parallelism). Before showing an example of concurrent data retrieval, let's go back to the origin.
 
 ## Iterators
 
@@ -158,8 +154,6 @@ An event loop is an orchestrator of coroutines and can pause and resume code eff
 You might be asking yourself how the event loop knows when an IO operation has been completed. For that, `asyncio` leverages [select](https://docs.python.org/3/library/select.html) which is an interface to the Unix [`select()` system call](https://man7.org/linux/man-pages/man2/select.2.html). This system call allows a program to monitor processes and waits until one or more processes are completed.
 
 ## Concurrency in a data retrieval context
-
-A nice example of a coroutine is this function that makes an API call to get `items`:
 
 ```python
 async def get_items(client: httpx.AsyncClient, from: int = 0) -> dict[Any, Any]:
