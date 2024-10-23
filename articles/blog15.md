@@ -49,7 +49,8 @@ from typing import Generator
 def square() -> Generator[float, float | None, None]:
     while True:
         x = yield
-        yield x ** 2
+        if x is not None:
+            yield x ** 2
 
 squarer = square()
 squarer.send(2)
@@ -155,11 +156,15 @@ You might be asking yourself how the event loop knows when an IO operation has b
 
 ## Concurrency in a data retrieval context
 
+Let's go back to the example we started with. Let's assume that we have an application that needs to process particular data and also needs additional data from another application.
+
 ```python
+from typing import Any
+
 async def get_items(client: httpx.AsyncClient, from: int = 0) -> dict[Any, Any]:
     r = await client.get(f"https://www.data_provider.com/api/items?from={from}")
     return r.json()
-```
 
-Let's assume that we there are millions of items and that they are paginated in pages of 50 items. When we run this function, we will mostly wait for the server to return data, so this function is I/O bound. With a synchronous approach, we would
-make a request, wait for data, make the next request, wait for data, et cetera. It would be much more efficient to do something else while waiting for data to be returned, such as sending off the next request.
+async def process(raw_data: Any, client: httpx.AsyncClient) -> None:
+
+```

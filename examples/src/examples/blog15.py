@@ -1,10 +1,11 @@
-from typing import Generator
+from typing import Generator, Any
 
 
-def square() -> Generator[float, float | None, None]:
+def square() -> Generator[None, Any, Any]:
     while True:
         x = yield
-        yield x**2
+        if x is not None:
+            yield x**2
 
 
 def wrapper(gen: Generator[float, float | None, None]) -> None:
