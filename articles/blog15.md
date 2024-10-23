@@ -5,11 +5,11 @@ Data retrieval is often input/output [(I/O) bound](https://en.wikipedia.org/wiki
 
 Up until now I have created a number of data connectors that pull data from other systems into a data lake, where it can be analysed. Recently I created one that gets to the I/O bound of the subsystem it is pulling data from. This was only possible with concurrency.
 
-I'm building these connectors in Python, so I started reading the docs on [`asyncio`](https://docs.python.org/3/library/asyncio.html), which is the implementation of coroutines in the Python ecosystem. It uses the `async` and `await` syntax to submit tasks to the [event loop](https://docs.python.org/3/library/asyncio-eventloop.html), which runs on a single thread. That's right, async code runs concurrently and not in parallel, which can be confusing at first but it's important to [understand the difference](https://stackoverflow.com/questions/1050222/what-is-the-difference-between-concurrency-and-parallelism). There are also a couple of other concepts that help to understand coroutines in Python.
+I'm building these connectors in Python, so I started reading the docs on [`asyncio`](https://docs.python.org/3/library/asyncio.html), which is the implementation of coroutines in the Python ecosystem. It uses the `async` and `await` syntax to submit tasks to the [event loop](https://docs.python.org/3/library/asyncio-eventloop.html), which runs on a single thread. That's right, async Python code runs concurrently and not in parallel, which can be confusing at first but it's important to [understand the difference](https://stackoverflow.com/questions/1050222/what-is-the-difference-between-concurrency-and-parallelism). Before showing an example of concurrent data retrieval, let's go back to the origin.
 
 ## Iterators
 
-An iterator is an object that provides access to an element of a collection and can change its internal state to provide access to the next element (traversal). In Python, an iterator implements the special methods `__next__()` and `__iter__()`. Now, you might think of a list, but that is actually an <i>iterable</i> because it only has the `__iter__()` method, which produces an <i>iterator</i> when it is called. You can get an iterator from a list and call `next()` until the iterator raises `StopIteration`.
+A prerequisite for understanding async functions, is an understanding of iterators. An iterator is an object that provides access to an element of a collection and can change its internal state to provide access to the next element (traversal). In Python, an iterator implements the special methods `__next__()` and `__iter__()`. Now, you might think of a list, but that is actually an <i>iterable</i> because it only has the `__iter__()` method, which produces an <i>iterator</i> when it is called. You can get an iterator from a list and call `next()` until the iterator raises `StopIteration`.
 
 ```py
 lst = [1,2,3]
@@ -134,7 +134,7 @@ You might have noticed that the wrapper function is now called using the `asynci
 
 ## Event loop
 
-The event loop is an orchestrator of coroutines and can pause and resume code efficiently, given that the code is I/O-bound. The diagram shows how the event loop "waits efficiently" on I/O operations.
+An event loop is an orchestrator of coroutines and can pause and resume code efficiently, given that the code is I/O-bound. `asyncio` is one of Python's builtin implementations to achieve concurrency through coroutines and asynchronous programming. The diagram shows how the event loop "waits efficiently" on I/O operations.
 
 <pre class="mermaid">
   sequenceDiagram
@@ -157,6 +157,8 @@ The event loop is an orchestrator of coroutines and can pause and resume code ef
 
 You might be asking yourself how the event loop knows when an IO operation has been completed. For that, `asyncio` leverages [select](https://docs.python.org/3/library/select.html) which is an interface to the Unix [`select()` system call](https://man7.org/linux/man-pages/man2/select.2.html). This system call allows a program to monitor processes and waits until one or more processes are completed.
 
+## Concurrency in a data retrieval context
+
 A nice example of a coroutine is this function that makes an API call to get `items`:
 
 ```python
@@ -166,4 +168,4 @@ async def get_items(client: httpx.AsyncClient, from: int = 0) -> dict[Any, Any]:
 ```
 
 Let's assume that we there are millions of items and that they are paginated in pages of 50 items. When we run this function, we will mostly wait for the server to return data, so this function is I/O bound. With a synchronous approach, we would
-make a request, wait for data, make the next request, wait for data, et cetera. I would be much more efficient to do something while we are waiting for data to be returned, perhaps already make the next request, in an asynchronous fashion.
+make a request, wait for data, make the next request, wait for data, et cetera. It would be much more efficient to do something else while waiting for data to be returned, such as sending off the next request.
