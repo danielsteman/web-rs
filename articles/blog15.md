@@ -1,7 +1,9 @@
 % id: 15
 % title: Concurrent data retrieval
 
-In data intensive applications, especially on the consumer side, many processes are [I/O bound](https://en.wikipedia.org/wiki/I/O_bound). What you see a lot with machine learning model inference services is that they receive requests with bodies of data, but require additional data. To get the additional data, a request to another application needs to be made and this takes time. The request is sent to the other application and while the request is processed and answered, the requesting application is idle. Since most applications I'm currently working on are written in Python, I started reading the docs on [`asyncio`](https://docs.python.org/3/library/asyncio.html), the implementation of coroutines in the Python ecosystem. It uses the `async` and `await` syntax to submit tasks to the [event loop](https://docs.python.org/3/library/asyncio-eventloop.html), which runs on a single thread. That's right, async Python code runs concurrently and not in parallel, which can be confusing at first but it's important to [understand the difference](https://stackoverflow.com/questions/1050222/what-is-the-difference-between-concurrency-and-parallelism). Before showing an example of concurrent data retrieval, let's go back to the origin.
+In data intensive applications many processes are [I/O bound](https://en.wikipedia.org/wiki/I/O_bound), meaning that their speed is limited not by CPU processing power but by the time spent waiting for I/O operations to complete, such as network requests or file reads. For example, when a client application requests data from a server, the request is sent, and while the server processes and sends back a response, the client is essentially waiting, or "idle." This waiting time can add up, especially when multiple requests are needed to retrieve large datasets.
+
+Since most applications I'm currently working on are written in Python, the examples throughout this post use [`asyncio`](https://docs.python.org/3/library/asyncio.html), the implementation of coroutines in the Python ecosystem. It uses the `async` and `await` syntax to submit tasks to the [event loop](https://docs.python.org/3/library/asyncio-eventloop.html), which runs on a single thread. That's right, async Python code runs concurrently and not in parallel, which can be confusing at first but it's important to [understand the difference](https://stackoverflow.com/questions/1050222/what-is-the-difference-between-concurrency-and-parallelism). Before showing an example of concurrent data retrieval, let's go back to the origin.
 
 ## Iterators
 
@@ -107,7 +109,7 @@ def wrapper(gen: Generator) -> Generator:
     yield from gen
 ```
 
-This will yield the same outcome as the previous function, but with more concise code.
+Like in the previous `wrapper` declaration, the `yield from` gives control to the sub-generator. The second `wrapper` declaration will yield the same outcome as the previous function, but with more concise code.
 
 ## Coroutines
 
@@ -152,19 +154,65 @@ An event loop is an orchestrator of coroutines and can pause and resume code eff
     C2-->>EL: Complete
 </pre>
 
-You might be asking yourself how the event loop knows when an IO operation has been completed. For that, `asyncio` leverages [select](https://docs.python.org/3/library/select.html) which is an interface to the Unix [`select()` system call](https://man7.org/linux/man-pages/man2/select.2.html). This system call allows a program to monitor processes and waits until one or more processes are completed.
+You might be asking yourself how the event loop knows when an IO operation has been completed. For that, `asyncio` leverages the [select](https://docs.python.org/3/library/select.html) module which is an interface to the Unix [system calls](https://man7.org/linux/man-pages/man2/select.2.html) that are used to examine that status of a [file descriptor](https://en.wikipedia.org/wiki/File_descriptor) of I/O channels. What does this mean? A file descriptor is like a receipt that a program receives when it opens a file or connection. The receipt can be used to read, write or close the associated file or connection. Unix system calls such as `select`, `poll` and `epoll` are indirectly used by `asyncio` to determine if a task is blocked.
 
 ## Concurrency in a data retrieval context
 
-Let's go back to the example we started with. Let's assume that we have an application that needs to process particular data and also needs additional data from another application.
+Let's assume that we have an application that wants to requests many pages of data from another application. Often times we know how many pages of data we need to request in advance, because this information is returned with the first request. To reduce idle time of our single thread, we can create a list of tasks (requests), where we create one task for each page of data, and push this to the event loop.
 
 ```python
 from typing import Any
+import httpx
+import asyncio
 
-async def get_items(client: httpx.AsyncClient, from: int = 0) -> dict[Any, Any]:
-    r = await client.get(f"https://www.data_provider.com/api/items?from={from}")
+async def get_items(client: httpx.AsyncClient, page: int = 0, page_size: int = 10) -> dict[str, Any]:
+    r = await client.get(f"https://www.data_provider.com/api/items", params={"page": page, "pageSize": page_size})
+    r.raise_for_status()
+    print(f"Fetched items {page * page_size} - {(page + 1) * page_size}")  # show range of items
     return r.json()
 
-async def process(raw_data: Any, client: httpx.AsyncClient) -> None:
+async def fetch_all_items(client: httpx.AsyncClient, total_pages: int, page_size: int = 10) -> list[dict[str, Any]]:
+    # create list of tasks
+    tasks = [
+        get_items(client, page=page, page_size=page_size)
+        for page in range(total_pages)
+    ]
 
+    # push tasks to event loop
+    try:
+        results = await asyncio.gather(*tasks)
+    except httpx.HTTPStatusError as e:
+        print("Error fetching items: {e}")  # that's right, asyncio will propagate exceptions
+
+    # flatten list of lists of items
+    all_items = [item for result in results for item in result.get("items", [])]
+    return all_items
 ```
+
+In this example, a task would be a `get_items` call. For demonstration purposes, I printed the range of items that was retrieved. Since the tasks are ran concurrently, the event loop will determine when to perform which task, making the order of the tasks nondeterministic.
+
+```python
+async def main():
+    async with httpx.AsyncClient() as client:
+        items = await fetch_all_items(client, 100)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+...
+Fetched items 0 - 10
+Fetched items 20 - 30
+Fetched items 10 - 20
+Fetched items 30 - 40
+```
+
+The next time `fetch_all_items` is called, the printed output might look different:
+
+```python
+...
+Fetched items 20 - 30
+Fetched items 0 - 10
+Fetched items 30 - 40
+Fetched items 10 - 20
+```
+
+When dealing with concurrent data fetching applications, you will probably run into several problems like, like overloading the server or race conditions. Some of these problems can be solved with [synchronization](https://docs.python.org/3/library/asyncio-sync.html), which I will write about in more detail in a next post.
