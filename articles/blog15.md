@@ -46,7 +46,7 @@ The second time we try to print out items from the generator, they're gone. It i
 ```py
 from typing import Generator
 
-def square() -> Generator[float, float | None, None]:
+def square() -> Generator:
     while True:
         x = yield
         if x is not None:
@@ -83,7 +83,7 @@ Now that we understand how to send data to a generator, let's examine what would
 ```py
 from typing import Generator
 
-def wrapper(gen: Generator[float, float | None, None]) -> None:
+def wrapper(gen: Generator) -> Generator:
     next(gen)
     while True:
         try:
@@ -103,7 +103,7 @@ w.send(2)
 The wrapper primes the generator (`gen`) by implicitly calling `__next__` with `next(gen)`. It needs to handle `StopIteration` because this is raised from within `gen` when the generator is finished ([PEP 255](https://peps.python.org/pep-0255/)👴). All this logic can be refactored into something much more elegant:
 
 ```py
-def wrapper(gen: Generator[float, float | None, None]) -> None:
+def wrapper(gen: Generator) -> Generator:
     yield from gen
 ```
 
