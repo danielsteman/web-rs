@@ -1,5 +1,7 @@
 % id: 15
 % title: Concurrent data retrieval
+% date: 2024-10-25
+% tags: async
 
 In data intensive applications many processes are [I/O bound](https://en.wikipedia.org/wiki/I/O_bound), meaning that their speed is limited not by CPU processing power but by the time spent waiting for I/O operations to complete, such as network requests or file reads. For example, when a client application requests data from a server, the request is sent, and while the server processes and sends back a response, the client is essentially waiting, or "idle." This waiting time can add up, especially when multiple requests are needed to retrieve large datasets. One solution would be to send off requests asynchronously, instead of synchronously.
 
