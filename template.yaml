@@ -45,7 +45,32 @@ Resources:
       EndpointConfiguration:
         Types:
           - REGIONAL
-
+  WebRsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: danielsteman.com
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebRsBucket
+      PolicyDocument: 
+        Statement: 
+          - Effect: "Allow"
+            Action: "s3:GetObject"
+            Resource: !Sub "arn:aws:s3:::${Bucket}/*"
+            Principal: 
+              AWS: !Sub 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OriginAccessIdentity}'
+  OriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref AWS::StackName
 Outputs:
   WebRsFunction:
     Description: Lambda Function ARN

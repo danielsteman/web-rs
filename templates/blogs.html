@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block content %}
 <body class="h-full bg-indigo-400 z-0">
   <script>
-    // watch for ⌘+E shortcut to focus on search field
+    // listen to ⌘+E keypress to focus on search field
 
     document.addEventListener("keydown", function (event) {
       if (event.metaKey && event.key === "e") {
