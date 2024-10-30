@@ -55,17 +55,17 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
-  BucketPolicy:
+  WebRsBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref WebRsBucket
-      PolicyDocument: 
-        Statement: 
+      PolicyDocument:
+        Statement:
           - Effect: "Allow"
             Action: "s3:GetObject"
             Resource: !Sub "arn:aws:s3:::${Bucket}/*"
-            Principal: 
-              AWS: !Sub 'arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OriginAccessIdentity}'
+            Principal:
+              AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OriginAccessIdentity}"
   OriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
