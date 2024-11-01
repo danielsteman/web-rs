@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dev": "npx tailwindcss -i ./templates/input.css -o ./assets/output.css --watch",
-    "prod": "npx tailwindcss -i ./templates/input.css -o ./assets/output.css --minify && cp -r ./assets/* ./target/lambda/webrs/assets/"
+    "prod": "mkdir -p ./target/lambda/webrs/assets && npx tailwindcss -i ./templates/input.css -o ./assets/output.css --minify && cp -r ./assets/* ./target/lambda/webrs/assets/"
   },
   "devDependencies": {},
   "dependencies": {
