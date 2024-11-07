@@ -63,7 +63,7 @@ Resources:
         Statement:
           - Effect: "Allow"
             Action: "s3:GetObject"
-            Resource: !Sub "arn:aws:s3:::${Bucket}/*"
+            Resource: !Sub "arn:aws:s3:::${WebRsBucket}/*"
             Principal:
               AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OriginAccessIdentity}"
   OriginAccessIdentity:
