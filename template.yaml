@@ -5,6 +5,18 @@ Parameters:
   DatabaseUrl:
     Type: String
 Resources:
+  WebRsApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: WebRsApi
+      StageName: Prod
+      BinaryMediaTypes:
+        - "image/x-icon"
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+
   WebRsFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -26,25 +38,38 @@ Resources:
         RootApiEvent:
           Type: Api
           Properties:
+            RestApiId: !Ref WebRsApi
             Path: /
             Method: ANY
         AnyApiEvent:
           Type: Api
           Properties:
+            RestApiId: !Ref WebRsApi
             Path: /{proxy+}
             Method: ANY
+
   WebRsFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: /aws/lambda/WebRsLogs
+
   WebRsCustomDomain:
     Type: AWS::ApiGateway::DomainName
     Properties:
       DomainName: danielsteman.com
-      RegionalCertificateArn: arn:aws:acm:eu-central-1:730335219622:certificate/f54b77ad-9ded-4c03-9f73-bea389d86eca
+      RegionalCertificateArn: arn:aws:acm:eu-central-1:730335219622:certificate/26ab8949-9465-4abd-af91-1e58ceb7c9c9
       EndpointConfiguration:
         Types:
           - REGIONAL
+
+  WebRsBasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: !Ref WebRsCustomDomain
+      RestApiId: !Ref WebRsApi
+      Stage: Prod
+      BasePath: ""
+
   WebRsBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -55,6 +80,7 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+
   WebRsBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -66,11 +92,13 @@ Resources:
             Resource: !Sub "arn:aws:s3:::${WebRsBucket}/*"
             Principal:
               AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OriginAccessIdentity}"
+
   OriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: !Ref AWS::StackName
+
 Outputs:
   WebRsFunction:
     Description: Lambda Function ARN
