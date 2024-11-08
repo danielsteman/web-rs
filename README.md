@@ -75,6 +75,12 @@ I'm using the [AWS Serverless Application Model (SAM)](https://aws.amazon.com/se
 AWS_ACCESS_KEY_ID={...} AWS_SECRET_ACCESS_KEY={...} sam deploy --parameter-overrides DatabaseUrl="$DATABASE_URL"
 ```
 
+Retrieve the API gateway domain name to route traffic from a custom domain name:
+
+```bash
+aws apigateway get-domain-names --region eu-central-1 | jq '.items.[0].regionalDomainName'
+```
+
 ## Load testing
 
 Install `artillery` globally with `npm install -g artillery@latest`.
