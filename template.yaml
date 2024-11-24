@@ -91,7 +91,7 @@ Resources:
             Action: "s3:GetObject"
             Resource: !Sub "arn:aws:s3:::${WebRsBucket}/*"
             Principal:
-              AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OriginAccessIdentity}"
+              AWS: !GetAtt OriginAccessIdentity.S3CanonicalUserId
 
   OriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
@@ -99,7 +99,43 @@ Resources:
       CloudFrontOriginAccessIdentityConfig:
         Comment: !Ref AWS::StackName
 
+  WebRsCloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !GetAtt WebRsBucket.DomainName
+            Id: WebRsS3Origin
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${OriginAccessIdentity}"
+        Enabled: true
+        DefaultRootObject: index.html
+        DefaultCacheBehavior:
+          TargetOriginId: WebRsS3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          MinTTL: 0
+          DefaultTTL: 86400
+          MaxTTL: 31536000
+        ViewerCertificate:
+          AcmCertificateArn: arn:aws:acm:eu-central-1:730335219622:certificate/26ab8949-9465-4abd-af91-1e58ceb7c9c9
+          SslSupportMethod: sni-only
+        HttpVersion: http2
+        PriceClass: PriceClass_100
+
 Outputs:
   WebRsFunction:
     Description: Lambda Function ARN
     Value: !GetAtt WebRsFunction.Arn
+  CloudFrontDistributionDomainName:
+    Description: CloudFront Distribution Domain Name
+    Value: !GetAtt WebRsCloudFrontDistribution.DomainName
