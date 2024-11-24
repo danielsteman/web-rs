@@ -81,6 +81,16 @@ Retrieve the API gateway domain name to route traffic from a custom domain name:
 aws apigateway get-domain-names --region eu-central-1 | jq '.items.[0].regionalDomainName'
 ```
 
+## Content delivery
+
+Copy files to cloudfront s3 bucket
+
+```bash
+aws s3 cp ./cloudfront/ s3://danielsteman.com/ --recursive
+```
+
+Cloudfront is the AWS CDN solution and requires a certificate in us-east-1, since it's a global service that kind of makes sense.
+
 ## Load testing
 
 Install `artillery` globally with `npm install -g artillery@latest`.
