@@ -17,14 +17,14 @@
       {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "name": "Welcome to My Blog",
-        "description": "Start reading interesting articles on various tech related topics.",
+        "name": "Tech Insights - Start Reading",
+        "description": "Read articles on various tech-related topics.",
         "url": "https://www.danielsteman.com"
       }
     </script>
   </head>
   <body class="h-full">
-    <script>
+    <script defer>
       document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("startReadingLink").focus();
       });
@@ -44,6 +44,7 @@
         class="font-mono bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 font-bold py-2 px-4 rounded"
         role="button"
         tabindex="0"
+        aria-label="Start reading articles on tech topics"
       >
         start reading 📖
       </a>
