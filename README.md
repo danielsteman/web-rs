@@ -91,6 +91,8 @@ aws s3 cp ./cloudfront/ s3://danielsteman.com/ --recursive
 
 Cloudfront is the AWS CDN solution and requires a certificate in us-east-1, since it's a global service that kind of makes sense.
 
+TODO: create cert in us-east-1
+
 ## Load testing
 
 Install `artillery` globally with `npm install -g artillery@latest`.
