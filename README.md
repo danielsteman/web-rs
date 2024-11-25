@@ -91,7 +91,7 @@ aws s3 cp ./cloudfront/ s3://danielsteman.com/ --recursive
 
 Cloudfront is the AWS CDN solution and requires a certificate in us-east-1, since it's a global service that kind of makes sense.
 
-TODO: create cert in us-east-1
+Create a certificate in Cloudflare and import it in AWS ACM along with the [Cloudflare root certificate](https://developers.cloudflare.com/ssl/origin-configuration/origin-ca/#cloudflare-origin-ca-root-certificate) as chain certificate.
 
 ## Load testing
 

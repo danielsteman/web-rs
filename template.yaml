@@ -91,7 +91,7 @@ Resources:
             Action: "s3:GetObject"
             Resource: !Sub "arn:aws:s3:::${WebRsBucket}/*"
             Principal:
-              AWS: !GetAtt OriginAccessIdentity.S3CanonicalUserId
+              CanonicalUser: !GetAtt OriginAccessIdentity.S3CanonicalUserId
 
   OriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
@@ -127,7 +127,7 @@ Resources:
           DefaultTTL: 86400
           MaxTTL: 31536000
         ViewerCertificate:
-          AcmCertificateArn: arn:aws:acm:eu-central-1:730335219622:certificate/26ab8949-9465-4abd-af91-1e58ceb7c9c9
+          AcmCertificateArn: arn:aws:acm:us-east-1:730335219622:certificate/e3f41e57-2741-4e04-8faf-f99f9c540849
           SslSupportMethod: sni-only
         HttpVersion: http2
         PriceClass: PriceClass_100
