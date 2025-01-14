@@ -1,0 +1,3 @@
+# BundleLint
+
+In the past months I have built several projects using Python and I felt like building something using different technology. As you might have read in my previous posts, I have been using Databricks asset bundles quite extensively. If you are not familiar, these are packages consisting of Python code and `yaml` specifications to embrace the as-code philosophy. It reminds me a bit of how Kubernetes works, where each object is declared as a `yaml` block. This is super convenient to declare resources as code because now they're reproducable and changes are managed by some DevOps process (unless you push to `main`).
