@@ -22,4 +22,16 @@ Flags:
   -v, --version   version for bundlelint
 ```
 
-Using a compiled language makes it easier to deploy the application because you don’t have to worry as much about system dependencies. With Go, you can [cross compile](https://golangcookbook.com/chapters/running/cross-compiling/) for all architectures and [release](https://github.com/danielsteman/bundlelint/releases/tag/v1.0.0) the pre built tool for Mac, Mac silicon, Linux etc.
+Using a compiled language makes it easier to deploy the application because you don’t have to worry as much about system dependencies, such as a JVM for Java, `node_modules` for Javascript or a Python interpreter for, yes you guessed it, Python. With Go, you can [cross compile](https://golangcookbook.com/chapters/running/cross-compiling/) for all architectures and [release](https://github.com/danielsteman/bundlelint/releases/tag/v1.0.0) the pre built tool for Mac, Mac silicon, Linux etc. The binary can be compressed using [tar](https://www.gnu.org/software/tar/), reducing the file size that was quite small to begin with, and preserving the file's permissions, which is required to make the `bundlelint` binary [executable](https://en.wikipedia.org/wiki/Chmod). `tar` also allows us to compress the same file name, `bundlelint`, multiple times and call the output differently. This is useful for cross compilation, as you can build `bundlelint` several times and create a compressed file with the architecture in its name after each time you compile. In the following snippet, I'm compiling for both ARM64 (Apple silicon) and AMD64 (Good ol' Intel 📉).
+
+```bash
+GOOS=darwin GOARCH=arm64 go build -o bundlelint
+tar -czvf bundlelint_1.0.0_darwin_arm64.tar.gz bundlelint
+
+GOOS=darwin GOARCH=amd64 go build -o bundlelint
+tar -czvf bundlelint_1.0.0_darwin_amd64.tar.gz bundlelint
+```
+
+## Homebrew
+
+[formula](https://github.com/danielsteman/homebrew-tap/blob/main/Formula/bundlelint.rb)
