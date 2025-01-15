@@ -8,7 +8,7 @@ databricks bundle validate
 
 This validates the `yaml` specifications in a bundle and will raise warnings for unknown keys or even errors for incorrect references. Up until now, this guard rail prevented many errors in to-be-merged code, but I wanted to take a step further. As the number of bundles grow, so does the potential for shipping bugs. This led to the creation of [BundleLint](https://github.com/danielsteman/bundlelint). It is a command line tool that can perform more custom and opinionated checks. An example of such a check is making sure that Databricks workflows that are deployed to the production target (AKA production workspace) send notifications to Slack when they fail.
 
-Like the `databricks-cli`, `bundlelint` was built using [cobra](https://github.com/spf13/cobra), a simple interface for Go that takes care of a lot of common CLI functionality so you don't have to.
+Like the `databricks-cli`, `bundlelint` was built using [cobra](https://github.com/spf13/cobra), a simple interface for Go that takes care of a lot of common CLI functionality so you don't have to. What I liked about it is that you can easily register functions that need to be executed when a CLI command is ran. The function takes
 
 ```bash
 ❯ bundlelint -h
