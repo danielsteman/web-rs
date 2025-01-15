@@ -8,7 +8,8 @@ databricks bundle validate
 
 This validates the `yaml` specifications in a bundle and will raise warnings for unknown keys or even errors for incorrect references. Up until now, this guard rail prevented many errors in to-be-merged code, but I wanted to take a step further. As the number of bundles grow, so does the potential for shipping bugs. This led to the creation of [BundleLint](https://github.com/danielsteman/bundlelint). It is a command line tool that can perform more custom and opinionated checks. An example of such a check is making sure that Databricks workflows that are deployed to the production target (AKA production workspace) send notifications to Slack when they fail.
 
-Like the `databricks-cli`, `bundlelint` was built using [cobra](https://github.com/spf13/cobra), a simple interface for Go that takes care of a lot of common CLI functionality so you don't have to. What I liked about it is that you can easily register functions that need to be executed when a CLI command is ran. The function takes
+Like the `databricks-cli`, `bundlelint` is built using [cobra](https://github.com/spf13/cobra), a simple interface for Go that takes care of a lot of common CLI functionality so you don't have to, such as automatic help generation for commands and flags and automatically generated autocomplete for your favorite shell. What I also liked about it is that you can easily register functions that need to be executed when a CLI command is ran. The registered function takes
+arguments and flags and performs a task, conditionally. `cobra` suggests that "the best applications read like sentences", so `bundlelint test_bundle` would make sense, considering "bundlelint" to be a made up verb based on an actual verb, "lint".
 
 ```bash
 ❯ bundlelint -h
@@ -34,4 +35,13 @@ tar -czvf bundlelint_1.0.0_darwin_amd64.tar.gz bundlelint
 
 ## Homebrew
 
-[formula](https://github.com/danielsteman/homebrew-tap/blob/main/Formula/bundlelint.rb)
+Homebrew is a package manager for macOS that is used extensively in my team, as everyone uses macOS, despite the amazing efforts of the [asahi linux](https://asahilinux.org/) team. Hence, I decided to make my first [formula](https://github.com/danielsteman/homebrew-tap/blob/main/Formula/bundlelint.rb) available. Since the Github repository doesn't have enough stars (yet 🤡), I had to create my own [tap](https://github.com/danielsteman/homebrew-tap). The process is quite straight forward. In a Ruby file I determine which architecture a user needs (`if Hardware::CPU.arm?`) and based on that I set the URL to the ARM64 build or the AMD64 build. Next to the URL I pass a [sha](https://en.wikipedia.org/wiki/Secure_Hash_Algorithms) of the compressed build which is used to ensure that the file has not been manipulated on its way from Github to the user's machine. Using my personal tap, any macOS user can now install `bundlelint` using `brew`:
+
+```bash
+brew tap danielsteman/tap
+brew install bundlelint
+```
+
+## Notes
+
+It was fun building and shipping this CLI with Go and Homebrew, partly because it was so convenient to do so (shout out to `cobra`) and because it is always fun to build something using a different stack than your daily driver (Python). A colleague pointed out that [cue](https://cuelang.org/docs/introduction/) is also a good contender to validate Databricks asset bundles against a set of business rules, as it allows you to express rules and constraints declaratively. After some more research, I found that [Open Policy Agent (OPA)](https://www.openpolicyagent.org/) could also be a contender. This already indicates that `bundlelint` is overengineered and performs tasks that are already performed well by renowned technology. But who cares, sometimes you just need to build something for sake of building.
