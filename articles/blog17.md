@@ -47,7 +47,7 @@ factorial_tr(1, 120);
 
 So first, `factorial_tr(5, 1)` is pushed to the call stack. Then `factorial_tr(5, 1)` is popped and resolved, emptying the call stack. Then `factorial_tr(4, 5)` is pushed to the call stack and popped and resolved, etcetera. In this case, the maximum size of the call stack is equal to one function call.
 
-Unfortunately, not all compilers perform tail call optimization. For example, Python will always yeet all recursive calls on the call stack. [Rust can C do eliminate tail calls](https://stackoverflow.com/questions/59257543/when-is-tail-recursion-guaranteed-in-rust), but not guarenteed. As mentioned in the issue, you should not rely on this optimization when it is important to eliminate tail calls <i>for sure</i>. Instead, you should take an iterative approach.
+Unfortunately, not all compilers perform tail call optimization. For example, Python will always yeet all recursive calls on the call stack. [Rust and C do eliminate tail calls](https://stackoverflow.com/questions/59257543/when-is-tail-recursion-guaranteed-in-rust), but not guarenteed. As mentioned in the issue, you should not rely on this optimization when it is important to eliminate tail calls <i>for sure</i>. Instead, you should take an iterative approach.
 
 ```python
 def factorial_iter(n):
