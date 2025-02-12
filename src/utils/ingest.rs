@@ -6,8 +6,6 @@ use reqwest;
 use serde_json::json;
 use time::{macros::format_description, Date};
 
-use super::settings::get_settings;
-
 pub async fn ingest_articles() -> Option<()> {
     match fs::read_dir("./articles") {
         Ok(files) => {
