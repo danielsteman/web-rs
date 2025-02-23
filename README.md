@@ -110,6 +110,7 @@ CockroachDB is going to log warnings on startup due to `sqlx` migration queries 
 - [ ] Use `aide`, or something like that, to generate openapi spec
 - [ ] Render `shiki` code snippets on the server
 - [ ] Render the tech radar on the server
+- [ ] Prevent overfetching on data on /blogs
 - [x] Get rid of the gaps in /blogs
 - [x] Logically order /blogs
 - [x] Add pagination for /blogs
