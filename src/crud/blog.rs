@@ -23,32 +23,36 @@ impl Blog {
         offset: usize,
     ) -> Result<Vec<Blog>, Error> {
         let query = format!("SELECT * FROM blog LIMIT {} OFFSET {}", limit, offset);
-        let mut blogs: Vec<Blog> = sqlx::query_as::<_, Blog>(&query).fetch_all(pool).await?;
+        let blogs: Vec<Blog> = sqlx::query_as::<_, Blog>(&query).fetch_all(pool).await?;
 
-        blogs.sort_by(|a, b| b.id.cmp(&a.id));
+        let reordered_blogs = Blog::reorder_blogs(blogs);
 
-        Ok(blogs)
+        Ok(reordered_blogs)
     }
 
     fn reorder_blogs(mut blogs: Vec<Blog>) -> Vec<Blog> {
-        blogs.sort_by(|a, b| b.id.cmp(&a.id)); // Sort descending by id
+        blogs.sort_by(|a, b| b.id.cmp(&a.id));
 
         let mid = blogs.len() / 2;
-        let mut left = blogs.drain(..mid).collect::<Vec<_>>(); // Move first half into `left`
-        let mut right = blogs; // Remaining second half stays in `right`
+        let mut left = blogs.drain(..mid).collect::<Vec<_>>();
+        let mut right = blogs;
 
         let mut reordered = Vec::with_capacity(left.len() + right.len());
 
-        // Interleave elements from left and right
         while !left.is_empty() && !right.is_empty() {
-            reordered.push(left.remove(0)); // Move from left
-            reordered.push(right.remove(0)); // Move from right
+            reordered.push(left.remove(0));
+            reordered.push(right.remove(0));
         }
 
         // If left has an extra element (odd-length case), move it to the end
         if !left.is_empty() {
             reordered.push(left.remove(0));
         }
+
+        println!(
+            "Reordered IDs: {:?}",
+            reordered.iter().map(|b| b.id).collect::<Vec<_>>()
+        );
 
         reordered
     }

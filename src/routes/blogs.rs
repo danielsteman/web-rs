@@ -20,15 +20,6 @@ pub struct Pagination {
     per_page: usize,
 }
 
-// impl Default for Pagination {
-//     fn default() -> Pagination {
-//         Pagination {
-//             page: 1,
-//             per_page: 10,
-//         }
-//     }
-// }
-
 pub async fn blogs(
     State(pool): State<PgPool>,
     pagination: Option<Query<Pagination>>,
@@ -50,7 +41,6 @@ pub async fn blogs(
                 page: pagination.page,
                 per_page: pagination.per_page,
             };
-            println!("{:?}", blogs);
             let template = BlogsTemplate {
                 blogs,
                 pagination: pagination_data,
