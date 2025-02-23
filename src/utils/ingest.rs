@@ -1,9 +1,7 @@
-use std::{env, fs};
+use std::fs;
 
 use crate::{crud::blog::Blog, utils::db::get_db};
 use regex::Regex;
-use reqwest;
-use serde_json::json;
 use time::{macros::format_description, Date};
 
 pub async fn ingest_articles() -> Option<()> {
@@ -144,49 +142,6 @@ fn get_metadata(text: &str) -> Option<Metadata> {
         Some(metadata)
     } else {
         None
-    }
-}
-
-async fn summarize(text: &str, system_message: &str) -> Result<String, reqwest::Error> {
-    let api_url = "https://api.openai.com/v1/chat/completions";
-    let api_key = env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY must be set.");
-
-    let client = reqwest::Client::new();
-    let response = client
-        .post(api_url)
-        .header("Content-Type", "application/json")
-        .header("Authorization", format!("Bearer {}", api_key))
-        .json(&json!({
-            "messages": [
-                {
-                    "role": "system",
-                    "content": system_message,
-                },
-                {
-                    "role": "user",
-                    "content": text,
-                }
-            ],
-            "model": "gpt-3.5-turbo-1106"
-        }))
-        .send()
-        .await?;
-
-    match response.error_for_status() {
-        Ok(res) => {
-            let summary = res.json::<serde_json::Value>().await?;
-            let summarized_text = summary["choices"][0]["message"]["content"]
-                .as_str()
-                .unwrap_or_default();
-
-            println!("Summarized Text: {}", summarized_text);
-
-            Ok(String::from(summarized_text))
-        }
-        Err(err) => {
-            eprintln!("{}", err);
-            panic!("Something went wrong during summarization using OpenAI")
-        }
     }
 }
 
