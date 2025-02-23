@@ -31,22 +31,25 @@ impl Blog {
     }
 
     fn reorder_blogs(mut blogs: Vec<Blog>) -> Vec<Blog> {
-        blogs.sort_by(|a, b| b.id.cmp(&a.id));
-
-        let mid = blogs.len() / 2;
-        let mut left = blogs.drain(..mid).collect::<Vec<_>>();
-        let mut right = blogs;
-
-        let mut reordered = Vec::with_capacity(left.len() + right.len());
-
-        while !left.is_empty() && !right.is_empty() {
-            reordered.push(left.remove(0));
-            reordered.push(right.remove(0));
+        if blogs.is_empty() {
+            return blogs;
         }
 
-        // If left has an extra element (odd-length case), move it to the end
-        if !left.is_empty() {
-            reordered.push(left.remove(0));
+        let max_id = blogs.iter().map(|b| b.id).max().unwrap();
+
+        blogs.sort_by(|a, b| b.id.cmp(&a.id));
+
+        let (mut evens, mut odds): (Vec<_>, Vec<_>) =
+            blogs.into_iter().partition(|b| b.id % 2 == 0);
+
+        let mut reordered = Vec::with_capacity(evens.len() + odds.len());
+
+        if max_id % 2 == 1 {
+            reordered.append(&mut odds);
+            reordered.append(&mut evens);
+        } else {
+            reordered.append(&mut evens);
+            reordered.append(&mut odds);
         }
 
         println!(
@@ -205,6 +208,6 @@ mod tests {
             },
         ];
         let reordered_blogs = Blog::reorder_blogs(blogs);
-        assert_eq!(reordered_blogs[1].id, 4)
+        assert_eq!(reordered_blogs[1].id, 6)
     }
 }
