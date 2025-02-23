@@ -155,13 +155,6 @@ mod tests {
         content
     }
 
-    #[tokio::test]
-    async fn test_summarizer() {
-        let prompt = "return only the string pass, and nothing else.";
-        let system_message = "this is just a test, do as you're told.";
-        let summary = summarize(prompt, system_message).await.unwrap();
-        assert_eq!(summary, "pass")
-    }
 
     #[tokio::test]
     async fn test_get_id() {

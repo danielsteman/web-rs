@@ -50,6 +50,7 @@ pub async fn blogs(
                 page: pagination.page,
                 per_page: pagination.per_page,
             };
+            println!("{:?}", blogs);
             let template = BlogsTemplate {
                 blogs,
                 pagination: pagination_data,
