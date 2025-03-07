@@ -41,7 +41,6 @@ impl Blog {
 
         let (mut evens, mut odds): (Vec<_>, Vec<_>) =
             blogs.into_iter().partition(|b| b.id % 2 == 0);
-
         let mut reordered = Vec::with_capacity(evens.len() + odds.len());
 
         if max_id % 2 == 1 {
@@ -51,11 +50,6 @@ impl Blog {
             reordered.append(&mut evens);
             reordered.append(&mut odds);
         }
-
-        println!(
-            "Reordered IDs: {:?}",
-            reordered.iter().map(|b| b.id).collect::<Vec<_>>()
-        );
 
         reordered
     }
