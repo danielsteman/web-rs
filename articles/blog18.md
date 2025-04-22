@@ -1,6 +1,6 @@
 # Cue lang
 
-JSON ⊆ CUE, but CUE ⊈ JSON. [All valid JSON is CUE](https://cuelang.org/docs/tour/basics/json-superset/). However, most of my configuration is done in YAML, and YAML ⊈ CUE. While we're at it, it is also argued that YAML ⊈ JSON.
+JSON ⊆ CUE, but CUE ⊈ JSON. [All valid JSON is CUE](https://cuelang.org/docs/tour/basics/json-superset/). However, most of my configuration is done in YAML, and YAML ⊈ CUE. While we're at it, it is also argued [by some](https://john-millikin.com/json-is-not-a-yaml-subset) that YAML ⊈ JSON. But many of the bugs that might arise from parsing JSON with a YAML parser or the other way around is by [being explicit about your types](https://hitchdev.com/strictyaml/why/implicit-typing-removed/). With this in mind, CUE can still be useful in my quest to standardize my YAML configurations across projects.
 
 [CUE](https://cuelang.org/) is an open-sourced data validation language that helps you with validation, configuration and even generation of code. The CUE language allows you to be flexible in how you want to do each of those.
 
