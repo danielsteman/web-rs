@@ -118,3 +118,5 @@ CockroachDB is going to log warnings on startup due to `sqlx` migration queries 
 - [x] Responsive navbar
 
 ## TEST UPDATE
+
+test
