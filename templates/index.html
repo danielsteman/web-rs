@@ -136,7 +136,7 @@
             vec3 fogColor = vec3(0.85, 0.75, 0.95);
             vec3 withShapes = mix(base, fogColor, shapeMask * 0.65);
 
-            float noise = rand(uv * u_resolution.xy * 0.1 + u_time * 5.0) * 0.12;
+            float noise = rand(uv * u_resolution.xy * 0.1 + u_time * 5.0) * 0.2;
 
             gl_FragColor = vec4(withShapes + noise, 1.0);
           }
