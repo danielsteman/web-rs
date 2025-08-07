@@ -129,10 +129,9 @@
 
             vec3 base = mix(colorA, colorB, gradientMix);
 
-            float blob1 = blob(uv, vec2(0.3, 0.4), 0.5, 0.2, u_time);
-            float blob2 = blob(uv, vec2(0.7, 0.6), 0.4, 0.16, u_time);
-            float blob3 = blob(uv, vec2(0.5, 0.5), 0.6, 0.14, u_time + 100.0);
-            float shapeMask = clamp(blob1 + blob2 + blob3, 0.0, 1.0);
+            float blob1 = blob(uv, vec2(0.5, 0.15), 0.8, 0.08, u_time);
+            float blob2 = blob(uv, vec2(0.5, 0.85), 0.8, 0.06, u_time + 200.0);
+            float shapeMask = clamp(blob1 + blob2, 0.0, 1.0);
 
             vec3 fogColor = vec3(0.85, 0.75, 0.95);
             vec3 withShapes = mix(base, fogColor, shapeMask * 0.65);
