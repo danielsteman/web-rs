@@ -52,11 +52,24 @@
         text-decoration: none;
         color: white;
         display: inline-block;
-        transition: transform 0.2s ease;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 12px 24px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
       }
 
       #text-overlay a:hover {
         transform: scale(1.05);
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      }
+
+      #text-overlay a:active {
+        transform: scale(0.98);
       }
 
       #text-overlay h1 {
@@ -91,7 +104,7 @@
           id="startReadingLink"
           href="/blogs"
           onclick="window.location.href = this.href;"
-          class="font-mono text-gray-800 font-bold py-2 px-4 rounded"
+          class="font-mono font-bold py-2 px-4 rounded"
           role="button"
           tabindex="0"
           aria-label="Start reading articles on tech topics"
