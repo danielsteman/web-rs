@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Daniel Steman shares insights on software engineering, tech trends, and development tips.">
+    <meta
+      name="description"
+      content="Daniel Steman shares insights on software engineering, tech trends, and development tips."
+    />
     <meta
       name="keywords"
       content="blog, tech, articles, reading, interesting topics"
@@ -18,35 +21,88 @@
         "url": "https://www.danielsteman.com"
       }
     </script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+      }
+
+      #canvas-container {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      #text-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        text-align: center;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      #text-overlay a {
+        pointer-events: auto;
+        text-decoration: none;
+        color: white;
+        display: inline-block;
+        transition: transform 0.2s ease;
+      }
+
+      #text-overlay a:hover {
+        transform: scale(1.05);
+      }
+
+      #text-overlay h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin: 0 0 1rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      #text-overlay p {
+        font-size: 1.25rem;
+        margin: 0;
+        opacity: 0.9;
+        font-weight: 400;
+      }
+
+      @media (max-width: 768px) {
+        #text-overlay h1 {
+          font-size: 2.5rem;
+        }
+
+        #text-overlay p {
+          font-size: 1rem;
+        }
+      }
+    </style>
   </head>
   <body class="h-full">
-    <!-- <script defer> -->
-    <!--   document.addEventListener("DOMContentLoaded", () => { -->
-    <!--     document.getElementById("startReadingLink").focus(); -->
-    <!--   }); -->
-    <!-- </script> -->
-    <!-- <div -->
-    <!--   class="items-center justify-center w-full h-full flex flex-col bg-gray-900" -->
-    <!-- > -->
-    <!--   <header -->
-    <!--     class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent text-6xl py-8 text-center font-black" -->
-    <!--   > -->
-    <!--     Welcome 👋 -->
-    <!--   </header> -->
-    <!--   <a -->
-    <!--     id="startReadingLink" -->
-    <!--     href="/blogs" -->
-    <!--     onclick="window.location.href = this.href;" -->
-    <!--     class="font-mono bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 font-bold py-2 px-4 rounded" -->
-    <!--     role="button" -->
-    <!--     tabindex="0" -->
-    <!--     aria-label="Start reading articles on tech topics" -->
-    <!--   > -->
-    <!--     start reading 📖 -->
-    <!--   </a> -->
-    <!-- </div> -->
+    <div id="canvas-container">
+      <div id="text-overlay">
+        <a
+          id="startReadingLink"
+          href="/blogs"
+          onclick="window.location.href = this.href;"
+          class="font-mono text-gray-800 font-bold py-2 px-4 rounded"
+          role="button"
+          tabindex="0"
+          aria-label="Start reading articles on tech topics"
+        >
+          start reading 📖
+        </a>
+      </div>
+    </div>
+
     <script type="module">
-      import * as THREE from 'https://cdn.skypack.dev/three@0.148.0';
+      import * as THREE from "https://cdn.skypack.dev/three@0.148.0";
 
       const scene = new THREE.Scene();
       const camera = new THREE.Camera();
@@ -54,11 +110,15 @@
       const renderer = new THREE.WebGLRenderer({ antialias: true });
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
+      document
+        .getElementById("canvas-container")
+        .appendChild(renderer.domElement);
 
       const uniforms = {
         u_time: { value: 0.0 },
-        u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+        u_resolution: {
+          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+        },
       };
 
       const material = new THREE.ShaderMaterial({
@@ -105,14 +165,14 @@
 
             gl_FragColor = vec4(withShapes + noise, 1.0);
           }
-        `
+        `,
       });
 
       const plane = new THREE.PlaneGeometry(2, 2);
       const quad = new THREE.Mesh(plane, material);
       scene.add(quad);
 
-      window.addEventListener('resize', () => {
+      window.addEventListener("resize", () => {
         const width = window.innerWidth;
         const height = window.innerHeight;
         renderer.setSize(width, height);
