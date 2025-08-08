@@ -1,11 +1,41 @@
-<div class="bg-indigo-400 z-10 w-full px-4 overflow-x-auto relative">
+<div class="bg-transparent z-10 w-full px-4 overflow-x-auto relative">
+  <style>
+    #search-input {
+      backdrop-filter: blur(20px);
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.05)
+      );
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+
+
+    #search-input:focus {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.08)
+      );
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+      outline: none;
+    }
+  </style>
   <div
-    class="bg-indigo-400 gap-4 p-4 relative flex flex-row justify-end items-center max-w-screen-md min-w-fit mx-auto border-b border-gray-500 sm: pr-2 pl-0"
+    class="bg-transparent gap-4 p-4 relative flex flex-row justify-end items-center max-w-screen-md min-w-fit mx-auto border-b border-gray-500 sm: pr-2 pl-0"
   >
     <div class="relative mr-auto">
       <input
         id="search-input"
-        class="w-32 mr-auto rounded py-1.5 px-3 bg-indigo-500 text-gray-100 placeholder:text-gray-100 font-mono sm:w-48"
+        class="w-32 mr-auto rounded-lg py-2 px-4 text-gray-900 placeholder:text-gray-900 font-mono sm:w-48"
         type="search"
         name="search_string"
         placeholder="Search..."
