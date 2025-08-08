@@ -14,22 +14,11 @@
       height: 100vh;
       z-index: -1;
     }
-
-    .content-overlay {
-      position: relative;
-      z-index: 10;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
-      margin: 20px;
-      padding: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
   </style>
 </head>
 <body class="h-full">
   <div id="canvas-container"></div>
-  <div class="content-overlay">
+  <div class="relative z-10 p-5">
     <script>
       // listen to ⌘+E keypress to focus on search field
       document.addEventListener("keydown", function (event) {
