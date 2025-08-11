@@ -1,27 +1,54 @@
 {% extends "base.html" %} {% block content %}
-<body class="h-full bg-indigo-400 z-0">
-  <script>
-    // listen to ⌘+E keypress to focus on search field
+<head>
+  <style>
+    /* Custom styles that can't be easily replicated with Tailwind */
+    body {
+      overflow-x: hidden;
+    }
 
-    document.addEventListener("keydown", function (event) {
-      if (event.metaKey && event.key === "e") {
-        document.getElementById("search-input").focus();
-      } else if (event.keyCode == 27) {
-        document.getElementById("search-input").blur();
-      }
-    });
-  </script>
-  {% include "header.html" %}
-  <div class="flex flex-col w-full max-w-screen-md mx-auto" id="search-results">
-    {% include "blogs-search-results.html" %}
-    <div class="flex flex-row gap-4 justify-center mx-auto mt-4">
-      <div class="cursor-pointer px-1 text-lg hover:bg-purple-500">👈</div>
-      <div class="font-mono text-sm py-1">
-        {{pagination.page}} / {{pagination.page}}
+    #canvas-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body class="h-full">
+  <div id="canvas-container"></div>
+  <div class="relative z-10 p-5">
+    <script>
+      // listen to ⌘+E keypress to focus on search field
+      document.addEventListener("keydown", function (event) {
+        if (event.metaKey && event.key === "e") {
+          document.getElementById("search-input").focus();
+        } else if (event.keyCode == 27) {
+          document.getElementById("search-input").blur();
+        }
+      });
+    </script>
+    {% include "header.html" %}
+    <div
+      class="flex flex-col w-full max-w-screen-md mx-auto"
+      id="search-results"
+    >
+      {% include "blogs-search-results.html" %}
+      <div class="flex flex-row gap-4 justify-center mx-auto mt-4">
+        <div class="cursor-pointer px-1 text-lg hover:bg-purple-500">👈</div>
+        <div class="font-mono text-sm py-1">
+          {{pagination.page}} / {{pagination.page}}
+        </div>
+        <div class="cursor-pointer px-1 text-lg hover:bg-purple-500">👉</div>
       </div>
-      <div class="cursor-pointer px-1 text-lg hover:bg-purple-500">👉</div>
+      {% include "footer.html" %}
     </div>
-    {% include "footer.html" %}
   </div>
+
+  <script type="module">
+    import { initBackgroundAnimation } from "/assets/background-animation.js";
+    initBackgroundAnimation();
+  </script>
 </body>
 {% endblock %}

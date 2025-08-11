@@ -1,31 +1,91 @@
+<style>
+  .glass-card {
+    backdrop-filter: blur(20px);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.05)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    transition: transform 0.25s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    color: #111827; /* gray-900 for readability */
+    border-radius: 0.5rem; /* rounded-lg */
+    z-index: 0; /* create stacking context */
+  }
+
+  .glass-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -110%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.18),
+      transparent
+    );
+    transition: left 0.6s ease;
+    pointer-events: none;
+    border-radius: inherit; /* match card rounding */
+    z-index: 1; /* below tags */
+  }
+
+  .glass-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+  }
+
+  .glass-card:hover::before {
+    left: 110%;
+  }
+
+  /* Make the tags appear to float above the glass */
+  .tags-layer {
+    position: relative;
+    z-index: 3; /* above shimmer */
+  }
+
+  .glass-pill {
+    position: relative;
+    z-index: 3;
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.35); /* more solid for contrast */
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    color: #111827; /* gray-900 */
+    font-weight: 400; /* match summary weight */
+    border-radius: 0.5rem; /* match rounded-lg */
+  }
+</style>
+
 <div class="p-4 gap-4 columns-1 sm:columns-2">
   {% for blog in blogs %}
   <a
     href="/blog/{{blog.id}}"
-    class="break-inside-avoid-column relative gap-2 mb-4 p-2 flex flex-col h-fit rounded-lg bg-indigo-500"
+    class="break-inside-avoid-column group relative gap-4 mb-4 p-4 flex flex-col rounded-lg glass-card"
   >
-    <div class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-purple-500">
-      {{blog.title}}
-    </div>
-    <div class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-indigo-400">
-      {{blog.date}}
-    </div>
-    <div class="font-mono px-4 py-2 rounded-lg text-gray-100 bg-pink-500">
-      {{blog.summary}}
-    </div>
+    <div class="font-mono font-bold text-base">{{blog.title}}</div>
+    <div class="font-mono text-sm opacity-80 py-1">{{blog.date}}</div>
+    <div class="font-mono text-sm leading-relaxed">{{blog.summary}}</div>
     <div
-      class="flex flex-row font-mono gap-2 px-2 py-2 rounded-lg text-gray-100 text-sm bg-indigo-400"
+      class="flex flex-row flex-wrap font-mono gap-2 pt-2 text-sm tags-layer"
     >
       {% for tag in blog.tags %}
-      <div
-        class="text-gray-100 text-ellipsis bg-indigo-300 rounded-lg px-2 py-1"
-      >
-        {{tag}}
-      </div>
+      <div class="glass-pill rounded-lg px-3 py-1.5">{{tag}}</div>
       {% endfor %}
     </div>
     <div
-      class="rounded-lg text-gray-100 font-mono absolute inset-0 flex items-center justify-center bg-black opacity-0 hover:opacity-50 transition-opacity"
+      class="rounded-lg font-mono absolute inset-0 hidden group-hover:flex items-center justify-center bg-black/30 text-white opacity-0 group-hover:opacity-100 transition-opacity"
     >
       👀
     </div>

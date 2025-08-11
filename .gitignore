@@ -20,3 +20,6 @@ assets/output.css
 
 # certs
 *.pem
+
+# env
+.env
