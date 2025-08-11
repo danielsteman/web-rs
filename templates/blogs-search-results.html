@@ -14,6 +14,7 @@
     overflow: hidden;
     color: #111827; /* gray-900 for readability */
     border-radius: 0.5rem; /* rounded-lg */
+    z-index: 0; /* create stacking context */
   }
 
   .glass-card::before {
@@ -32,6 +33,7 @@
     transition: left 0.6s ease;
     pointer-events: none;
     border-radius: inherit; /* match card rounding */
+    z-index: 1; /* below tags */
   }
 
   .glass-card:hover {
@@ -46,11 +48,23 @@
     left: 110%;
   }
 
+  /* Make the tags appear to float above the glass */
+  .tags-layer {
+    position: relative;
+    z-index: 3; /* above shimmer */
+  }
+
   .glass-pill {
-    backdrop-filter: blur(8px);
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    z-index: 3;
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.35); /* more solid for contrast */
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
     color: #111827; /* gray-900 */
+    font-weight: 400; /* match summary weight */
+    border-radius: 0.5rem; /* match rounded-lg */
   }
 </style>
 
@@ -63,9 +77,11 @@
     <div class="font-mono font-bold text-base">{{blog.title}}</div>
     <div class="font-mono text-sm opacity-80 py-1">{{blog.date}}</div>
     <div class="font-mono text-sm leading-relaxed">{{blog.summary}}</div>
-    <div class="flex flex-row flex-wrap font-mono gap-2 pt-2 text-sm">
+    <div
+      class="flex flex-row flex-wrap font-mono gap-2 pt-2 text-sm tags-layer"
+    >
       {% for tag in blog.tags %}
-      <div class="glass-pill rounded-lg px-2 py-1">{{tag}}</div>
+      <div class="glass-pill rounded-lg px-3 py-1.5">{{tag}}</div>
       {% endfor %}
     </div>
     <div
