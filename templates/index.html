@@ -121,6 +121,12 @@
       import { initBackgroundAnimation } from "/assets/background-animation.js?v=2";
       initBackgroundAnimation();
     </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const link = document.getElementById("startReadingLink");
+        if (link) link.focus();
+      });
+    </script>
   </body>
 </html>
 {% endblock %}
