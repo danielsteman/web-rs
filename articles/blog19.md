@@ -4,4 +4,4 @@ Years ago I had been introduced to the concept of [infrastructure as code](https
 
 With this in mind, I had a look at my [dotfiles](https://github.com/danielsteman/.dotfiles) repository, where I maintain a bunch of config files that I use on my development machine, and noticed all the complex shell scripts and manual dependency management. Surely there must be a way to treat my machine the same way I treat my cloud infrastructure stack. I remember a conversation I had with a colleague who mentioned a fully declarative Linux distro called NixOS. Instead of `apt update && apt install ...` (or whatever package manager you'd use) with every fresh install, you'd describe your system as code, using the [Nix programming language](https://nix.dev/tutorials/nix-language.html). The code files can be kept in version control and outlive the OS installation. You can wipe your system, boot NixOS, clone your Nix configuration and rebuild your system. This enables full reproducability of the your OS. Pretty awesome right? 
 
-:
+I had a good run with NixOS on my machine at home but professionally I always work on MacOS, mainly because the rest of the company does. 
