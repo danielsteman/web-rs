@@ -6,6 +6,65 @@ With this in mind, I had a look at my [dotfiles](https://github.com/danielsteman
 
 I had a good run with NixOS on my machine at home but professionally I always work on macOS, mainly because the rest of the company does. Luckily, there is [nix-darwin](https://github.com/nix-darwin/nix-darwin) which is similar to NixOS but for macOS. It's fairly easy to install because of the installer built by [determinate](https://github.com/DeterminateSystems/nix-installer?tab=readme-ov-file#determinate-nix-installer), which is an interesting project on its own 🦀. 
 
+## configuration.nix
+
+So how does it work? This is a minimal example of `configuration.nix` which declares how your OS should be build. 
+
+```nix
+{ config, pkgs, ... }:
+
+{
+  # Bootloader setup
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  # Networking
+  networking.hostName = "my-nixos";   # Set hostname
+  networking.networkmanager.enable = true;
+
+  # Set your time zone
+  time.timeZone = "Europe/Amsterdam";
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  # Enable the X11 windowing system + GNOME desktop
+  services.xserver.enable = true;
+  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
+
+  # Users
+  users.users.daniel = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" ];
+    shell = pkgs.zsh;
+  };
+
+  # Allow unfree packages (like Chrome, Spotify)
+  nixpkgs.config.allowUnfree = true;
+
+  # Packages installed system-wide
+  environment.systemPackages = with pkgs; [
+    vim
+    git
+    firefox
+    htop
+  ];
+
+  # Enable the firewall
+  networking.firewall.enable = true;
+
+  # Enable OpenSSH daemon
+  services.openssh.enable = true;
+
+  # System state version (don’t change unless upgrading)
+  system.stateVersion = "24.05"; 
+}
+```
+
+This is an example configuration file for NixOS, the Linux distro based on Nix package manager. You can see that the file takes some inputs, `pkgs` and `config`. We'll go over them one by one. `pkgs` is set by the [module system](https://nix.dev/tutorials/module-system/index.html) and usually points to [nixpkgs](https://search.nixos.org/packages), the biggest package collection. As you can see, `pkgs` includes software like `vim` and `git`. The other input, `config`, contains the current system configuration which can be read inside the function to potential apply changes. Even though `config` is not directly used inside the function, it's idiomatic to declare it as input because other modules might rely on it. NixOS also passes some other arguments that are not explicitly named, these are captured by the `...` spread operator. 
+
+
 ## Flakes
 
-An experimental, but widely used, feature of Nix is [flakes](https://nixos.wiki/wiki/Flakes)
+An experimental, but widely used feature of Nix is [flakes](https://nixos.wiki/wiki/Flakes). 
