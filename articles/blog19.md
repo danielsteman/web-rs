@@ -71,7 +71,7 @@ An experimental, but widely used feature of Nix is [flakes](https://nixos.wiki/w
 
 "It may be helpful to think of flakes as processors of Nix code. They take Nix expressions as input and output things that Nix can use, like package definitions, development environments, or NixOS configurations." Whereas our `configuration.nix` only outputs OS configuration, flakes can output other things, such as shells, applications, full nix-darwin macOS configuration (more on that later) and more. 
 
-### Development environments
+## Development environments
 
 One of such _other things_ is a [development environment](https://zero-to-nix.com/start/nix-develop/). This is kind of like a Python `virtualenv`, which you might know, but on steroids. Whereas Python's `virtualenv` _just_ takes care of Python packages, Nix development environments take care of OS level dependencies such as compilers and libraries. Such development environments are often declared in a flake, using builtin [devShells] output. 
 
@@ -127,7 +127,7 @@ This development environment can be shared across more machines, which can be po
 
 To be fair, where Docker does have an advantage is security. Since a container runs in its own environment, fully isolated from the host system, it can safely run untrusted code, whereas a Nix dev shell would run on the host machine, in which case it would not be safe. 
 
-### nix-darwin
+## nix-darwin
 
 Now that we have a better understanding of NixOS and flakes, let's continue to most relevant bit (at least for my fellow MacOS devs): [nix-darwin](https://github.com/nix-darwin/nix-darwin). This combines Nix and flakes to make MacOS declarative. Since we are using flake, we haveto use `nixpkgs-unstable` as input, alongside `nix-darwin`: 
 
@@ -178,6 +178,24 @@ system.keyboard.enableKeyMapping = true;
 system.defaults.NSGlobalDomain.AppleInterfaceStyle = "Dark";
 ```
 
- Another tool that allows you to declare dotfiles is [home-manager](https://github.com/nix-community/home-manager). 
+Another tool that allows you to declare dotfiles is [home-manager](https://github.com/nix-community/home-manager). Without home-manager, it is up to the developer to manage [symbolic links](https://en.wikipedia.org/wiki/Symbolic_link) to get configuration files in places where they're expected by tools (e.g. `~/.config/nvim`) and making sure that dependencies are installed (e.g. installing `neovim`). Both solutions are valid, but the former ensure reproducability of the entire environment. 
 
-These are just some examples of what you can declare, but it only scratches the surface of what's possible. My [own nix-darwin-config](https://github.com/danielsteman/.dotfiles/tree/master/nix-darwin-config) is still in its early phase but if you're looking for inspiration, there are many muture configs you can find publicly. 
+These are just some examples of what you can declare with flakes, but it only scratches the surface of what's possible. My own [nix-darwin-config](https://github.com/danielsteman/.dotfiles/tree/master/nix-darwin-config) is still in its early phase but if you're looking for inspiration, there are many muture configs you can find publicly. 
+
+## Going fully Nix ✨
+
+Up until now we mostly discussed how Nix can help a developer to setup their machine, but it's capable of more than just that. We already discussed development environments, but let's zoom in on that. If we were to build and deploy a Python application, what would the setup look like using Nix? 
+
+Let's go over some of the requirements. My workflow to build a Python application, such as a FastAPI app, includes at least:
+
+- Running the app locally
+- Running tests
+- Running linters
+- Building a Docker image
+- Installing pre-commit hooks
+- Dependency management
+- Database migration tools
+- Secrets management
+- CI/CD
+
+
