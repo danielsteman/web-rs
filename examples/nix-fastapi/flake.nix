@@ -8,11 +8,13 @@
   outputs = { self, nixpkgs, ... }:
     let
       system = "aarch64-darwin";
+      linuxSystem = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
+      pkgsLinux = import nixpkgs { system = linuxSystem; };
     in {
       devShells.${system} = {
   
-        # Local environment
+        # Development environment
         dev = pkgs.mkShell {
           buildInputs = [
             (pkgs.python311.withPackages (ps: with ps; [
@@ -68,6 +70,33 @@
             echo "Run pre-commit hooks with: pre-commit run --all-files"
           '';
         };
+      };
+
+      packages.${linuxSystem}.fastapi-app = pkgsLinux.dockerTools.buildImage {
+        name = "fastapi-app";
+        tag = "latest";
+
+        contents = pkgsLinux.buildEnv {
+          name = "fastapi-env";
+          paths = [
+            (pkgsLinux.python311.withPackages (ps: with ps; [
+              fastapi
+              uvicorn
+              httpx
+              pydantic
+            ]))
+          ];
+        };
+
+        config = {
+          Cmd = [ "uvicorn" "app.main:app" "--host" "0.0.0.0" "--port" "8000" ];
+          Expose = [ 8000 ];
+        };
+
+        extraCommands = ''
+          mkdir -p /app
+          cp -r ${./app}/* /app/
+        '';
       };
     };
 }
