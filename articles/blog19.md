@@ -4,11 +4,11 @@ Years ago I had been introduced to the concept of [infrastructure as code](https
 
 With this in mind, I had a look at my [dotfiles](https://github.com/danielsteman/.dotfiles) repository, where I maintain a bunch of config files that I use on my development machine, and noticed all the complex shell scripts and manual dependency management. Surely there must be a way to treat my machine the same way I treat my cloud infrastructure stack. I remember a conversation I had with a colleague who mentioned a fully declarative Linux distro called [NixOS](https://nixos.org/). Instead of `apt update && apt install ...` (or whatever package manager you'd use) with every fresh install, you'd describe your system as code, using the [Nix programming language](https://nix.dev/tutorials/nix-language.html). The code files can be kept in version control and outlive the OS installation. You can wipe your system, boot NixOS, clone your Nix configuration and rebuild your system. This enables full reproducability of the your OS. Pretty awesome right? 
 
-I had a good run with NixOS on my machine at home but professionally I always work on macOS, mainly because the rest of the company does. Luckily, there is [nix-darwin](https://github.com/nix-darwin/nix-darwin) which is similar to NixOS but for macOS. It's fairly easy to install because of the installer built by [determinate](https://github.com/DeterminateSystems/nix-installer?tab=readme-ov-file#determinate-nix-installer), which is an interesting project on its own 🦀. 
+I had a good run with NixOS on my machine at home but professionally I always work on macOS, mainly because the rest of the company does. Luckily, there is [nix-darwin](https://github.com/nix-darwin/nix-darwin) which is similar to NixOS but for macOS. It's fairly easy to install because of the installer built by [determinate](https://github.com/DeterminateSystems/nix-installer?tab=readme-ov-file#determinate-nix-installer), which is an interesting project on its own 🦀. But let's start at the basics: NixOS.
 
 ## configuration.nix
 
-So how does it work? This is a minimal example of `configuration.nix` which declares how your OS should be build. 
+So how does it work? This is a minimal example of `configuration.nix` which declares how your NixOS should be build. 
 
 ```nix
 { config, pkgs, ... }:
@@ -62,16 +62,18 @@ So how does it work? This is a minimal example of `configuration.nix` which decl
 }
 ```
 
-This is an example configuration file for NixOS, the Linux distro based on Nix package manager. You can see that the file takes some inputs, `pkgs` and `config`. We'll go over them one by one. `pkgs` is set by the [module system](https://nix.dev/tutorials/module-system/index.html) and usually points to [nixpkgs](https://search.nixos.org/packages), the biggest package collection. As you can see, `pkgs` includes software like `vim` and `git`. The other input, `config`, contains the current system configuration which can be read inside the function to potential apply changes. Even though `config` is not directly used inside the function, it's idiomatic to declare it as input because other modules might rely on it. NixOS also passes some other arguments that are not explicitly named, these are captured by the `...` spread operator. This example module declares options and their values. When you run `sudo nixos-rebuild switch`, the module system gathers all modules and merges them. You can leverage this mechanism by splitting up your configuration in more modules, which can be useful when it grows over time. 
+This is an example configuration file for NixOS, the Linux distro based on Nix package manager. You can see that the file takes some inputs, `pkgs` and `config`. We'll go over them one by one. `pkgs` is set by the [module system](https://nix.dev/tutorials/module-system/index.html) and usually points to [nixpkgs](https://search.nixos.org/packages), the biggest package collection. As you can see, `pkgs` includes software like `vim` and `git`. The other input, `config`, contains the current system configuration which can be read inside the function to potential apply changes. Even though `config` is not directly used inside the function, it's idiomatic to declare it as input because other modules might rely on it. NixOS also passes some other arguments that are not explicitly named, these are captured by the `...` spread operator. This example module declares options and their values, which is often called an _attribute set_. When you run `sudo nixos-rebuild switch`, the module system gathers all modules and merges them in a clever way, where arrays are concatenated and attribute sets are merged recursively. You can leverage this mechanism by splitting up your configuration in more modules, which can be useful when it grows over time. 
 
 
 ## Flakes
 
 An experimental, but widely used feature of Nix is [flakes](https://nixos.wiki/wiki/Flakes). What are flakes and how does it differ from the `configuration.nix` we discussed earlier? I like this quote from the [zero-to-nix](https://zero-to-nix.com/concepts/flakes/) tutorial:
 
-"It may be helpful to think of flakes as processors of Nix code. They take Nix expressions as input and output things that Nix can use, like package definitions, development environments, or NixOS configurations."
+"It may be helpful to think of flakes as processors of Nix code. They take Nix expressions as input and output things that Nix can use, like package definitions, development environments, or NixOS configurations." Whereas our `configuration.nix` only outputs OS configuration, flakes can output other things, such as shells, applications, full nix-darwin macOS configuration (more on that later) and more. 
 
-Whereas our `configuration.nix` only outputs OS configuration, flakes can output other things. One of such _other things_ is a [development environment](https://zero-to-nix.com/start/nix-develop/). This is kind of like a Python `virtualenv`, which you might know, but on steroids. Whereas Python's `virtualenv` _just_ takes care of Python packages, Nix development environments take care of OS level dependencies such as compilers and libraries. Such development environments are often declared in a flake, using builtin [devShells] output. 
+### Development environments
+
+One of such _other things_ is a [development environment](https://zero-to-nix.com/start/nix-develop/). This is kind of like a Python `virtualenv`, which you might know, but on steroids. Whereas Python's `virtualenv` _just_ takes care of Python packages, Nix development environments take care of OS level dependencies such as compilers and libraries. Such development environments are often declared in a flake, using builtin [devShells] output. 
 
 ```nix
 {
@@ -125,8 +127,5 @@ This development environment can be shared across more machines, which can be po
 
 To be fair, where Docker does have an advantage is security. Since a container runs in its own environment, fully isolated from the host system, it can safely run untrusted code, whereas a Nix dev shell would run on the host machine, in which case it would not be safe. 
 
-
-
-
-
+### 
 
