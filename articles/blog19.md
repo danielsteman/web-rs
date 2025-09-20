@@ -186,7 +186,7 @@ These are just some examples of what you can declare with flakes, but it only sc
 
 Up until now we mostly discussed how Nix can help a developer to setup their machine, but it's capable of more than just that. We already discussed development environments, but let's zoom in on that. If we were to build and deploy a Python application, what would the setup look like using Nix? 
 
-Let's go over some of the requirements. My workflow to build a Python application, such as a FastAPI app, includes at least:
+Let's go over some of the requirements. My workflow to build a Python application, such as a FastAPI app, includes at least the following:
 
 - Running the app locally
 - Running tests
@@ -196,4 +196,146 @@ Let's go over some of the requirements. My workflow to build a Python applicatio
 - Dependency management
 - CI/CD
 
+Normally I would use Poetry to pin my Python dependencies, but Nix Flakes can take over this responsibility. For a local, test and linting environment, we can declare the Python dependencies for each environment: 
 
+```nix
+devShells.${system} = {
+  # Development environment
+  dev = pkgs.mkShell {
+    buildInputs = [
+      (pkgs.python311.withPackages (ps: with ps; [
+        fastapi
+        uvicorn
+        httpx
+        pydantic
+        pytest      
+      ]))
+      pkgs.pre-commit
+    ];
+
+    shellHook = ''
+      echo "FastAPI dev environment ready on macOS!"
+      export ENV_FILE=.env
+    '';
+  };
+
+  # Test environment
+  test = pkgs.mkShell {
+    buildInputs = [
+      pkgs.python311
+      pkgs.python311Packages.pip
+      pkgs.python311Packages.setuptools
+      pkgs.python311Packages.pytest
+      pkgs.python311Packages.httpx
+    ];
+    shellHook = ''
+      echo 'Test shell ready! run pytest tests/'
+    '';
+  };
+
+  # Linting / code quality
+  lint = pkgs.mkShell {
+    buildInputs = [
+      pkgs.python311
+      pkgs.python311Packages.ruff
+      pkgs.python311Packages.black
+    ];
+    shellHook = "echo 'Linting shell ready! Run black, ruff'";
+  };
+};
+```
+
+Running the local development environment is as easy as:
+
+```bash
+❯ nix develop .#devShells.aarch64-darwin.dev
+FastAPI dev environment ready on macOS!
+(nix:nix-shell-env) bash-5.3$ uvicorn app.main:app --reload
+INFO:     Will watch for changes in these directories: ['/Users/danielsteman/repos/web-rs/examples/nix-fastapi']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [87122] using StatReload
+INFO:     Started server process [87124]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+```
+
+We can also declaratively build a Docker image to run the application on remote infrastructure: 
+
+```nix
+packages.${linuxSystem}.fastapi-app = pkgsLinux.dockerTools.buildImage {
+  name = "fastapi-app";
+  tag = "latest";
+
+  contents = pkgsLinux.buildEnv {
+    name = "fastapi-env";
+    paths = [
+      (pkgsLinux.python311.withPackages (ps: with ps; [
+        fastapi
+        uvicorn
+        httpx
+        pydantic
+      ]))
+    ];
+  };
+
+  config = {
+    Cmd = [ "uvicorn" "app.main:app" "--host" "0.0.0.0" "--port" "8000" ];
+    Expose = [ 8000 ];
+  };
+
+  extraCommands = ''
+    mkdir -p /app
+    cp -r ${./app}/* /app/
+  '';
+};
+```
+
+We can build the docker image on a Linux runner with `nix build .#packages.x86_64-linux.fastapi-app`, where the only dependency of the runnner would be `nix`. To put that in practice, a Github workflow that builds the image would look like this: 
+
+```yaml
+name: Build Docker Image
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Install Nix
+      - name: Install Nix
+        uses: cachix/install-nix-action@v22
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+
+      # 3. Enable Flakes
+      - name: Enable Nix Flakes
+        run: nix --extra-experimental-features 'nix-command flakes' --version
+
+      # 4. Build Docker image using the flake
+      - name: Build Docker image
+        run: |
+          nix build .#packages.x86_64-linux.fastapi-app
+          docker load < result
+
+      # 5. Test that image runs
+      - name: Test Docker container
+        run: |
+          docker run -d --name fastapi-test -p 8000:8000 fastapi-app
+          sleep 5
+          curl -f http://localhost:8000 || (docker logs fastapi-test && exit 1)
+          docker stop fastapi-test
+          docker rm fastapi-test
+```
+
+How cool is that! We don't have to maintain any builder images where build dependencies are installed but we can just use the same flake we use for all other tasks. To take things a step further, we can also publish our flake on [FlakeHub](https://flakehub.com/), which is a flake repository and [binary cache](https://nixos.wiki/wiki/Binary_Cache). The binary cache keeps the result of a flake for other machines to use. This can greatly speed up build times in the CI. Like FlakeHub hilariously put it ["Put a little pep in your CI's step"](https://flakehub.com/cache#how-it-works). 
+
+While writing this post, I dove into the rabbit hole of Nix and was pleasantly surprised with what I found out. Nix is truly the go-to technology for developers who embrace the philosophy of "everything-as-code", letting you break stuff, release quick and rebuild with confidence when you tear down a system on the way to your next release. 
