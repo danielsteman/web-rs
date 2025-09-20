@@ -67,8 +67,66 @@ This is an example configuration file for NixOS, the Linux distro based on Nix p
 
 ## Flakes
 
-An experimental, but widely used feature of Nix is [flakes](https://nixos.wiki/wiki/Flakes). It's good to know that Nix is not only providing a declarative solution to configure your OS, it also provides [development environments](https://zero-to-nix.com/start/nix-develop/). This is kind of like a Python `virtualenv`, which you might know, on steroids. Such development environments are often declared as a flake, using a tool like [devshell](https://numtide.github.io/devshell/getting_started.html). But what are flakes and how does it differ from the `configuration.nix` we discussed earlier? I like this quote from the [zero-to-nix](https://zero-to-nix.com/concepts/flakes/) tutorial:
+An experimental, but widely used feature of Nix is [flakes](https://nixos.wiki/wiki/Flakes). What are flakes and how does it differ from the `configuration.nix` we discussed earlier? I like this quote from the [zero-to-nix](https://zero-to-nix.com/concepts/flakes/) tutorial:
 
 "It may be helpful to think of flakes as processors of Nix code. They take Nix expressions as input and output things that Nix can use, like package definitions, development environments, or NixOS configurations."
+
+Whereas our `configuration.nix` only outputs OS configuration, flakes can output other things. One of such _other things_ is a [development environment](https://zero-to-nix.com/start/nix-develop/). This is kind of like a Python `virtualenv`, which you might know, but on steroids. Whereas Python's `virtualenv` _just_ takes care of Python packages, Nix development environments take care of OS level dependencies such as compilers and libraries. Such development environments are often declared in a flake, using builtin [devShells] output. 
+
+```nix
+{
+  description = "Rust development environment";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
+
+  outputs = { self, nixpkgs }:
+    let
+      system = "aarch64-darwin"; # or "x86_64-linux" on Linux
+      pkgs = import nixpkgs { inherit system; };
+    in {
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = [
+          pkgs.rustc
+          pkgs.cargo
+        ];
+
+        shellHook = ''
+          echo "Rust dev environment ready!"
+          rustc --version
+          cargo --version
+        '';
+      };
+    };
+}
+```
+
+This is stored in a `flake.nix` in the current working directory and can easily be entered: 
+
+```bash
+❯ nix develop
+Rust dev environment ready!
+rustc 1.89.0 (29483883e 2025-08-04) (built from a source tarball)
+cargo 1.89.0 (c24e10642 2025-06-23)
+(nix:nix-shell-env) bash-5.3$ cargo
+Rust's package manager
+
+Usage: cargo [OPTIONS] [COMMAND]
+       cargo [OPTIONS] -Zscript <MANIFEST_RS> [ARGS]...
+```
+
+This development environment can be shared across more machines, which can be powerful for engineering teams working on the same project. At this point you might ask yourself: "isn't this why we have Docker?". This is a valid question, but dev shells with Nix flakes have some advantages. First, all packages that are installed come from [nixpkgs](https://search.nixos.org/packages) and are pinned to the commit, instead of external sources such as `apt` and `npm`. which are less deterministic. Also, with Docker you don't _have_ to pin the base image, making it less deterministic by design. Another advantage is that there is no overhead of a VM or container that is running on your machine. Instead, dependencies are kept locally in `/nix/store`, which you can actually see when you open the dev shell: 
+
+```bash
+(nix:nix-shell-env) bash-5.3$ which cargo
+/nix/store/gzv6psv17kv7x9s01w8jhi0h2cg6z15p-cargo-1.89.0/bin/cargo
+```
+
+To be fair, where Docker does have an advantage is security. Since a container runs in its own environment, fully isolated from the host system, it can safely run untrusted code, whereas a Nix dev shell would run on the host machine, in which case it would not be safe. 
+
+
+
+
 
 
