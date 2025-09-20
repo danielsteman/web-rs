@@ -1,4 +1,7 @@
-# Nix
+% id: 19
+% title: Nix ❄️
+% date: 2025-09-20
+% tags: nix, devops
 
 Years ago I had been introduced to the concept of [infrastructure as code](https://en.wikipedia.org/wiki/Infrastructure_as_code)(IaC) to provision (cloud) resources in a declarative way (as code). Before IaC, developers were forced to master the art of [ClickOps](https://dev.to/terraformmonkey/what-is-clickops-27f9) and provision resources manually through a web interface. The latter is intuitive to those who have not been introduced to IaC, at least, this is how I experienced it. There is something that is very satisfying about maintaining your infrastructure with code that lives next to the application code that is running on it. At that point you can't really go back to the (AWS|GCP|Azure) developer console or shell scripts with complex CLI commands.
 
