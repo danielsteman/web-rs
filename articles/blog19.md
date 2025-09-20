@@ -127,5 +127,57 @@ This development environment can be shared across more machines, which can be po
 
 To be fair, where Docker does have an advantage is security. Since a container runs in its own environment, fully isolated from the host system, it can safely run untrusted code, whereas a Nix dev shell would run on the host machine, in which case it would not be safe. 
 
-### 
+### nix-darwin
 
+Now that we have a better understanding of NixOS and flakes, let's continue to most relevant bit (at least for my fellow MacOS devs): [nix-darwin](https://github.com/nix-darwin/nix-darwin). This combines Nix and flakes to make MacOS declarative. Since we are using flake, we haveto use `nixpkgs-unstable` as input, alongside `nix-darwin`: 
+
+```nix
+  description = "My configuration for macOS";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+```
+
+Instead of manually installing packages with something like `brew`, it's now possible to declare them in `flake.nix`: 
+
+```nix
+environment.systemPackages = with pkgs; [
+    aerospace
+    bun
+    firefox
+    kitty
+    vim
+    # Just to give you an example
+]
+```
+
+And instead of configuring your MacOS instance through the settings interface, you can now declare settings, which is super awesome if you ever switch to another MacBook: 
+
+```nix
+# Unlock sudo commands with our fingerprint.
+security.pam.services.sudo_local.touchIdAuth = true;
+
+system.defaults = {
+    trackpad.Clicking = true;
+    dock.autohide = true;
+    screencapture.target = "clipboard";
+
+    finder = {
+      AppleShowAllExtensions = true;
+      ShowPathbar = true;
+      FXEnableExtensionChangeWarning = false;
+    };
+};
+
+system.keyboard.enableKeyMapping = true;
+
+system.defaults.NSGlobalDomain.AppleInterfaceStyle = "Dark";
+```
+
+ Another tool that allows you to declare dotfiles is [home-manager](https://github.com/nix-community/home-manager). 
+
+These are just some examples of what you can declare, but it only scratches the surface of what's possible. My [own nix-darwin-config](https://github.com/danielsteman/.dotfiles/tree/master/nix-darwin-config) is still in its early phase but if you're looking for inspiration, there are many muture configs you can find publicly. 
