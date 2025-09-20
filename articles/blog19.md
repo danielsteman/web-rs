@@ -194,8 +194,6 @@ Let's go over some of the requirements. My workflow to build a Python applicatio
 - Building a Docker image
 - Installing pre-commit hooks
 - Dependency management
-- Database migration tools
-- Secrets management
 - CI/CD
 
 
