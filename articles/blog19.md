@@ -2,9 +2,9 @@
 
 Years ago I had been introduced to the concept of [infrastructure as code](https://en.wikipedia.org/wiki/Infrastructure_as_code)(IaC) to provision (cloud) resources in a declarative way (as code). Before IaC, developers were forced to master the art of [ClickOps](https://dev.to/terraformmonkey/what-is-clickops-27f9) and provision resources manually through a web interface. The latter is intuitive to those who have not been introduced to IaC, at least, this is how I experienced it. There is something that is very satisfying about maintaining your infrastructure with code that lives next to the application code that is running on it. At that point you can't really go back to the (AWS|GCP|Azure) developer console or shell scripts with complex CLI commands.
 
-With this in mind, I had a look at my [dotfiles](https://github.com/danielsteman/.dotfiles) repository, where I maintain a bunch of config files that I use on my development machine, and noticed all the complex shell scripts and manual dependency management. Surely there must be a way to treat my machine the same way I treat my cloud infrastructure stack. I remember a conversation I had with a colleague who mentioned a fully declarative Linux distro called [NixOS](https://nixos.org/). Instead of `apt update && apt install ...` (or whatever package manager you'd use) with every fresh install, you'd describe your system as code, using the [Nix programming language](https://nix.dev/tutorials/nix-language.html). The code files can be kept in version control and outlive the OS installation. You can wipe your system, boot NixOS, clone your Nix configuration and rebuild your system. This enables full reproducability of the your OS. Pretty awesome right? 
+With this in mind, I had a look at my [dotfiles](https://github.com/danielsteman/.dotfiles) repository, where I maintain a bunch of config files that I use on my development machine, and noticed all the complex shell scripts and manual dependency management. Surely there must be a way to treat my machine the same way I treat my cloud infrastructure stack. I remember a conversation I had with a colleague who mentioned a fully declarative Linux distro called [NixOS](https://nixos.org/). Instead of `apt update && apt install ...` (or whatever package manager you'd use) with every fresh install, you'd describe your system as code, using the purely functional [Nix programming language](https://nix.dev/tutorials/nix-language.html). The code files can be kept in version control and outlive the OS installation. You can wipe your system, boot NixOS, clone your Nix configuration and rebuild your system. This enables full reproducability of the your OS. Pretty awesome right? 
 
-I had a good run with NixOS on my machine at home but professionally I always work on macOS, mainly because the rest of the company does. Luckily, there is [nix-darwin](https://github.com/nix-darwin/nix-darwin) which is similar to NixOS but for macOS. It's fairly easy to install because of the installer built by [determinate](https://github.com/DeterminateSystems/nix-installer?tab=readme-ov-file#determinate-nix-installer), which is an interesting project on its own 🦀. But let's start at the basics: NixOS.
+I had a good run with NixOS on my machine at home but professionally I always work on macOS, mainly because the rest of the company does. Luckily, there is [nix-darwin](https://github.com/nix-darwin/nix-darwin) which is similar to NixOS but for macOS. It's fairly easy to install because of the installer built by [determinate](https://github.com/DeterminateSystems/nix-installer?tab=readme-ov-file#determinate-nix-installer), which is an interesting project on its own. But let's start at the basics: NixOS.
 
 ## configuration.nix
 
@@ -62,7 +62,7 @@ So how does it work? This is a minimal example of `configuration.nix` which decl
 }
 ```
 
-This is an example configuration file for NixOS, the Linux distro based on Nix package manager. You can see that the file takes some inputs, `pkgs` and `config`. We'll go over them one by one. `pkgs` is set by the [module system](https://nix.dev/tutorials/module-system/index.html) and usually points to [nixpkgs](https://search.nixos.org/packages), the biggest package collection. As you can see, `pkgs` includes software like `vim` and `git`. The other input, `config`, contains the current system configuration which can be read inside the function to potential apply changes. Even though `config` is not directly used inside the function, it's idiomatic to declare it as input because other modules might rely on it. NixOS also passes some other arguments that are not explicitly named, these are captured by the `...` spread operator. This example module declares options and their values, which is often called an _attribute set_. When you run `sudo nixos-rebuild switch`, the module system gathers all modules and merges them in a clever way, where arrays are concatenated and attribute sets are merged recursively. You can leverage this mechanism by splitting up your configuration in more modules, which can be useful when it grows over time. 
+This is an example configuration file for NixOS, the Linux distro based on Nix package manager. You can see that the function in this file takes some inputs, `pkgs` and `config`. We'll go over them one by one. `pkgs` is set by the [module system](https://nix.dev/tutorials/module-system/index.html) and usually points to [nixpkgs](https://search.nixos.org/packages), the biggest package collection. As you can see, `pkgs` includes software like `vim` and `git`. The other input, `config`, contains the current system configuration which can be read inside the function to potentially apply changes. Even though `config` is not directly used inside the function, it is idiomatic to declare it as input because other modules might rely on it. NixOS also passes some other arguments that are not explicitly named, these are captured by the `...` spread operator. This example module declares options and their values. This is called an _attribute set_. When you run `sudo nixos-rebuild switch`, the module system gathers all modules and merges them in a clever way, where arrays are concatenated and attribute sets are merged recursively. You can leverage this mechanism by splitting up your configuration in more modules, which can be useful when it grows over time. 
 
 
 ## Flakes
@@ -118,7 +118,7 @@ Usage: cargo [OPTIONS] [COMMAND]
        cargo [OPTIONS] -Zscript <MANIFEST_RS> [ARGS]...
 ```
 
-This development environment can be shared across more machines, which can be powerful for engineering teams working on the same project. At this point you might ask yourself: "isn't this why we have Docker?". This is a valid question, but dev shells with Nix flakes have some advantages. First, all packages that are installed come from [nixpkgs](https://search.nixos.org/packages) and are pinned to the commit, instead of external sources such as `apt` and `npm`. which are less deterministic. Also, with Docker you don't _have_ to pin the base image, making it less deterministic by design. Another advantage is that there is no overhead of a VM or container that is running on your machine. Instead, dependencies are kept locally in `/nix/store`, which you can actually see when you open the dev shell: 
+This development environment can be shared across other machines, which can be powerful for engineering teams working on the same project. At this point you might ask yourself: "isn't this why we have Docker?". This is a valid question, but dev shells with Nix flakes have some advantages. First, all packages that are installed come from [nixpkgs](https://search.nixos.org/packages) and are pinned to the commit, instead of external sources such as `apt` and `npm`, which are less deterministic. Also, with Docker you don't _have_ to pin the base image, making it less deterministic when you're not [pinning by digest](https://docs.docker.com/dhi/core-concepts/digests/). Another advantage is that there is no overhead of a VM or container that is running on your machine. Instead, dependencies are kept locally in `/nix/store`, which you can actually see when you open the dev shell: 
 
 ```bash
 (nix:nix-shell-env) bash-5.3$ which cargo
@@ -129,7 +129,7 @@ To be fair, where Docker does have an advantage is security. Since a container r
 
 ## nix-darwin
 
-Now that we have a better understanding of NixOS and flakes, let's continue to most relevant bit (at least for my fellow MacOS devs): [nix-darwin](https://github.com/nix-darwin/nix-darwin). This combines Nix and flakes to make MacOS declarative. Since we are using flake, we haveto use `nixpkgs-unstable` as input, alongside `nix-darwin`: 
+Now that we have a better understanding of NixOS and flakes, let's continue to the most relevant bit (at least for my fellow macOS devs): [nix-darwin](https://github.com/nix-darwin/nix-darwin). This combines Nix and flakes to make macOS declarative. Since we are using flakes, we have to use `nixpkgs-unstable` as input, alongside `nix-darwin`: 
 
 ```nix
   description = "My configuration for macOS";
@@ -142,35 +142,35 @@ Now that we have a better understanding of NixOS and flakes, let's continue to m
   };
 ```
 
-Instead of manually installing packages with something like `brew`, it's now possible to declare them in `flake.nix`: 
+Instead of manually installing packages with something like `brew`, a package manager for macOS without functionality to pin versions, it's now possible to declare them in `flake.nix`: 
 
 ```nix
 environment.systemPackages = with pkgs; [
-    aerospace
-    bun
-    firefox
-    kitty
-    vim
-    # Just to give you an example
+  aerospace
+  bun
+  firefox
+  kitty
+  vim
+  # Just to give you an example
 ]
 ```
 
-And instead of configuring your MacOS instance through the settings interface, you can now declare settings, which is super awesome if you ever switch to another MacBook: 
+And instead of configuring your macOS instance through the settings interface, you can now declare settings, which is super awesome if you ever switch to another MacBook: 
 
 ```nix
 # Unlock sudo commands with our fingerprint.
 security.pam.services.sudo_local.touchIdAuth = true;
 
 system.defaults = {
-    trackpad.Clicking = true;
-    dock.autohide = true;
-    screencapture.target = "clipboard";
+  trackpad.Clicking = true;
+  dock.autohide = true;
+  screencapture.target = "clipboard";
 
-    finder = {
-      AppleShowAllExtensions = true;
-      ShowPathbar = true;
-      FXEnableExtensionChangeWarning = false;
-    };
+  finder = {
+    AppleShowAllExtensions = true;
+    ShowPathbar = true;
+    FXEnableExtensionChangeWarning = false;
+  };
 };
 
 system.keyboard.enableKeyMapping = true;
@@ -178,7 +178,7 @@ system.keyboard.enableKeyMapping = true;
 system.defaults.NSGlobalDomain.AppleInterfaceStyle = "Dark";
 ```
 
-Another tool that allows you to declare dotfiles is [home-manager](https://github.com/nix-community/home-manager). Without home-manager, it is up to the developer to manage [symbolic links](https://en.wikipedia.org/wiki/Symbolic_link) to get configuration files in places where they're expected by tools (e.g. `~/.config/nvim`) and making sure that dependencies are installed (e.g. installing `neovim`). Both solutions are valid, but the former ensure reproducability of the entire environment. 
+Next to mac settings, I customize a lot and keep track of customizations in [.dotfiles](https://github.com/danielsteman/.dotfiles). A tool that allows you to declare dotfiles is [home-manager](https://github.com/nix-community/home-manager). Without home-manager, it is up to the developer to manage [symbolic links](https://en.wikipedia.org/wiki/Symbolic_link) to get configuration files in places where they're expected by tools (e.g. `~/.config/nvim`) and making sure that dependencies are installed (e.g. installing `neovim`). Both solutions are valid, but the former ensures reproducability of the entire environment and takes a lot of management out of hands.
 
 These are just some examples of what you can declare with flakes, but it only scratches the surface of what's possible. My own [nix-darwin-config](https://github.com/danielsteman/.dotfiles/tree/master/nix-darwin-config) is still in its early phase but if you're looking for inspiration, there are many muture configs you can find publicly. 
 
@@ -338,4 +338,6 @@ jobs:
 
 How cool is that! We don't have to maintain any builder images where build dependencies are installed but we can just use the same flake we use for all other tasks. To take things a step further, we can also publish our flake on [FlakeHub](https://flakehub.com/), which is a flake repository and [binary cache](https://nixos.wiki/wiki/Binary_Cache). The binary cache keeps the result of a flake for other machines to use. This can greatly speed up build times in the CI. Like FlakeHub hilariously put it ["Put a little pep in your CI's step"](https://flakehub.com/cache#how-it-works). 
 
-While writing this post, I dove into the rabbit hole of Nix and was pleasantly surprised with what I found out. Nix is truly the go-to technology for developers who embrace the philosophy of "everything-as-code", letting you break stuff, release quick and rebuild with confidence when you tear down a system on the way to your next release. 
+Even though I only shed light on the benefits of using Nix, I can also see some challenges ahead while implementing this in an existing stack. `nixpkgs` contains a lot of packages, but is still behind repositories such as [pypi](https://pypi.org/), which may become a problem if you need to update a package due to a newly discovered vulnerability. Another potential issue is disk bloat, since every version of your build is kept in `/nix/store`. This can be resolved with garbage collection, but it can still be challenge. Another more human challenge is the steep learning curve. Nix requires you to think differently about your system and having _everything_ reproducable is not always easy. Nix is known for sometimes cryptic debugging messages and it requires some system knowledge to solve them. Personally, I like this challenge because you're forced to deepen your knowledge, but I can imagine that not everyone feels this way. On top of that, if not your whole team is using the same tool (Nix) then it doesn't make sense it use it in the first place.
+
+On a positive note, while writing this post, I dove into the rabbit hole of Nix and was pleasantly surprised with what I found out. Nix is truly the go-to technology for developers who embrace the philosophy of "everything-as-code", letting you break stuff, release quick and rebuild with confidence when you tear down a system on the way to your next release. 
