@@ -48,6 +48,21 @@ Resources:
             Path: /{proxy+}
             Method: ANY
 
+  WebRsUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      UsagePlanName: WebRsUsagePlan
+      Description: Usage plan to limit API calls to Lambda free tier (1M/month)
+      ApiStages:
+        - ApiId: !Ref WebRsApi
+          Stage: Prod
+      Throttle:
+        BurstLimit: 200
+        RateLimit: 100
+      Quota:
+        Limit: 1000000
+        Period: MONTH
+
   WebRsFunctionLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -139,3 +154,6 @@ Outputs:
   CloudFrontDistributionDomainName:
     Description: CloudFront Distribution Domain Name
     Value: !GetAtt WebRsCloudFrontDistribution.DomainName
+  WebRsUsagePlan:
+    Description: API Gateway Usage Plan ID
+    Value: !Ref WebRsUsagePlan
