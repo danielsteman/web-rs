@@ -53,6 +53,8 @@ async fn main() -> Result<(), Error> {
     let app = Router::new()
         .nest_service("/assets", ServeDir::new("assets"))
         .route("/", get(routes::root::root))
+        .route("/robots.txt", get(routes::robots::robots_txt))
+        .route("/sitemap.xml", get(routes::sitemap::sitemap_xml))
         .route("/blogs", get(routes::blogs::blogs))
         .route("/blog/:id", get(routes::blog::blog))
         .route("/resume", get(routes::resume::resume))

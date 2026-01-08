@@ -4,5 +4,7 @@ pub mod handler_404;
 pub mod health;
 pub mod radar;
 pub mod resume;
+pub mod robots;
 pub mod root;
 pub mod search;
+pub mod sitemap;
