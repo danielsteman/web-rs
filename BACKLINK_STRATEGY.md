@@ -27,11 +27,13 @@ Share your blog posts and site on social platforms where you already have profil
 #### GitHub (High Priority)
 
 - **Profile README**: Create/update `github.com/danielsteman/README.md` with:
+
   ```markdown
   ## Blog
 
   I write about software engineering at [danielsteman.com](https://www.danielsteman.com)
   ```
+
 - **Project READMEs**: Add links to relevant blog posts in your project READMEs
 - **Discussions**: Participate in GitHub Discussions and link to relevant posts when helpful
 
