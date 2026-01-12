@@ -1,0 +1,91 @@
+<!-- Social Sharing -->
+<div class="border-t border-gray-300 pt-6 mt-8">
+  <div class="font-mono text-sm text-gray-700 mb-4 text-center">Share this post:</div>
+  <div class="flex gap-3 flex-wrap justify-center">
+    <a
+      href="#"
+      onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('{{ title }}') + '&url=' + encodeURIComponent('https://www.danielsteman.com/blog/{{ id }}'), '_blank'); return false;"
+      class="px-4 py-2 bg-gray-900 text-gray-100 rounded hover:bg-gray-800 transition-colors font-mono text-sm"
+    >
+      Twitter
+    </a>
+    <a
+      href="https://www.linkedin.com/sharing/share-offsite/?url=https://www.danielsteman.com/blog/{{ id }}"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="px-4 py-2 bg-gray-900 text-gray-100 rounded hover:bg-gray-800 transition-colors font-mono text-sm"
+    >
+      LinkedIn
+    </a>
+    <a
+      href="#"
+      onclick="window.open('https://news.ycombinator.com/submitlink?u=' + encodeURIComponent('https://www.danielsteman.com/blog/{{ id }}') + '&t=' + encodeURIComponent('{{ title }}'), '_blank'); return false;"
+      class="px-4 py-2 bg-gray-900 text-gray-100 rounded hover:bg-gray-800 transition-colors font-mono text-sm"
+    >
+      Hacker News
+    </a>
+    <button
+      type="button"
+      onclick="copyLinkToClipboard('https://www.danielsteman.com/blog/{{ id }}');"
+      class="px-4 py-2 bg-gray-900 text-gray-100 rounded hover:bg-gray-800 transition-colors font-mono text-sm"
+    >
+      Copy Link
+    </button>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="copy-toast" style="position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); padding: 0.75rem 1.5rem; background-color: rgb(17, 24, 39); color: rgb(243, 244, 246); border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.875rem; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-in-out; z-index: 9999; white-space: nowrap; text-align: center;">
+  Link copied!
+</div>
+
+<script>
+  function copyLinkToClipboard(url) {
+    if (!navigator.clipboard) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Link copied!');
+      } catch (err) {
+        showToast('Failed to copy link');
+      }
+      document.body.removeChild(textArea);
+      return;
+    }
+
+    navigator.clipboard.writeText(url).then(() => {
+      showToast('Link copied!');
+    }).catch(() => {
+      showToast('Failed to copy link');
+    });
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('copy-toast');
+    if (!toast) return;
+
+    toast.textContent = message;
+    toast.style.opacity = '0';
+    toast.style.pointerEvents = 'none';
+
+    // Force reflow
+    void toast.offsetHeight;
+
+    // Show toast
+    toast.style.opacity = '1';
+    toast.style.pointerEvents = 'auto';
+
+    // Hide after 2 seconds
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.pointerEvents = 'none';
+    }, 2000);
+  }
+</script>
+
