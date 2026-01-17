@@ -1,4 +1,43 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block head %}
+  <!-- Primary Meta Tags -->
+  <title>{{ title }} – Daniel Steman</title>
+  <meta name="title" content="{{ title }} - Daniel Steman" />
+  <meta name="description" content="{{ summary }}" />
+  <meta name="keywords" content="{{ keywords }}" />
+  <meta name="author" content="Daniel Steman" />
+  <link rel="canonical" href="https://www.danielsteman.com/blog/{{ id }}" />
+
+  <!-- Structured Data - Article -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "{{ title }}",
+    "description": "{{ summary }}",
+    "url": "https://www.danielsteman.com/blog/{{ id }}",
+    "datePublished": "{{ date_iso }}",
+    "dateModified": "{{ date_iso }}",
+    "author": {
+      "@type": "Person",
+      "name": "Daniel Steman",
+      "url": "https://www.danielsteman.com"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Daniel Steman",
+      "url": "https://www.danielsteman.com"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://www.danielsteman.com/blog/{{ id }}"
+    }
+    {% if has_tags %},
+    "keywords": "{{ tags_keywords }}"{% endif %}
+  }
+  </script>
+{% endblock %}
+{% block content %}
 <body class="blog bg-gray-100">
   <script type="module">
     import { getHighlighter } from "https://esm.sh/shiki@1.0.0-beta.0";
