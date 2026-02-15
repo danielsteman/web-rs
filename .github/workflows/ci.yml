@@ -42,7 +42,7 @@ jobs:
         run: corepack enable
 
       - name: Install yarn dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Check formatting
         run: cargo fmt --check
@@ -81,7 +81,7 @@ jobs:
         run: corepack enable
 
       - name: Install yarn dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Cache cargo registry
         uses: actions/cache@v4
