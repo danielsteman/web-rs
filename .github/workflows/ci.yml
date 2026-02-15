@@ -37,10 +37,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'yarn'
 
-      - name: Install npm dependencies
-        run: npm ci
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Check formatting
         run: cargo fmt --check
@@ -69,10 +72,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'yarn'
 
-      - name: Install npm dependencies
-        run: npm ci
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install yarn dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Cache cargo registry
         uses: actions/cache@v4
