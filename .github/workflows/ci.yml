@@ -5,20 +5,80 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      force_build:
+        description: 'Force rebuild of CI base image'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
+  changes:
+    name: Check for CI image changes
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.filter.outputs.ci-image }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          base: main
+          filters: |
+            ci-image:
+              - 'Dockerfile.ci'
+              - 'Cargo.toml'
+              - 'Cargo.lock'
+              - 'package.json'
+              - 'yarn.lock'
+
+  build-ci-image:
+    name: Build CI base image
+    needs: changes
+    if: needs.changes.outputs.build == 'true' || github.event.inputs.force_build == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push CI image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile.ci
+          push: true
+          tags: ghcr.io/${{ github.repository }}/ci-base:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
   test-and-lint:
+    needs: [changes, build-ci-image]
+    if: always() && needs.changes.result == 'success' && (needs.build-ci-image.result == 'success' || needs.build-ci-image.result == 'skipped')
     name: Test and Lint
     runs-on: ubuntu-latest
-    
+    container:
+      image: ghcr.io/${{ github.repository }}/ci-base:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
 
       - name: Cache cargo registry
         uses: actions/cache@v4
@@ -33,13 +93,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Cache yarn
+        uses: actions/cache@v4
         with:
-          node-version: '20'
-
-      - name: Enable corepack
-        run: corepack enable
+          path: |
+            ~/.cache/yarn
+            node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Install yarn dependencies
         run: yarn install --immutable
@@ -54,34 +116,19 @@ jobs:
         run: cargo test --verbose
 
   build-lambda:
+    needs: [changes, build-ci-image]
+    if: always() && needs.changes.result == 'success' && (needs.build-ci-image.result == 'success' || needs.build-ci-image.result == 'skipped')
     name: Build with cargo-lambda
     runs-on: ubuntu-latest
-    
+    container:
+      image: ghcr.io/${{ github.repository }}/ci-base:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Setup Zig
-        uses: goto-bus-stop/setup-zig@v2
-        with:
-          version: '0.13.0'
-
-      - name: Install cargo-lambda
-        uses: zerj9/setup-cargo-lambda@v0.1.2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Install yarn dependencies
-        run: yarn install --immutable
 
       - name: Cache cargo registry
         uses: actions/cache@v4
@@ -95,6 +142,19 @@ jobs:
           key: ${{ runner.os }}-lambda-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-lambda-cargo-
+
+      - name: Cache yarn
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/yarn
+            node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install yarn dependencies
+        run: yarn install --immutable
 
       - name: Build Lambda function
         run: cargo lambda build --release

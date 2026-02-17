@@ -8,9 +8,9 @@ WORKDIR /usr/src/app
 COPY tailwind.config.js package.json yarn.lock ./
 COPY templates/input.css ./templates/input.css
 
-# Compile and minify css
+# Compile and minify css (npx directly; yarn prod runs cargo lambda)
 RUN yarn install
-RUN yarn prod
+RUN mkdir -p assets && npx tailwindcss -i ./templates/input.css -o ./assets/output.css --minify
 
 # Use a Rust base image
 FROM rust:latest as builder

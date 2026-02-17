@@ -1,0 +1,9 @@
+# act options for faster local CI (see: https://nektosact.com)
+# -b: bind workspace instead of copy (much faster)
+# -r: reuse containers between runs (preserves state)
+# --container-architecture: required for Apple M-series (Colima)
+# --cache-server-path: enable actions/cache compatibility
+-b
+-r
+--container-architecture linux/amd64
+--cache-server-path ~/.cache/act
