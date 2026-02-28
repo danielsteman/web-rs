@@ -1,11 +1,14 @@
-# Home lab
+# European Digital Sovereignity
 
-I've been running home assistant on an Intel NUC for a while now and it's great. This small machine is very quiet, hardly uses 10% of its memory and even less CPU and doesn't consume energy significant enough to be a burden on the energy bill. But, the leftover memory and compute started to bug me. Surely there is better use for it. A field that I always like to explore is distributed computing. I've been working a lot with compute clusters, provisioning and configuring resources declaratively both for web applications and data heavy workloads. But, in a professional setting there is only so much you can take ownership of. When the goal is to deliver a project before a deadline, it makes more sense to split the work amongst people in the team. As a consequence, I found myself working on parts of the stack and usually the core infrastructure was already set up. Now that I had some left over resources on the premise (my house), I decided to setup some core infrastructure and over engineer the crap out of it. No deadlines, no responsibilities, just the physical limits of that Intel NUC (4 cores and 12GB of memory). 
+You cannot have missed this in the news in the past months. Europeans who became aware of the risks associated to the depedence on American tech, triggered by a changing geopolitical landscape. That's roughly what the front page headlines looked like. In simple terms, it means that the orange republican can command technology companies such as Microsoft to deny services to Europe, and that is a major risk. If that were to happen to the Netherlands, where I live, the country would [shut down completely](https://nltimes.nl/2026/01/28/netherlands-risk-shutdown-dependence-foreign-data-authority-warns), as has been raised by the [national data protection authority](https://www.autoriteitpersoonsgegevens.nl/). 
 
-## GitOps
 
-At the start of a project it's very tempting to provision resources through the graphical interface of the infrastructure provider (e.g. AWS console). For most, this is intuitive, quick and sufficiently managable in the mid-term, especially if a project doesn't require fancy resources (e.g. simple lambda + API gateway stack). However, I'm a big advocate of infrastructure-as-code, like you might have inferred from my other blogs 😅, so for this project, I want every simple component to be [emphemeral](https://en.wikipedia.org/wiki/Ephemerality).
+Links:
 
-## Virtualization
+Risks of vendor lock-in:
+- https://www.outsystems.com/application-development/vendor-lock-in-challenges-and-concerns/#faqs
 
-I only have one machine, yet I'm looking to distribute workloads. How is this possible? Virtualization. For that reason, I booted [Proxmox](https://www.proxmox.com/en/) and setup a couple of virtual machines (VM). 
+Pros of going open source:
+- https://www.reddit.com/r/opensource/comments/1iguh9m/moving_to_open_source_azure_alternative/
+- https://double.cloud/blog/posts/2023/01/break-free-from-vendor-lock-in-with-open-source-tech/
+- https://venturebeat.com/data-infrastructure/6-tips-combat-vendor-lock-in-data-gravity
