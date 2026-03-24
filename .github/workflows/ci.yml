@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
       force_build:
-        description: 'Force rebuild of CI base image'
+        description: "Force rebuild of CI base image"
         required: false
         default: false
         type: boolean
