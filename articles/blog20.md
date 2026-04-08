@@ -1,15 +1,5 @@
-# European Digital Sovereignity
+The past couple of weeks have been quite hectic in cyber security land. In the startup environment that I work in, there is no dedicated security department, because the company is simply too small, so I took the opportunity to get into the details of some of the widely spread attacks (fortunately we were not exposed) to learn more about them and come up with ways to prevent future attacks affecting me. In the process of doing so I wanted to share to my insights.
 
-You cannot have missed this in the news in the past months. Europeans who became aware of the risks associated to the depedence on American tech, triggered by a changing geopolitical landscape. That's roughly what the front page headlines looked like. In simple terms, it means that the orange republican can command technology companies such as Microsoft to deny services to Europe, and that is a major risk. If that were to happen to the Netherlands, where I live, the country would [shut down completely](https://nltimes.nl/2026/01/28/netherlands-risk-shutdown-dependence-foreign-data-authority-warns), as has been raised by the [national data protection authority](https://www.autoriteitpersoonsgegevens.nl/).
+## Trivy
 
-Links:
-
-Risks of vendor lock-in:
-
-- https://www.outsystems.com/application-development/vendor-lock-in-challenges-and-concerns/#faqs
-
-Pros of going open source:
-
-- https://www.reddit.com/r/opensource/comments/1iguh9m/moving_to_open_source_azure_alternative/
-- https://double.cloud/blog/posts/2023/01/break-free-from-vendor-lock-in-with-open-source-tech/
-- https://venturebeat.com/data-infrastructure/6-tips-combat-vendor-lock-in-data-gravity
+Ironically, I was just in the process of upgrading the vulnerability scanning process to Trivy when it became the target of a "multi-phase supply chain attack". The attack is claimed to be the most sophisticated supply chain attack on a security tool so far by Palo Alto Networks. All the more tempting to dive into this attack and understand what actually happened. You can read the full article [here](https://www.paloaltonetworks.com/blog/cloud-security/trivy-supply-chain-attack/).
