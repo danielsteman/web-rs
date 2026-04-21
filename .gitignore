@@ -23,3 +23,6 @@ assets/output.css
 
 # env
 .env
+
+# claude
+.claude/
