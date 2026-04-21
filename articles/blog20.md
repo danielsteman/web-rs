@@ -4,3 +4,5 @@ A hacker bot exploited a misconfigured [pull_request_target workflows](https://d
 2. Send them to an external server
 3. Open a [PR](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) with the original Trivy repository as base
 4. Check out the forked repository inside the [`apidiff`](https://pkg.go.dev/golang.org/x/exp/apidiff) workflow, which checks if a module has breaking changes for [semantic versioning](https://semver.org/). The maintainers of Trivy were under the impression that this was safe since the checkout is only done for static analysis, as [the comment of the now removed workflow suggests](https://github.com/aquasecurity/trivy/pull/10259/changes). The `Go` code in the forked repository is still executed during analysis and when this code is ran in the context of the original Trivy repository, it has access to environment variables in that environment, such as an organisation-scoped Github PAT. 
+5. The team noticed and rotated secrets, but not _all secrets_. 
+
