@@ -2,7 +2,7 @@ The Trivy hack has been discussed a lot over the past month, but I still wanted 
 
 ## The exploit
 
-An AI-powered hacker bot, [hackerbot-claw](https://www.linkedin.com/posts/cybersecurity-supplychainsecurity-githubactions-share-7433820997457469440-SUuo/), exploited a misconfigured [pull_request_target workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target) to get repository secrets from the Trivy project. A workflow of this kind can be triggered by an external pull request. When I read this, I thought: how? Github masks secrets in workflows when you try to print them or write them to a file. What happened is: 
+An AI-powered hacker bot, [hackerbot-claw](https://www.linkedin.com/posts/cybersecurity-supplychainsecurity-githubactions-share-7433820997457469440-SUuo/), exploited a misconfigured [pull_request_target workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target) to get repository secrets from the Trivy project. A workflow of this kind can be triggered by an external pull request and may be configured in an unsafe manner. This how credentials were stolen from the Trivy project:
 
 1. A hacker forked the Trivy repository, added code to [exfiltrate](https://www.ibm.com/think/topics/data-exfiltration) environment variables
 2. Send them to an external server
