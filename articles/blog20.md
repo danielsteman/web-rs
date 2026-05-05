@@ -65,4 +65,10 @@ bun install --ignore-scripts
 deno install --no-npm-lifecycle-scripts
 ```
 
-It is adviced to do this in your CI to prevent that your build machine will be compromised by a malicious open source package. 
+It is adviced to do this in your CI to prevent that your build machine will be compromised by a malicious open source package, such as the secret scanner hidden in a Trivy release.
+
+### Get rid of long-lived secrets
+
+Stolen secrets are worthless if they are expired, so we better make sure that the life time of secrets is short. This can be achieved with frequent (daily) secrets rotation or using OpenID for authentication. Check out [my other post about OIDC](https://danielsteman.com/blog/14) for more information about setting this up in your CI/CD pipeline. 
+
+The Github runner exchanges a OIDC token for AWS Security Token Service (STS) credentials that have a 1 hour lifetime by default. The STS secrets consist of a `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN`, which can be used to access an AWS account. If these credentials get stolen, a hacker would have 1 hour to do whatever the associated IAM role allows. This is already much better than a long lived developer credential, but it's not great. It's possible to shorten the life time of these tokens further, shortening the exposure window. Also, most CI/CD setups use a single role for several tasks in the pipeline. You can consider to create more roles with tighter permissions, scoped to the work that each tasks does, keeping the [least privileges principle](https://en.wikipedia.org/wiki/Principle_of_least_privilege_) in mind. This makes the attack surface smaller, may the STS secrets be compromised. 
