@@ -29,4 +29,40 @@ To give you some more context so you can estimate the number of credentials that
 
 ## Counter measures
 
+### Pin open source Github action templates
 
+This event once again showed the importance of the [zero trust](https://www.cloudflare.com/learning/security/glossary/what-is-zero-trust/) philosophy when building a platform. Part of this is not trusting mutable version tags of open source software. It's better to pin on the immutable commit hash (the SHA). In a Github workflow, instead of this: 
+
+```yaml
+- name: Run Trivy (pinned to version tag)
+        uses: aquasecurity/trivy-action@0.24.0
+```
+
+Do this: 
+
+```yaml
+- name: Run Trivy (pinned to version tag)
+        uses: aquasecurity/trivy-action@b3f1c2a9d7e4c6a1f2b8d9e0c123456789abcdef0
+```
+
+### Disable post-install scripts
+
+Some [npm](https://www.npmjs.com/)(Node Package Manager) dependencies rely on scripts that run after you install the package, to automatically bootstrap the environment for example, or compile source code. This is convenient but also a security risk, because post install scripts can execute maliscious code. Luckily, you can disable these scripts at install time: 
+
+```bash
+npm install --ignore-scripts
+```
+
+```bash
+yarn install --ignore-scripts
+```
+
+```bash
+bun install --ignore-scripts
+```
+
+```bash
+deno install --no-npm-lifecycle-scripts
+```
+
+It is adviced to do this in your CI to prevent that your build machine will be compromised by a malicious open source package. 
