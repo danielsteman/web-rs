@@ -78,4 +78,8 @@ The Github runner exchanges a OIDC token for AWS Security Token Service (STS) cr
 
 Exfiltration is only possible if stolen credentials leave the owner's environment. This can be prevented by using self-hosted runners that live in a private network (AWS offers Virtual Private Cloud, or VPC). There is a number of ways to set this up and it really depends on how to rest of your platform is setup, but with a VPC it's easy to manage firewall rules and security groups that prevent any traffic going to a malicious address. When using self-hosted Github runners, it's also possible to use a [proxy server](https://docs.github.com/en/actions/how-tos/manage-runners/use-proxy-servers) like [nginx](https://nginx.org/) that has a deny-all policy and has an allow list of addresses that you trust. 
 
-If your Github runner would've been compromised by the malicious Trivy workflows, exfiltration of secrets to the typosquatted address (scan.aquasecutiy.org) would not have been possible. 
+If your Github runner would've been compromised by the malicious Trivy workflows, exfiltration of secrets to the typosquatted address (scan.aquasecutiy.org) would not have been possible. This would not have closed off the fallback method though (write encrypted secrets to a user's public repo release assets and use it as a dead drop). 
+
+### Software Bill of Materials (SBOM) scanning
+
+
