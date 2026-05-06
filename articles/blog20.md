@@ -81,3 +81,5 @@ Exfiltration is only possible if stolen credentials leave the owner's environmen
 If your Github runner would've been compromised by the malicious Trivy workflows, exfiltration of secrets to the typosquatted address (scan.aquasecutiy.org) would not have been possible. This would not have closed off the fallback method though (write encrypted secrets to a user's public repo release assets and use it as a dead drop).
 
 ### Software Bill of Materials (SBOM) scanning
+
+You could compare the SBOM with an ingredient list. It states what components have been used to build your application. Often times, software applications are built using hundred if not thousands of other software components, that all have their own versioning and are built from other software components. You can imagine that this becomes complex very fast and it would be impossible to keep track without a programmatic approach. _Why is it important to keep track of the ingredients list in the first place_, you might ask yourself. It can help you to determine that your application doesn't include any malicious components.
