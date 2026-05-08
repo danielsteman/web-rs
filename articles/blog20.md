@@ -199,16 +199,16 @@ Outside of the CI/CD runners, on developer machines, it's possible to realise sh
 
 Exfiltration is only possible if stolen credentials leave the owner's environment. This can be prevented by using self-hosted runners that live in a private network (AWS offers Virtual Private Cloud, or VPC). There is a number of ways to set this up and it really depends on how to rest of your platform is setup, but with a VPC it's easy to manage firewall rules and security groups that prevent any traffic going to a malicious address. When using self-hosted Github runners, it's also possible to use a [proxy server](https://docs.github.com/en/actions/how-tos/manage-runners/use-proxy-servers) like [nginx](https://nginx.org/) that has a deny-all policy and has an allow list of addresses that you trust.
 
-```mermaid
-flowchart LR
-	subgraph vpc["Private network / VPC"]
-		runner["GitHub runner"]
-		proxy["Proxy (deny-all + allowlist)"]
-		runner -->|"outbound HTTP(S)"| proxy
-	end
-	proxy -->|"allowed"| trusted["Trusted hosts"]
-	proxy -.->|"blocked"| untrusted["Untrusted / malicious"]
-```
+<pre class="mermaid">
+  flowchart LR
+    subgraph vpc["Private network / VPC"]
+      runner["GitHub runner"]
+      proxy["Proxy (deny-all + allowlist)"]
+      runner -->|"outbound HTTP(S)"| proxy
+    end
+    proxy -->|"allowed"| trusted["Trusted hosts"]
+    proxy -.->|"blocked"| untrusted["Untrusted / malicious"]
+</pre>
 
 If your Github runner would've been compromised by the malicious Trivy workflows, exfiltration of secrets to the typosquatted address (scan.aquasecutiy.org) would not have been possible. This would not have closed off the fallback method though (write encrypted secrets to a user's public repo release assets and use it as a dead drop).
 
