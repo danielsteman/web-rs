@@ -28,6 +28,30 @@ The team noticed and rotated secrets, but not _all secrets_. After doing some di
 
 Three weeks later, another actor got involved: [TeamPCP](https://cyble.com/threat-actor-profiles/teampcp/). They used stolen credentials to [spoof](https://en.wikipedia.org/wiki/Spoofing_attack) commits to the [Trivy action repository](https://github.com/aquasecurity/trivy-action). Each commit cloned the original commit metadata, timestamp and commit message to make them go unnoticed in the Git history and therefor hard to catch. These commits contained changes in the [`entrypoint.sh` file](https://github.com/aquasecurity/trivy-action/blob/master/entrypoint.sh) that silently scanned the environment it was running on for credentials. Another change was made in `action.yaml` with the same credential-stealing logic. Then, the attacker force-pushed version tags on [`aquasecurity/setup-trivy`](https://github.com/aquasecurity/setup-trivy) and [`aquasecurity/trivy-action`](https://github.com/aquasecurity/trivy-action) to point at the malicious commits. Anyone using these workflows with a tag such as `0.28.0` would then pull the workflow with the malicious `entrypoint.sh` and run that on their Github runners. The changes in `entrypoint.sh` have now been reverted and are not public information anymore, but [this write up](https://www.abgeo.dev/blog/trivy-github-actions-compromised-full-payload-analysis) describes how to script actually acquired credentials on its host. To summarize: it looks for all processes that run on the Github runner. For each process, it reads [`/proc/<PID>/environ`, its environment](https://man7.org/linux/man-pages/man5/proc_pid_environ.5.html), and [`/proc/<PID>/mem`, its memory](https://man7.org/linux/man-pages/man5/proc_pid_mem.5.html), that contain environment variables that either hold a secret value or a reference to the file on disk that contains the secret value. The latter is useful because SSH keys or TLS private keys are contained in files and often referenced with a file path (e.g. `/home/user/.ssh/id_ed25519`).
 
+We can actually try this harvesting technique ourselves. I used [Lima](https://github.com/lima-vm/lima) to spin up a [virtual machine (VM)](https://en.wikipedia.org/wiki/Virtual_machine). Open a shell in a VM after installing `lima`:
+
+```bash
+limactl start
+# use the default config for this example
+lima
+```
+
+We'll export some fake secrets and trigger a `sleep` process
+
+```bash
+export AWS_SECRET_ACCESS_KEY=FAKE_AWS_SECRET
+export GITHUB_TOKEN=ghp_fake_token
+export SSH_KEY_PATH=/home/danielsteman.linux/.ssh/id_ed25519
+
+sleep 999999
+```
+
+We can find this process with [`ps`](https://man7.org/linux/man-pages/man1/ps.1.html), which I believe stands for "process snapshot", plus [some parameters](https://unix.stackexchange.com/questions/106847/what-does-aux-mean-in-ps-aux).
+
+```bash
+ps aux | grep sleep
+```
+
 ### 7. Persistent backdoor via an ICP canister
 
 While hijacking version tags on Trivy's Github actions, the attacker also created a backdoor in Trivy's binary. This binary installed a [persistent backdoor](https://www.offsec.com/metasploit-unleashed/persistent-backdoors/), in this case a systemd user service in `~/.config/systemd/user/sysmon.py` that polled a URL that pointed to an [ICP hosted canister](https://docs.internetcomputer.org/building-apps/essentials/canisters). Before continuing, let's clear some things up. A canister is a [smart contract](https://www.freecodecamp.org/news/smart-contracts-for-dummies-a1ba1e0b9575/) compiled to [Web Assembly](https://danielsteman.com/blog/4) that can store state and respond to HTTP requests. ICP is decentralised internet, making it very suitable to host malware since it's not possible to take down a website. This means that the canister's lifecycle is governed by the blockchain's consensus protocol. Taking it down would involve the [Network Nervous System](https://nns.ic0.app/), which is a decentralized voting process, and deserves a complete blog post on its own. After some more digging I found that the malicious canister continued to live on the blockchain but [DFINITY](https://dfinity.org/) stopped the [boundary nodes](https://learn.internetcomputer.org/hc/en-us/articles/34212818609684-ICP-Edge-Infrastructure) to serve it. These boundary nodes are the primary interface for users of ICP and enforce security measures to protect the network. What fascinates me is that the _decentralised internet_ apparently still has a _central_ actor that can interfene, so it's not completely like the wild west, as you might think if you're not very familiar with the decentralised web, like me.
