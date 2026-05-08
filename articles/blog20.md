@@ -1,4 +1,4 @@
-% id: 19
+% id: 20
 % title: Trivy Supply Chain Attack 🔗☠️
 % date: 2026-05-08
 % tags: devsecops
@@ -27,7 +27,7 @@ Checkout the forked repository inside the [`apidiff`](https://pkg.go.dev/golang.
 
 ### 5. Incomplete secret rotation
 
-The team noticed and rotated secrets, but not _all secrets_. After doing some digging it doesn't seems to be public information which secrets weren't rotated, it was only stated that rotation was "incomplete". I guess it makes sense in an organisation that has _many_ secrets in _many_ places, that there _might be_ a secret that was not in scope of the rotation process. This did make me review my rotation process to make sure that everything is in scope, because it only takes one forgotten secret to nullify all other measures. Anyways, no real harm was done using these credentials, yet. This is what happened next:
+The team noticed and rotated secrets, but not _all secrets_. After doing some digging it doesn't seem to be public information which secrets weren't rotated, it was only stated that rotation was "incomplete". I guess it makes sense in an organisation that has _many_ secrets in _many_ places, that there _might be_ a secret that was not in scope of the rotation process. This did make me review my rotation process to make sure that everything is in scope, because it only takes one forgotten secret to nullify all other measures. Anyways, no real harm was done using these credentials, yet. This is what happened next:
 
 ### 6. TeamPCP spoofs commits and force-pushes tags
 
@@ -60,7 +60,7 @@ ps aux | grep sleep
 We can already find the secrets in the environment of the process. Let's assume that the process we started earlier has PID `1234`. We can `cat` and format the environment like this.
 
 ```bash
-cat /proc/4631/environ | tr '\0' '\n'
+cat /proc/1234/environ | tr '\0' '\n'
 ```
 
 Which would return our fake secrets, among other variables.
@@ -77,7 +77,11 @@ GITHUB_TOKEN=ghp_fake_token
 AWS_SECRET_ACCESS_KEY=FAKE_AWS_SECRET
 ```
 
-A more advanced way of harvesting secrets would be to read them from a process's memory. According to Aqua Security this is what TeamPCP did in their malware. In their post mortem, its stated that secrets were also retrieved from `/proc/{pid}/mem`, but as opposed to `/proc/{pid}/environ`, this is not a regular file that you can `cat` but a [virtual file](https://docs.kernel.org/filesystems/vfs.html). Virtual files don't take up space on disk, but are backed by kernel handler functions. Following Unix's "everything is a file" philosophy, files and virtual files share the open/read/write semantics. When a virtual file is opened, I call a kernel handler function that generates and returns data. For example, `/proc/cpuinfo` is a virtual file that I can open. When we `open()` it, we do a lookup the proc file system, `procfs`, which has a set of file operations. When we `read()` the `/proc/cpuinfo`, we call `cpuinfo_read` which generates and returns CPU data to us. So it's very similar to reading a file, but the data that you get back is generated on the fly. We got a little side tracked, but this is good to understand to further explain how secrets can be stolen from process memory. The malware targeted the `Runner.Worker` process on the Github runner of a victim. The readable memory regions of this process can be found in `/proc/{pid}/maps`, which was accessible because a Github workflow is ran with the `runner` user and the process is also owned by the `runner` user. For each region, `/proc/{pid}/mem` was dumped and parsed to extract secrets.
+A more advanced way of harvesting secrets would be to read them from a process's memory. According to Aqua Security this is what TeamPCP did in their malware. In their post mortem, its stated that secrets were also retrieved from `/proc/{pid}/mem`, but as opposed to `/proc/{pid}/environ`, this is not a regular file that you can `cat` but a [virtual file](https://docs.kernel.org/filesystems/vfs.html).
+
+Virtual files don't take up space on disk, but are backed by kernel handler functions. Following Unix's "everything is a file" philosophy, files and virtual files share the open/read/write semantics. When a virtual file is opened, a kernel handler function is called that generates and returns data. For example, `/proc/cpuinfo` is a virtual file that I can open. When we `open()` it, we do a lookup the proc file system, `procfs`, which has a set of file operations. When we `read()` the `/proc/cpuinfo`, we call `cpuinfo_read` which generates and returns CPU data to us. So it's very similar to reading a file, but the data that you get back is generated on the fly.
+
+We got a little side tracked, but this is good to understand to further explain how secrets can be stolen from process memory. The malware targeted the `Runner.Worker` process on the Github runner of a victim. The readable memory regions of this process can be found in `/proc/{pid}/maps`, which was accessible because a Github workflow is ran with the `runner` user and the process is also owned by the `runner` user. For each region, `/proc/{pid}/mem` was dumped and parsed to extract secrets.
 
 ```bash
 # start a random process
@@ -111,7 +115,7 @@ with open(f"/proc/{pid}/maps") as maps, open(f"/proc/{pid}/mem", "rb") as mem:
 
 ### 7. Persistent backdoor via an ICP canister
 
-While hijacking version tags on Trivy's Github actions, the attacker also created a backdoor in Trivy's binary. This binary installed a [persistent backdoor](https://www.offsec.com/metasploit-unleashed/persistent-backdoors/), in this case a systemd user service in `~/.config/systemd/user/sysmon.py` that polled a URL that pointed to an [ICP hosted canister](https://docs.internetcomputer.org/building-apps/essentials/canisters). Before continuing, let's clear some things up. A canister is a [smart contract](https://www.freecodecamp.org/news/smart-contracts-for-dummies-a1ba1e0b9575/) compiled to [Web Assembly](https://danielsteman.com/blog/4) that can store state and respond to HTTP requests. ICP is decentralised internet, making it very suitable to host malware since it's not possible to take down a website. This means that the canister's lifecycle is governed by the blockchain's consensus protocol. Taking it down would involve the [Network Nervous System](https://nns.ic0.app/), which is a decentralized voting process, and deserves a complete blog post on its own. After some more digging I found that the malicious canister continued to live on the blockchain but [DFINITY](https://dfinity.org/) stopped the [boundary nodes](https://learn.internetcomputer.org/hc/en-us/articles/34212818609684-ICP-Edge-Infrastructure) to serve it. These boundary nodes are the primary interface for users of ICP and enforce security measures to protect the network. What fascinates me is that the _decentralised internet_ apparently still has a _central_ actor that can interfene, so it's not completely like the wild west, as you might think if you're not very familiar with the decentralised web, like me.
+While hijacking version tags on Trivy's Github actions, the attacker also created a backdoor in Trivy's binary. This binary installed a [persistent backdoor](https://www.offsec.com/metasploit-unleashed/persistent-backdoors/), in this case a systemd user service in `~/.config/systemd/user/sysmon.py` that polled a URL that pointed to an [ICP hosted canister](https://docs.internetcomputer.org/building-apps/essentials/canisters). Before continuing, let's clear some things up. A canister is a [smart contract](https://www.freecodecamp.org/news/smart-contracts-for-dummies-a1ba1e0b9575/) compiled to [Web Assembly](https://danielsteman.com/blog/4) that can store state and respond to HTTP requests. ICP is decentralised internet, making it very suitable to host malware since it's not possible to take down a website. This means that the canister's lifecycle is governed by the blockchain's consensus protocol. Taking it down would involve the [Network Nervous System](https://nns.ic0.app/), which is a decentralized voting process, and deserves a complete blog post on its own. After some more digging I found that the malicious canister continued to live on the blockchain but [DFINITY](https://dfinity.org/) stopped the [boundary nodes](https://learn.internetcomputer.org/hc/en-us/articles/34212818609684-ICP-Edge-Infrastructure) to serve it. These boundary nodes are the primary interface for users of ICP and enforce security measures to protect the network. What fascinates me is that the _decentralised internet_ apparently still has a _central_ actor that can intervene, so it's not completely like the wild west, as you might think if you're not very familiar with the decentralised web, like me.
 
 ### 8. Hybrid encryption of stolen secrets
 
@@ -123,7 +127,7 @@ The exfiltration part is also interesting due to its fallback logic. Stolen secr
 
 ### 10. Hijacking Aqua Security's repos and Docker images
 
-Next to stealing secrets of Trivy users, TeamPCP also stole secrets from Aqua Security itself. Days after the attack, [Aqua Security internal repositories were hijacked](https://opensourcemalware.com/blog/teampcp-aquasec-com-github-org-compromise) and showed "TeamPCP Owns Aqua Security" for a brief moment. On the same day, stolen Docker Hub credentials were sued to force-push malisicous Docker images.
+Next to stealing secrets of Trivy users, TeamPCP also stole secrets from Aqua Security itself. Days after the attack, [Aqua Security internal repositories were hijacked](https://opensourcemalware.com/blog/teampcp-aquasec-com-github-org-compromise) and showed "TeamPCP Owns Aqua Security" for a brief moment. On the same day, stolen Docker Hub credentials were sued to force-push malicious Docker images.
 
 ### Overview
 
@@ -181,13 +185,13 @@ bun install --ignore-scripts
 deno install --no-npm-lifecycle-scripts
 ```
 
-It is adviced to do this in your CI to prevent that your build machine will be compromised by a malicious open source package, such as the secret scanner hidden in a Trivy release.
+It is advised to do this in your CI to prevent that your build machine will be compromised by a malicious open source package, such as the secret scanner hidden in a Trivy release.
 
 ### Get rid of long-lived secrets
 
 Stolen secrets are worthless if they are expired, so we better make sure that the life time of secrets is short. This can be achieved with frequent (daily) secrets rotation or using OpenID for authentication. Check out [my other post about OIDC](https://danielsteman.com/blog/14) for more information about setting this up in your CI/CD pipeline.
 
-The Github runner exchanges a OIDC token for AWS Security Token Service (STS) credentials that have a 1 hour lifetime by default. The STS secrets consist of a `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN`, which can be used to access an AWS account. If these credentials get stolen, a hacker would have 1 hour to do whatever the associated IAM role allows. This is already much better than a long lived developer credential, but it's not great. It's possible to shorten the life time of these tokens further, shortening the exposure window. Also, most CI/CD setups use a single role for several tasks in the pipeline. You can consider to create more roles with tighter permissions, scoped to the work that each tasks does, keeping the [least privileges principle](https://en.wikipedia.org/wiki/Principle_of_least_privilege_) in mind. In a scenario where the STS secrets are compromised, the attacker wouldn't be able to do much.
+The Github runner exchanges an OIDC token for AWS Security Token Service (STS) credentials that have a 1 hour lifetime by default. The STS secrets consist of a `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN`, which can be used to access an AWS account. If these credentials get stolen, a hacker would have 1 hour to do whatever the associated IAM role allows. This is already much better than a long lived developer credential, but it's not great. It's possible to shorten the life time of these tokens further, shortening the exposure window. Also, most CI/CD setups use a single role for several tasks in the pipeline. You can consider to create more roles with tighter permissions, scoped to the work that each tasks does, keeping the [least privileges principle](https://en.wikipedia.org/wiki/Principle_of_least_privilege_) in mind. In a scenario where the STS secrets are compromised, the attacker wouldn't be able to do much.
 
 Outside of the CI/CD runners, on developer machines, it's possible to realise short lived secrets using [SSO](https://aws.amazon.com/iam/identity-center/).
 
@@ -210,7 +214,7 @@ If your Github runner would've been compromised by the malicious Trivy workflows
 
 ### Software Bill of Materials (SBOM)
 
-You could compare the SBOM with an ingredient list. It states what components have been used to build your application. Often times, software applications are built using hundred if not thousands of other software components, that all have their own versioning and are built from other software components. You can imagine that this becomes complex very fast and it would be impossible to keep track without a programmatic approach. _Why is it important to keep track of the ingredients list in the first place?_ - you might ask yourself. It can help you to determine that your application doesn't include any malicious components. It also serves as an audit trial that is valuable when handling an incident. Next to vulnerabilities, we can also analyse the licenses of underlying packages, which is important to do for compliance reasons. If one of the packages that you use is stating that you have to mention its maintainers somewhere in your software, you have to do that otherwise you'd violate the license of the software you're using. There are two industry standard formats of the SBOM:
+You could compare the SBOM with an ingredient list. It states what components have been used to build your application. Often times, software applications are built using hundred if not thousands of other software components, that all have their own versioning and are built from other software components. You can imagine that this becomes complex very fast and it would be impossible to keep track without a programmatic approach. _Why is it important to keep track of the ingredients list in the first place?_ - you might ask yourself. It can help you to determine that your application doesn't include any malicious components. It also serves as an audit trail that is valuable when handling an incident. Next to vulnerabilities, we can also analyse the licenses of underlying packages, which is important to do for compliance reasons. If one of the packages that you use is stating that you have to mention its maintainers somewhere in your software, you have to do that otherwise you'd violate the license of the software you're using. There are two industry standard formats of the SBOM:
 
 - CycloneDX - [OWASP](https://owasp.org/) maintained, used for supply chain analysis
 - SPDX (Software Package Data Exchange) - [Linux Foundation](https://www.linuxfoundation.org/) maintained, used to assess license compliance
@@ -312,3 +316,13 @@ Several security tools, such as Trivy or [Snyk](https://snyk.io/) can generate a
 ```
 
 With this file, it's possible evaluate each dependency against the [Common Vulnerabilities and Exposures (CVE)](https://www.cve.org/) database. There is a number of SaaS tools that do this effectively and suggest remediation in the form of a version bump or otherwise.
+
+## Wrapping up
+
+What I take away from picking this attack apart is that no single misconfiguration was catastrophic on its own. A `pull_request_target` workflow that checks out a fork, an incomplete secret rotation, mutable version tags, a CI runner that can talk to anywhere on the internet, each of these is something most teams have lived with at some point. The damage came from chaining them together, and the attacker was patient enough to wait three weeks between the initial credential theft and the tag poisoning.
+
+That's the part that stuck with me. There is no single setting in Github that would've prevented this end to end. Pinning to commit SHAs would've stopped the tag poisoning but not the original `apidiff` exploit. Disabling post-install scripts wouldn't have helped a victim of the malicious binary. Short-lived OIDC credentials would've shrunk the blast radius but not closed the door. You need most of the counter measures above, most of the time, and you need to assume that one of them will fail.
+
+The other thing worth saying is that the attacker here was a bot. [hackerbot-claw](https://www.linkedin.com/posts/cybersecurity-supplychainsecurity-githubactions-share-7433820997457469440-SUuo/) found the misconfigured workflow by scanning, not by manual reconnaissance. That changes the economics. A misconfiguration in a small project that a human attacker would never have bothered with is now reachable in minutes by something that doesn't sleep. This is something to keep in mind the next time you're thinking about leaving a "we'll fix that later" comment in a CI workflow yaml.
+
+I already took action and eliminated most of the attack surface. If you've read this far, maybe you should too.
