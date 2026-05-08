@@ -74,6 +74,8 @@ Stolen secrets are worthless if they are expired, so we better make sure that th
 
 The Github runner exchanges a OIDC token for AWS Security Token Service (STS) credentials that have a 1 hour lifetime by default. The STS secrets consist of a `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN`, which can be used to access an AWS account. If these credentials get stolen, a hacker would have 1 hour to do whatever the associated IAM role allows. This is already much better than a long lived developer credential, but it's not great. It's possible to shorten the life time of these tokens further, shortening the exposure window. Also, most CI/CD setups use a single role for several tasks in the pipeline. You can consider to create more roles with tighter permissions, scoped to the work that each tasks does, keeping the [least privileges principle](https://en.wikipedia.org/wiki/Principle_of_least_privilege_) in mind. In a scenario where the STS secrets are compromised, the attacker wouldn't be able to do much.
 
+Outside of the CI/CD runners, on developer machines, it's possible to realise short lived secrets using [SSO](https://aws.amazon.com/iam/identity-center/).
+
 ### Limit outbound traffic
 
 Exfiltration is only possible if stolen credentials leave the owner's environment. This can be prevented by using self-hosted runners that live in a private network (AWS offers Virtual Private Cloud, or VPC). There is a number of ways to set this up and it really depends on how to rest of your platform is setup, but with a VPC it's easy to manage firewall rules and security groups that prevent any traffic going to a malicious address. When using self-hosted Github runners, it's also possible to use a [proxy server](https://docs.github.com/en/actions/how-tos/manage-runners/use-proxy-servers) like [nginx](https://nginx.org/) that has a deny-all policy and has an allow list of addresses that you trust.
@@ -193,3 +195,5 @@ Several security tools, such as Trivy or [Snyk](https://snyk.io/) can generate a
   ]
 }
 ```
+
+With this file, it's possible evaluate each dependency against the [Common Vulnerabilities and Exposures (CVE)](https://www.cve.org/) database. There is a number of SaaS tools that do this effectively and suggest remediation in the form of a version bump or otherwise.
