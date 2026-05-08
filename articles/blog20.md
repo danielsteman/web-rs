@@ -133,14 +133,14 @@ Next to stealing secrets of Trivy users, TeamPCP also stole secrets from Aqua Se
 
 To give you some more context so you can estimate the number of credentials that were stolen, here is an overview of the exposure window per attack vector:
 
-| Vector                                   | Compromise start (UTC) | Contained (UTC)   | Exposure window                    |
-| ---------------------------------------- | ---------------------- | ----------------- | ---------------------------------- |
-| trivy binary v0.69.4                     | Mar 19, ~18:22         | Mar 19, ~21:42    | ~3 hours                           |
-| setup-trivy (all 7 tags)                 | Mar 19, ~17:43         | Mar 19, ~21:44    | ~4 hours                           |
-| trivy-action (76 of 77 tags)             | Mar 19, ~17:43         | Mar 20, ~05:40    | ~12 hours                          |
-| Docker Hub images (v0.69.5, v0.69.6)     | Mar 22, ~16:00         | Mar 22 (same day) | Hours (exact removal time unclear) |
-| Internal Aqua repos defaced (44 repos)   | Mar 22, ~20:31         | Mar 22 (same day) | Hours (exact removal time unclear) |
-| ICP canister (C2 for sysmon.py backdoor) | Mar 19, ~17:43         | Mar 22, 21:31     | ~3 days                            |
+| Vector                                   | Compromise start (UTC) | Contained (UTC) | Exposure window                    |
+| ---------------------------------------- | ---------------------- | --------------- | ---------------------------------- |
+| trivy binary v0.69.4                     | Mar 19, ~18:22         | Mar 19, ~21:42  | ~3 hours                           |
+| setup-trivy (all 7 tags)                 | Mar 19, ~17:43         | Mar 19, ~21:44  | ~4 hours                           |
+| trivy-action (76 of 77 tags)             | Mar 19, ~17:43         | Mar 20, ~05:40  | ~12 hours                          |
+| Docker Hub images (v0.69.5, v0.69.6)     | Mar 22, ~16:00         | Mar 22          | Hours (exact removal time unclear) |
+| Internal Aqua repos defaced (44 repos)   | Mar 22, ~20:31         | Mar 22          | Hours (exact removal time unclear) |
+| ICP canister (C2 for sysmon.py backdoor) | Mar 19, ~17:43         | Mar 22, 21:31   | ~3 days                            |
 
 ## Counter measures
 

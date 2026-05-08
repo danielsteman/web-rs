@@ -61,3 +61,12 @@ body[class*="blog"] h2 {
   padding: 32px 0px 8px 0px;
   font-weight: 700;
 }
+
+/*
+h3 headers that are rendered by markdown.rs (###)
+*/
+
+body[class*="blog"] h3 {
+  padding: 24px 0px 6px 0px;
+  font-weight: 700;
+}
