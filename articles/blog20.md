@@ -82,4 +82,103 @@ If your Github runner would've been compromised by the malicious Trivy workflows
 
 ### Software Bill of Materials (SBOM)
 
-You could compare the SBOM with an ingredient list. It states what components have been used to build your application. Often times, software applications are built using hundred if not thousands of other software components, that all have their own versioning and are built from other software components. You can imagine that this becomes complex very fast and it would be impossible to keep track without a programmatic approach. _Why is it important to keep track of the ingredients list in the first place?_ - you might ask yourself. It can help you to determine that your application doesn't include any malicious components. It also serves as an audit trial that is valuable when handling an incident. In fact, Trivy can take the SBOM as input to determine vulnerabilities in [transistive dependencies](https://en.wikipedia.org/wiki/Transitive_dependency).
+You could compare the SBOM with an ingredient list. It states what components have been used to build your application. Often times, software applications are built using hundred if not thousands of other software components, that all have their own versioning and are built from other software components. You can imagine that this becomes complex very fast and it would be impossible to keep track without a programmatic approach. _Why is it important to keep track of the ingredients list in the first place?_ - you might ask yourself. It can help you to determine that your application doesn't include any malicious components. It also serves as an audit trial that is valuable when handling an incident. Next to vulnerabilities, we can also analyse the licenses of underlying packages, which is important to do for compliance reasons. If one of the packages that you use is stating that you have to mention its maintainers somewhere in your software, you have to do that otherwise you violate the license of the software you're using. There are two industry standard formats of the SBOM:
+
+- CycloneDX - [OWASP](https://owasp.org/) maintained, used for supply chain analysis
+- SPDX (Software Package Data Exchange) - [Linux Foundation](https://www.linuxfoundation.org/) maintained, used to assess license compliance
+
+Several security tools, such as Trivy or [Snyk](https://snyk.io/) can generate a SBOM for you. An example CycloneDX SBOM in JSON format looks like this:
+
+```json
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:4b1e5fa2-3c8d-4a1f-b2f7-9e0a1c23d456",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-05-08T10:30:00Z",
+    "tools": [
+      {
+        "vendor": "CycloneDX",
+        "name": "cyclonedx-python-lib",
+        "version": "5.1.0"
+      }
+    ],
+    "component": {
+      "type": "application",
+      "bom-ref": "app-root",
+      "name": "my-web-api",
+      "version": "2.4.1",
+      "description": "Internal REST API service"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "pkg:pypi/fastapi@0.111.0",
+      "name": "fastapi",
+      "version": "0.111.0",
+      "purl": "pkg:pypi/fastapi@0.111.0",
+      "licenses": [{ "license": { "id": "MIT" } }],
+      "hashes": [{ "alg": "SHA-256", "content": "a3f1c2d4e5b6..." }],
+      "externalReferences": [
+        { "type": "website", "url": "https://fastapi.tiangolo.com" }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:pypi/pydantic@2.7.1",
+      "name": "pydantic",
+      "version": "2.7.1",
+      "purl": "pkg:pypi/pydantic@2.7.1",
+      "licenses": [{ "license": { "id": "MIT" } }],
+      "hashes": [{ "alg": "SHA-256", "content": "b9e2a4f7c1d3..." }]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:pypi/uvicorn@0.29.0",
+      "name": "uvicorn",
+      "version": "0.29.0",
+      "purl": "pkg:pypi/uvicorn@0.29.0",
+      "licenses": [{ "license": { "id": "BSD-3-Clause" } }],
+      "hashes": [{ "alg": "SHA-256", "content": "c7d8e9f0a1b2..." }]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:pypi/sqlalchemy@2.0.30",
+      "name": "sqlalchemy",
+      "version": "2.0.30",
+      "purl": "pkg:pypi/sqlalchemy@2.0.30",
+      "licenses": [{ "license": { "id": "MIT" } }],
+      "hashes": [{ "alg": "SHA-256", "content": "d4e5f6a7b8c9..." }]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:pypi/starlette@0.37.2",
+      "name": "starlette",
+      "version": "0.37.2",
+      "purl": "pkg:pypi/starlette@0.37.2",
+      "licenses": [{ "license": { "id": "BSD-3-Clause" } }],
+      "hashes": [{ "alg": "SHA-256", "content": "e1f2a3b4c5d6..." }]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "app-root",
+      "dependsOn": [
+        "pkg:pypi/fastapi@0.111.0",
+        "pkg:pypi/uvicorn@0.29.0",
+        "pkg:pypi/sqlalchemy@2.0.30"
+      ]
+    },
+    {
+      "ref": "pkg:pypi/fastapi@0.111.0",
+      "dependsOn": ["pkg:pypi/starlette@0.37.2", "pkg:pypi/pydantic@2.7.1"]
+    },
+    { "ref": "pkg:pypi/uvicorn@0.29.0", "dependsOn": [] },
+    { "ref": "pkg:pypi/sqlalchemy@2.0.30", "dependsOn": [] },
+    { "ref": "pkg:pypi/starlette@0.37.2", "dependsOn": [] },
+    { "ref": "pkg:pypi/pydantic@2.7.1", "dependsOn": [] }
+  ]
+}
+```
