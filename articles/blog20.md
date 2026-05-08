@@ -135,6 +135,8 @@ To give you some more context so you can estimate the number of credentials that
 
 ## Counter measures
 
+What makes it interesting to learn about hacks like these, is to think about what would've been necessary to be resilient. It feels good to know that you built a platform that cannot be [pwnd](https://www.urbandictionary.com/define.php?term=pwnd), even by advanced supply chain attacks like the one we're discussing. So instead of waiting for things to go wrong, let's look at some of the things you can do to make your platform resilient.
+
 ### Pin open source Github action templates
 
 This event once again showed the importance of the [zero trust](https://www.cloudflare.com/learning/security/glossary/what-is-zero-trust/) philosophy when building a platform. Part of this is not trusting mutable version tags of open source software. It's better to pin on the immutable commit hash (the SHA). In a Github workflow, instead of this:
@@ -200,7 +202,7 @@ If your Github runner would've been compromised by the malicious Trivy workflows
 
 ### Software Bill of Materials (SBOM)
 
-You could compare the SBOM with an ingredient list. It states what components have been used to build your application. Often times, software applications are built using hundred if not thousands of other software components, that all have their own versioning and are built from other software components. You can imagine that this becomes complex very fast and it would be impossible to keep track without a programmatic approach. _Why is it important to keep track of the ingredients list in the first place?_ - you might ask yourself. It can help you to determine that your application doesn't include any malicious components. It also serves as an audit trial that is valuable when handling an incident. Next to vulnerabilities, we can also analyse the licenses of underlying packages, which is important to do for compliance reasons. If one of the packages that you use is stating that you have to mention its maintainers somewhere in your software, you have to do that otherwise you violate the license of the software you're using. There are two industry standard formats of the SBOM:
+You could compare the SBOM with an ingredient list. It states what components have been used to build your application. Often times, software applications are built using hundred if not thousands of other software components, that all have their own versioning and are built from other software components. You can imagine that this becomes complex very fast and it would be impossible to keep track without a programmatic approach. _Why is it important to keep track of the ingredients list in the first place?_ - you might ask yourself. It can help you to determine that your application doesn't include any malicious components. It also serves as an audit trial that is valuable when handling an incident. Next to vulnerabilities, we can also analyse the licenses of underlying packages, which is important to do for compliance reasons. If one of the packages that you use is stating that you have to mention its maintainers somewhere in your software, you have to do that otherwise you'd violate the license of the software you're using. There are two industry standard formats of the SBOM:
 
 - CycloneDX - [OWASP](https://owasp.org/) maintained, used for supply chain analysis
 - SPDX (Software Package Data Exchange) - [Linux Foundation](https://www.linuxfoundation.org/) maintained, used to assess license compliance
