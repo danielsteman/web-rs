@@ -1,4 +1,9 @@
-The Trivy hack has been discussed a lot over the past month, but I still wanted to take the opportunity to write about the details of this exploit, both to share knowledge and deepen my own knowledge to guard codebases that I contribute to against adversaries. I'll do this by writing about the events in a chronological order and get into more details when it gets complex.
+% id: 19
+% title: Trivy Supply Chain Attack 🔗☠️
+% date: 2026-05-08
+% tags: devsecops
+
+The Trivy hack has been discussed a lot over the past month, but I still wanted to take the opportunity to write about the details of this exploit, both to share knowledge and deepen my own knowledge to guard codebases that I contribute to against adversaries. I'll do this by writing about the events in a chronological order and get into more details to find out what _actually_ happens.
 
 ## The exploit
 
@@ -6,15 +11,15 @@ An AI-powered hacker bot, [hackerbot-claw](https://www.linkedin.com/posts/cybers
 
 ### 1. Forking the repo and adding exfiltration code
 
-A hacker forked the Trivy repository, added code to [exfiltrate](https://www.ibm.com/think/topics/data-exfiltration) environment variables
+A hacker forked the Trivy repository and added code to [exfiltrate](https://www.ibm.com/think/topics/data-exfiltration) secrets. Github Actions injects secrets into the runner's processes as environment variables, so the malicious code targeted those variables, scanning for credentials like Github personal access tokens (PAT), AWS keys, and container registry credentials. The fork otherwise looked legitimate. The only meaningful change was the harvesting logic, hidden in a place where it would be invoked once a workflow ran.
 
-### 2. Sending environment variables to an external server
+### 2. Sending secrets to an external server
 
-Send them to an external server
+Once the exfiltration code collected the secrets, it bundled them up and shipped them off to an attacker-controlled server over HTTPS. HTTPS is convenient for an attacker because it blends in with the legitimate outbound traffic that any CI runner produces (`git fetch`, `npm install`, `docker pull`, etc.), so it doesn't trigger any obvious red flags in network logs. At this point the code just sits in the fork; it doesn't do anything until something runs it in a context where real secrets are available.
 
 ### 3. Opening a pwn request
 
-Open a [PR](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) with the original Trivy repository as base. Also known as a [pwd request](https://www.praetorian.com/blog/pwn-request-hacking-microsoft-github-repositories-and-more/).
+The hacker then opened a [PR](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) from the fork against the original Trivy repository, also known as a [pwn request](https://www.praetorian.com/blog/pwn-request-hacking-microsoft-github-repositories-and-more/). The trick is to target a workflow that uses [`pull_request_target`](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#pull_request_target). Unlike the regular `pull_request` trigger, `pull_request_target` runs in the context of the _base_ repository with access to its secrets, which is exactly what the attacker needs. The dangerous combination is when such a workflow then checks out and executes code from the fork, which is what happened here.
 
 ### 4. Checkout inside the `apidiff` workflow
 
@@ -72,7 +77,7 @@ GITHUB_TOKEN=ghp_fake_token
 AWS_SECRET_ACCESS_KEY=FAKE_AWS_SECRET
 ```
 
-A more advanced way of harvesting secrets would be to read them from a process's memory. According to Aqua Security this is what TeamPCP did in their malware. In their post-mortum, its stated that secrets were also retrieved from `/proc/{pid}/mem`, but as opposed to `/proc/{pid}/environ`, this is not a regular file that you can `cat` but a [virtual file](https://docs.kernel.org/filesystems/vfs.html). Virtual files don't take up space on disk, but are backed by kernel handler functions. Following Unix's "everything is a file" philosophy, files and virtual files share the open/read/write semantics. When a virtual file is opened, I call a kernel handler function that generates and returns data. For example, `/proc/cpuinfo` is a virtual file that I can open. When we `open()` it, we do a lookup the proc file system, `procfs`, which has a set of file operations. When we `read()` the `/proc/cpuinfo`, we call `cpuinfo_read` which generates and returns CPU data to us. So it's very similar to reading a file, but the data that you get back is generated on the fly. We got a little side tracked, but this is good to understand to further explain how secrets can be stolen from process memory. The malware targeted the `Runner.Worker` process on the Github runner of a victim. The readable memory regions of this process can be found in `/proc/{pid}/maps`, which was accessible because a Github workflow is ran with the `runner` user and the process is also owned by the `runner` user. For each region, `/proc/{pid}/mem` was dumped and parsed to extract secrets.
+A more advanced way of harvesting secrets would be to read them from a process's memory. According to Aqua Security this is what TeamPCP did in their malware. In their post mortem, its stated that secrets were also retrieved from `/proc/{pid}/mem`, but as opposed to `/proc/{pid}/environ`, this is not a regular file that you can `cat` but a [virtual file](https://docs.kernel.org/filesystems/vfs.html). Virtual files don't take up space on disk, but are backed by kernel handler functions. Following Unix's "everything is a file" philosophy, files and virtual files share the open/read/write semantics. When a virtual file is opened, I call a kernel handler function that generates and returns data. For example, `/proc/cpuinfo` is a virtual file that I can open. When we `open()` it, we do a lookup the proc file system, `procfs`, which has a set of file operations. When we `read()` the `/proc/cpuinfo`, we call `cpuinfo_read` which generates and returns CPU data to us. So it's very similar to reading a file, but the data that you get back is generated on the fly. We got a little side tracked, but this is good to understand to further explain how secrets can be stolen from process memory. The malware targeted the `Runner.Worker` process on the Github runner of a victim. The readable memory regions of this process can be found in `/proc/{pid}/maps`, which was accessible because a Github workflow is ran with the `runner` user and the process is also owned by the `runner` user. For each region, `/proc/{pid}/mem` was dumped and parsed to extract secrets.
 
 ```bash
 # start a random process
