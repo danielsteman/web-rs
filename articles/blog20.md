@@ -52,6 +52,58 @@ We can find this process with [`ps`](https://man7.org/linux/man-pages/man1/ps.1.
 ps aux | grep sleep
 ```
 
+We can already find the secrets in the environment of the process. Let's assume that the process we started earlier has PID `1234`. We can `cat` and format the environment like this.
+
+```bash
+cat /proc/4631/environ | tr '\0' '\n'
+```
+
+Which would return our fake secrets, among other variables.
+
+```bash
+SHELL=/bin/bash
+SSH_KEY_PATH=/home/lima/.ssh/id_ed25519
+PWD=/Users/danielsteman/repos/web-rs
+LOGNAME=danielsteman
+XDG_SESSION_TYPE=tty
+HOME=/home/danielsteman.linux
+LANG=C.UTF-8
+GITHUB_TOKEN=ghp_fake_token
+AWS_SECRET_ACCESS_KEY=FAKE_AWS_SECRET
+```
+
+A more advanced way of harvesting secrets would be to read them from a process's memory. According to Aqua Security this is what TeamPCP did in their malware. In their post-mortum, its stated that secrets were also retrieved from `/proc/{pid}/mem`, but as opposed to `/proc/{pid}/environ`, this is not a regular file that you can `cat` but a [virtual file](https://docs.kernel.org/filesystems/vfs.html). Virtual files don't take up space on disk, but are backed by kernel handler functions. Following Unix's "everything is a file" philosophy, files and virtual files share the open/read/write semantics. When a virtual file is opened, I call a kernel handler function that generates and returns data. For example, `/proc/cpuinfo` is a virtual file that I can open. When we `open()` it, we do a lookup the proc file system, `procfs`, which has a set of file operations. When we `read()` the `/proc/cpuinfo`, we call `cpuinfo_read` which generates and returns CPU data to us. So it's very similar to reading a file, but the data that you get back is generated on the fly. We got a little side tracked, but this is good to understand to further explain how secrets can be stolen from process memory. The malware targeted the `Runner.Worker` process on the Github runner of a victim. The readable memory regions of this process can be found in `/proc/{pid}/maps`, which was accessible because a Github workflow is ran with the `runner` user and the process is also owned by the `runner` user. For each region, `/proc/{pid}/mem` was dumped and parsed to extract secrets.
+
+```bash
+# start a random process
+sleep 999999 &
+# returns the PID: 1234
+```
+
+We take that PID and find the readable memory regions. I created a simple Python script to make it more readable.
+
+```python
+import re
+
+pid = 1234
+
+with open(f"/proc/{pid}/maps") as maps, open(f"/proc/{pid}/mem", "rb") as mem:
+	for line in maps:
+		# parse start and end address from each maps line
+		m = re.match(r'([0-9a-f]+)-([0-9a-f]+) r', line)
+		# skip non-readable regions
+		if not m:
+			continue
+		start = int(m.group(1), 16)
+		end = int(m.group(2), 16)
+		# seek to the start address and read the region
+		mem.seek(start)
+		data = mem.read(end - start)
+		# search for secrets
+		if b'"isSecret":true' in data:
+			print(data)
+```
+
 ### 7. Persistent backdoor via an ICP canister
 
 While hijacking version tags on Trivy's Github actions, the attacker also created a backdoor in Trivy's binary. This binary installed a [persistent backdoor](https://www.offsec.com/metasploit-unleashed/persistent-backdoors/), in this case a systemd user service in `~/.config/systemd/user/sysmon.py` that polled a URL that pointed to an [ICP hosted canister](https://docs.internetcomputer.org/building-apps/essentials/canisters). Before continuing, let's clear some things up. A canister is a [smart contract](https://www.freecodecamp.org/news/smart-contracts-for-dummies-a1ba1e0b9575/) compiled to [Web Assembly](https://danielsteman.com/blog/4) that can store state and respond to HTTP requests. ICP is decentralised internet, making it very suitable to host malware since it's not possible to take down a website. This means that the canister's lifecycle is governed by the blockchain's consensus protocol. Taking it down would involve the [Network Nervous System](https://nns.ic0.app/), which is a decentralized voting process, and deserves a complete blog post on its own. After some more digging I found that the malicious canister continued to live on the blockchain but [DFINITY](https://dfinity.org/) stopped the [boundary nodes](https://learn.internetcomputer.org/hc/en-us/articles/34212818609684-ICP-Edge-Infrastructure) to serve it. These boundary nodes are the primary interface for users of ICP and enforce security measures to protect the network. What fascinates me is that the _decentralised internet_ apparently still has a _central_ actor that can interfene, so it's not completely like the wild west, as you might think if you're not very familiar with the decentralised web, like me.
@@ -89,14 +141,14 @@ This event once again showed the importance of the [zero trust](https://www.clou
 
 ```yaml
 - name: Run Trivy (pinned to version tag)
-  uses: aquasecurity/trivy-action@0.24.0
+	uses: aquasecurity/trivy-action@0.24.0
 ```
 
 Do this:
 
 ```yaml
 - name: Run Trivy (pinned to version tag)
-  uses: aquasecurity/trivy-action@b3f1c2a9d7e4c6a1f2b8d9e0c123456789abcdef0
+	uses: aquasecurity/trivy-action@b3f1c2a9d7e4c6a1f2b8d9e0c123456789abcdef0
 ```
 
 ### Disable post-install scripts
@@ -135,13 +187,13 @@ Exfiltration is only possible if stolen credentials leave the owner's environmen
 
 ```mermaid
 flowchart LR
-  subgraph vpc["Private network / VPC"]
-    runner["GitHub runner"]
-    proxy["Proxy (deny-all + allowlist)"]
-    runner -->|"outbound HTTP(S)"| proxy
-  end
-  proxy -->|"allowed"| trusted["Trusted hosts"]
-  proxy -.->|"blocked"| untrusted["Untrusted / malicious"]
+	subgraph vpc["Private network / VPC"]
+		runner["GitHub runner"]
+		proxy["Proxy (deny-all + allowlist)"]
+		runner -->|"outbound HTTP(S)"| proxy
+	end
+	proxy -->|"allowed"| trusted["Trusted hosts"]
+	proxy -.->|"blocked"| untrusted["Untrusted / malicious"]
 ```
 
 If your Github runner would've been compromised by the malicious Trivy workflows, exfiltration of secrets to the typosquatted address (scan.aquasecutiy.org) would not have been possible. This would not have closed off the fallback method though (write encrypted secrets to a user's public repo release assets and use it as a dead drop).
