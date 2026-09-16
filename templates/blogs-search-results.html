@@ -68,11 +68,11 @@
   }
 </style>
 
-<div class="p-4 gap-4 columns-1 sm:columns-2">
+<div class="grid grid-cols-1 sm:grid-cols-2 items-start gap-4 p-4">
   {% for blog in blogs %}
   <a
     href="/blog/{{blog.id}}"
-    class="break-inside-avoid-column group relative gap-4 mb-4 p-4 flex flex-col rounded-lg glass-card"
+    class="group relative gap-4 p-4 flex flex-col rounded-lg glass-card"
   >
     <div class="font-mono font-bold text-base">{{blog.title}}</div>
     <div class="font-mono text-sm opacity-80 py-1">{{blog.date}}</div>
