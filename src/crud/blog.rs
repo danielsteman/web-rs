@@ -31,6 +31,14 @@ impl Blog {
         .await
     }
 
+    pub async fn count_blogs(pool: &Pool<Postgres>) -> Result<i64, Error> {
+        let (count,): (i64,) = sqlx::query_as("SELECT COUNT(*) FROM blog")
+            .fetch_one(pool)
+            .await?;
+
+        Ok(count)
+    }
+
     pub async fn search_blogs(pool: &Pool<Postgres>, search: &str) -> Result<Vec<Blog>, Error> {
         let mut blogs: Vec<Blog> =
             sqlx::query_as::<_, Blog>("SELECT * FROM blog WHERE title ILIKE $1")
