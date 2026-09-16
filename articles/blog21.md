@@ -6,4 +6,4 @@ In computing, an interface is the shared boundary of two or more components in a
 
 ## Before AI
 
-Before AI, developers created interfaces with two types users in mind: humans (GUI) and deterministic code.
+Before AI, developers created interfaces with two types users in mind: humans (GUI) and deterministic code. GUIs are everywhere, from browsers, device settings and camera apps, and this is the type of interface that most computers users use. They need to be intuitive and visually appealing. This is where the domain of [UX and UI design](https://www.figma.com/resource-library/what-is-ux-design/) originates from. The second type, deterministic code, concerns applications that interact with other applications, for example a frontend that fetches data from a backend.
