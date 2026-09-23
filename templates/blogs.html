@@ -31,11 +31,29 @@
     >
       {% include "blogs-search-results.html" %}
       <div class="flex flex-row gap-4 justify-center mx-auto mt-4">
-        <div class="cursor-pointer px-1 text-lg hover:bg-purple-500">👈</div>
+        {% match prev_page %} {% when Some with (prev) %}
+        <a
+          href="/blogs?page={{prev}}&amp;per_page={{per_page}}"
+          class="cursor-pointer px-1 text-lg hover:bg-purple-500"
+          aria-label="Previous page"
+          >👈</a
+        >
+        {% when None %}
+        <span class="px-1 text-lg opacity-30" aria-hidden="true">👈</span>
+        {% endmatch %}
         <div class="font-mono text-sm py-1">
-          {{pagination.page}} / {{pagination.page}}
+          {{page}} / {{total_pages}}
         </div>
-        <div class="cursor-pointer px-1 text-lg hover:bg-purple-500">👉</div>
+        {% match next_page %} {% when Some with (next) %}
+        <a
+          href="/blogs?page={{next}}&amp;per_page={{per_page}}"
+          class="cursor-pointer px-1 text-lg hover:bg-purple-500"
+          aria-label="Next page"
+          >👉</a
+        >
+        {% when None %}
+        <span class="px-1 text-lg opacity-30" aria-hidden="true">👉</span>
+        {% endmatch %}
       </div>
       {% include "footer.html" %}
     </div>

@@ -22,36 +22,21 @@ impl Blog {
         limit: usize,
         offset: usize,
     ) -> Result<Vec<Blog>, Error> {
-        let query = format!("SELECT * FROM blog LIMIT {} OFFSET {}", limit, offset);
-        let blogs: Vec<Blog> = sqlx::query_as::<_, Blog>(&query).fetch_all(pool).await?;
-
-        let reordered_blogs = Blog::reorder_blogs(blogs);
-
-        Ok(reordered_blogs)
+        sqlx::query_as::<_, Blog>(
+            "SELECT * FROM blog ORDER BY date DESC, id DESC LIMIT $1 OFFSET $2",
+        )
+        .bind(limit as i64)
+        .bind(offset as i64)
+        .fetch_all(pool)
+        .await
     }
 
-    fn reorder_blogs(mut blogs: Vec<Blog>) -> Vec<Blog> {
-        if blogs.is_empty() {
-            return blogs;
-        }
+    pub async fn count_blogs(pool: &Pool<Postgres>) -> Result<i64, Error> {
+        let (count,): (i64,) = sqlx::query_as("SELECT COUNT(*) FROM blog")
+            .fetch_one(pool)
+            .await?;
 
-        let max_id = blogs.iter().map(|b| b.id).max().unwrap();
-
-        blogs.sort_by(|a, b| b.id.cmp(&a.id));
-
-        let (mut evens, mut odds): (Vec<_>, Vec<_>) =
-            blogs.into_iter().partition(|b| b.id % 2 == 0);
-        let mut reordered = Vec::with_capacity(evens.len() + odds.len());
-
-        if max_id % 2 == 1 {
-            reordered.append(&mut odds);
-            reordered.append(&mut evens);
-        } else {
-            reordered.append(&mut evens);
-            reordered.append(&mut odds);
-        }
-
-        reordered
+        Ok(count)
     }
 
     pub async fn search_blogs(pool: &Pool<Postgres>, search: &str) -> Result<Vec<Blog>, Error> {
@@ -139,69 +124,5 @@ mod tests {
         let result = Blog::search_blogs(&pool, "hoi").await.unwrap();
         assert_eq!(result.len() > 0, true);
         assert_eq!(result[0].id, 420);
-    }
-
-    #[test]
-    fn test_reorder() {
-        let blogs = vec![
-            Blog {
-                id: 7,
-                title: "Title 7".to_string(),
-                summary: "Summary 7".to_string(),
-                body: "Body 7".to_string(),
-                date: Date::from_calendar_date(2024, Month::January, 1).unwrap(),
-                tags: vec!["tag1".to_string()],
-            },
-            Blog {
-                id: 6,
-                title: "Title 6".to_string(),
-                summary: "Summary 6".to_string(),
-                body: "Body 6".to_string(),
-                date: Date::from_calendar_date(2024, Month::January, 1).unwrap(),
-                tags: vec!["tag2".to_string()],
-            },
-            Blog {
-                id: 5,
-                title: "Title 5".to_string(),
-                summary: "Summary 5".to_string(),
-                body: "Body 5".to_string(),
-                date: Date::from_calendar_date(2024, Month::January, 1).unwrap(),
-                tags: vec!["tag3".to_string()],
-            },
-            Blog {
-                id: 4,
-                title: "Title 4".to_string(),
-                summary: "Summary 4".to_string(),
-                body: "Body 4".to_string(),
-                date: Date::from_calendar_date(2024, Month::January, 1).unwrap(),
-                tags: vec!["tag4".to_string()],
-            },
-            Blog {
-                id: 3,
-                title: "Title 3".to_string(),
-                summary: "Summary 3".to_string(),
-                body: "Body 3".to_string(),
-                date: Date::from_calendar_date(2024, Month::January, 1).unwrap(),
-                tags: vec!["tag5".to_string()],
-            },
-            Blog {
-                id: 2,
-                title: "Title 2".to_string(),
-                summary: "Summary 2".to_string(),
-                body: "Body 2".to_string(),
-                date: Date::from_calendar_date(2024, Month::January, 1).unwrap(),
-                tags: vec!["tag6".to_string()],
-            },
-            Blog {
-                id: 1,
-                title: "Title 1".to_string(),
-                summary: "Summary 1".to_string(),
-                body: "Body 1".to_string(),
-                date: Date::from_calendar_date(2024, Month::January, 1).unwrap(),
-                tags: vec!["tag7".to_string()],
-            },
-        ];
-        let reordered_blogs = Blog::reorder_blogs(blogs);
-        assert_eq!(reordered_blogs[1].id, 6)
     }
 }
